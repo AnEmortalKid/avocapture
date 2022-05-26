@@ -1,7 +1,9 @@
 const { app, BrowserWindow, globalShortcut } = require('electron')
 const path = require('path')
 
-const rdl = new ReplayDetectionListener();
+import { ReplayDetectionListener } from './detector/replayDetectionListener';
+import { HotkeyReplayDetector } from './detector/hotkeyReplayDetector';
+const rdl = new ReplayDetectionListener()
 
 const createWindow = () => {
   const win = new BrowserWindow({
