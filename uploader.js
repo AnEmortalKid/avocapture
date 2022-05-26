@@ -1,0 +1,5 @@
+class Uploader {
+
+  upload(videoData) {
+  }
+}
