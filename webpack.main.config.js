@@ -1,5 +1,5 @@
 const path = require("path");
-const fs = require("fs");
+const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   /**
@@ -10,5 +10,15 @@ module.exports = {
   // Put your normal webpack config below here
   module: {
     rules: require('./webpack.rules'),
-  }
+  },
+  plugins: [
+    new CopyPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, "src", "main", "views"),
+          to: path.resolve(__dirname, ".webpack/main", "views"),
+        },
+      ],
+    }),
+  ]
 };

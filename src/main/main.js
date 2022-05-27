@@ -1,11 +1,14 @@
-const { app, BrowserWindow, globalShortcut } = require('electron')
+const { app, BrowserWindow } = require('electron')
 const path = require('path')
 
 import { ReplayDetectionListener } from './detector/replayDetectionListener';
 import { HotkeyReplayDetector } from './detector/hotkeyReplayDetector';
+import { EntryView } from "./entry/entryView"
 
 
-const rdl = new ReplayDetectionListener();
+const entryView = new EntryView();
+const rdl = new ReplayDetectionListener(entryView);
+const hrd = new HotkeyReplayDetector();
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -19,22 +22,11 @@ const createWindow = () => {
   // Open the DevTools.
   win.webContents.openDevTools();
 
-  // TODO figure out how to open this
-  // const childWindow = new BrowserWindow({
-  //   width: 800,
-  //   height: 600
-  // })
-  // childWindow.document.write(```
-  // < !DOCTYPE html >
-  // <html>
-
-  //   <h1> Data entry here dog</h1>
-
-  // </html>
-  // ```)
 }
 
 app.on('window-all-closed', () => {
+  console.log('tearing down');
+  hrd.teardown();
   if (process.platform !== 'darwin') app.quit()
 })
 
@@ -45,9 +37,5 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
 
-  const hrd = new HotkeyReplayDetector();
   hrd.register(rdl);
-
-  // Check whether a shortcut is registered.
-  console.log(globalShortcut.isRegistered('numadd'))
 })

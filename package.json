@@ -33,6 +33,7 @@
     "fs": "^0.0.1-security"
   },
   "dependencies": {
+    "copy-webpack-plugin": "^11.0.0",
     "electron-squirrel-startup": "^1.0.0",
     "electron-webpack": "^2.8.2"
   }
