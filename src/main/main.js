@@ -1,10 +1,11 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
 
 import { ReplayDetectionListener } from './detector/replayDetectionListener';
 import { HotkeyReplayDetector } from './detector/hotkeyReplayDetector';
 import { EntryView } from "./entry/entryView"
 import { ConsoleUploader } from './uploader/consoleUploder';
+import { EntryEvents } from './entry/entryEvents';
 
 
 const entryView = new EntryView();
@@ -48,3 +49,11 @@ app.whenReady().then(() => {
 
   hrd.register(rdl);
 })
+
+ipcMain.on(EntryEvents.DIALOG.CANCEL, () => {
+  console.log("Cancel");
+});
+
+ipcMain.on(EntryEvents.DIALOG.APPLY, (event, data) => {
+  console.log("Data: ", data)
+});
