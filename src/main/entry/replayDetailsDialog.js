@@ -9,13 +9,11 @@ export class ReplayDetailsDialog {
     const entryWindow = new BrowserWindow({
       width: 400,
       height: 400,
-      show: false,
-      modal: true,
-      frame: false,
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: false,
       },
+      ...overlayWindow.WINDOW_OPTS
     })
     entryWindow.setAlwaysOnTop(true, "pop-up-menu");
     entryWindow.setVisibleOnAllWorkspaces(true);
@@ -29,11 +27,9 @@ export class ReplayDetailsDialog {
     entryWindow.once("ready-to-show", () => {
       console.log("Broadcasting Event");
       entryWindow.webContents.send(ReplayDetailsEvents.DIALOG.INITIALIZE, { prefix: "foo" });
-      entryWindow.center();
-      entryWindow.moveAbove("window:462274:0");
       //entryWindow.moveTop();
       entryWindow.show();
-      entryWindow.focus();
+      // entryWindow.focus();
     });
 
     this.entryWindow = entryWindow;
