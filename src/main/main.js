@@ -4,11 +4,18 @@ const path = require('path')
 import { ReplayDetectionListener } from './detector/replayDetectionListener';
 import { HotkeyReplayDetector } from './detector/hotkeyReplayDetector';
 import { EntryView } from "./entry/entryView"
+import { ConsoleUploader } from './uploader/consoleUploder';
 
 
 const entryView = new EntryView();
-const rdl = new ReplayDetectionListener(entryView);
+const rdl = new ReplayDetectionListener(entryView, notifyUploader);
 const hrd = new HotkeyReplayDetector();
+
+const uploader = new ConsoleUploader();
+
+function notifyUploader(data) {
+  uploader.upload(data);
+}
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -36,6 +43,8 @@ app.whenReady().then(() => {
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
+
+  uploader.initialize();
 
   hrd.register(rdl);
 })

@@ -6,6 +6,8 @@
   <!-- what in the ever living fuck why would you add this to the starter template -->
   <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'"> -->
   <title>Hello World!</title>
+  <link rel="stylesheet" href="../css/w3.css" />
+  <link rel="stylesheet" href="../css/w3-theme-indigo.css" />
 </head>
 
 <body>
@@ -14,7 +16,32 @@
   Chromium <span id="chrome-version"></span>,
   and Electron <span id="electron-version"></span>.
 
-  <button id="settings">SETTINGS</button>
+
+  <div>
+
+    <div class="w3-container">
+      <h2>Detection Mode</h2>
+      <select class="w3-select" name="option">
+        <option value="" disabled selected>Choose your option</option>
+        <option value="1">Option 1</option>
+        <option value="2">Option 2</option>
+        <option value="3">Option 3</option>
+      </select>
+    </div>
+
+    <div class="w3-container">
+      <h2>Upload Mode</h2>
+      <select class="w3-select" name="option">
+        <option value="" disabled selected>Choose your option</option>
+        <option value="1">Option 1</option>
+        <option value="2">Option 2</option>
+        <option value="3">Option 3</option>
+      </select>
+    </div>
+
+  </div>
+
+  <button id="settings" class="w3-button w3-round w3-theme-d4" id="entry-cancel-btn">Settings</button>
 </body>
 
 </html>

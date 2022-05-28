@@ -1,4 +1,9 @@
 module.exports = [
+  {
+    test: /\.css$/,
+    use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
+  },
+
   // Add support for native node modules
   // {
   //   // We're specifying native_modules in the test because the asset relocator loader generates a
