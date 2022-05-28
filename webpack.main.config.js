@@ -1,7 +1,7 @@
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
 
-const assets = ["images", "css"];
+const assets = ["css"];
 
 const assetPatterns = assets.map((asset) => {
   return {

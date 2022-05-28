@@ -33,8 +33,10 @@
     "fs": "^0.0.1-security"
   },
   "dependencies": {
+    "@timfish/forge-externals-plugin": "^0.1.2",
     "copy-webpack-plugin": "^11.0.0",
     "electron-squirrel-startup": "^1.0.0",
-    "electron-webpack": "^2.8.2"
+    "electron-webpack": "^2.8.2",
+    "node-global-key-listener": "^0.1.1"
   }
 }

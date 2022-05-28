@@ -1,5 +1,4 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
-const path = require('path')
 
 import { ReplayDetectionListener } from './detector/replayDetectionListener';
 import { HotkeyReplayDetector } from './detector/hotkeyReplayDetector';
@@ -52,6 +51,7 @@ app.whenReady().then(() => {
 
 ipcMain.on(ReplayDetailsEvents.DIALOG.CANCEL, () => {
   console.log("Cancel");
+  entryView.destroy();
 });
 
 ipcMain.on(ReplayDetailsEvents.DIALOG.APPLY, (event, data) => {

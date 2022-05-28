@@ -21,4 +21,7 @@ module.exports = {
   module: {
     rules,
   },
+  externals: {
+    "node-global-key-listener": "node-global-key-listener",
+  },
 };

@@ -12,7 +12,14 @@ module.exports = {
           js: './src/renderer/main.js'
         }]
       }
-    }]
+    }],
+    // [
+    //   "@timfish/forge-externals-plugin",
+    //   {
+    //     "externals": ["node-global-key-listener"],
+    //     "includeDeps": true
+    //   }
+    // ]
   ],
   makers: [
     {

@@ -5,15 +5,21 @@ import { ReplayDetailsEvents } from "./replayDetailsEvents";
 export class ReplayDetailsDialog {
 
   create() {
+    // todo better state handling
     const entryWindow = new BrowserWindow({
-      width: 800,
-      height: 600,
+      width: 400,
+      height: 400,
       show: false,
+      modal: true,
+      frame: false,
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: false,
       },
     })
+    entryWindow.setAlwaysOnTop(true, "pop-up-menu");
+    entryWindow.setVisibleOnAllWorkspaces(true);
+    entryWindow.setFullScreenable(false);
     entryWindow.setTitle("Entry");
 
     entryWindow.loadURL(
@@ -23,8 +29,16 @@ export class ReplayDetailsDialog {
     entryWindow.once("ready-to-show", () => {
       console.log("Broadcasting Event");
       entryWindow.webContents.send(ReplayDetailsEvents.DIALOG.INITIALIZE, { prefix: "foo" });
+      entryWindow.center();
+      entryWindow.moveAbove("window:462274:0");
+      //entryWindow.moveTop();
       entryWindow.show();
       entryWindow.focus();
     });
+
+    this.entryWindow = entryWindow;
+  }
+  destroy() {
+    this.entryWindow.close();
   }
 }
