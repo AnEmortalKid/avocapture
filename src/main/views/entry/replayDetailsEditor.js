@@ -2,21 +2,22 @@ console.log('entryEditor');
 
 const { ipcRenderer } = require("electron");
 
-
+const replayId = "replay.id";
 const replayPrefix = "replay.prefix";
 const replayTitle = "replay.title";
 
 function bindToForm(data) {
-  const { prefix } = data;
+  const { prefix, id } = data;
 
-  const replayPrefixInput = document.getElementById(replayPrefix);
-  replayPrefixInput.value = prefix;
+  document.getElementById(replayId).value = id;
+  document.getElementById(replayPrefix).value = prefix;
 }
 
 function bindFromForm() {
   return {
     prefix: document.getElementById(replayPrefix).value,
-    title: document.getElementById(replayTitle).value
+    title: document.getElementById(replayTitle).value,
+    id: document.getElementById(replayId).value
   }
 }
 

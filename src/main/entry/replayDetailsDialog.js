@@ -4,7 +4,7 @@ import { ReplayDetailsEvents } from "./replayDetailsEvents";
 
 export class ReplayDetailsDialog {
 
-  create() {
+  create(contextData) {
     // todo better state handling
     const entryWindow = new BrowserWindow({
       width: 400,
@@ -13,9 +13,8 @@ export class ReplayDetailsDialog {
         nodeIntegration: true,
         contextIsolation: false,
       },
-      ...overlayWindow.WINDOW_OPTS
     })
-    entryWindow.setAlwaysOnTop(true, "pop-up-menu");
+    entryWindow.setAlwaysOnTop(true, "screen-saver");
     entryWindow.setVisibleOnAllWorkspaces(true);
     entryWindow.setFullScreenable(false);
     entryWindow.setTitle("Entry");
@@ -26,10 +25,10 @@ export class ReplayDetailsDialog {
 
     entryWindow.once("ready-to-show", () => {
       console.log("Broadcasting Event");
-      entryWindow.webContents.send(ReplayDetailsEvents.DIALOG.INITIALIZE, { prefix: "foo" });
-      //entryWindow.moveTop();
+      entryWindow.webContents.send(ReplayDetailsEvents.DIALOG.INITIALIZE, { id: contextData.id, prefix: "foo" });
+      entryWindow.moveTop();
       entryWindow.show();
-      // entryWindow.focus();
+      entryWindow.focus();
     });
 
     this.entryWindow = entryWindow;

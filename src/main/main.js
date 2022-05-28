@@ -8,7 +8,7 @@ import { ReplayDetailsEvents } from './entry/replayDetailsEvents';
 
 
 const entryView = new ReplayDetailsDialog();
-const rdl = new ReplayDetectionListener(entryView, notifyUploader);
+const rdl = new ReplayDetectionListener(entryView);
 const hrd = new HotkeyReplayDetector();
 
 const uploader = new ConsoleUploader();
@@ -56,4 +56,6 @@ ipcMain.on(ReplayDetailsEvents.DIALOG.CANCEL, () => {
 
 ipcMain.on(ReplayDetailsEvents.DIALOG.APPLY, (event, data) => {
   console.log("Data: ", data)
+  entryView.destroy();
+  notifyUploader(data);
 });
