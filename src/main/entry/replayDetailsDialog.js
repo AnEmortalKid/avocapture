@@ -1,8 +1,8 @@
 import { BrowserWindow } from "electron"
 import *  as path from "path"
-import { EntryEvents } from "./entryEvents";
+import { ReplayDetailsEvents } from "./replayDetailsEvents";
 
-export class EntryView {
+export class ReplayDetailsDialog {
 
   create() {
     const entryWindow = new BrowserWindow({
@@ -22,7 +22,7 @@ export class EntryView {
 
     entryWindow.once("ready-to-show", () => {
       console.log("Broadcasting Event");
-      entryWindow.webContents.send(EntryEvents.DIALOG.INITIALIZE, { prefix: "foo" });
+      entryWindow.webContents.send(ReplayDetailsEvents.DIALOG.INITIALIZE, { prefix: "foo" });
       entryWindow.show();
       entryWindow.focus();
     });

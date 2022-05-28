@@ -3,12 +3,12 @@ const path = require('path')
 
 import { ReplayDetectionListener } from './detector/replayDetectionListener';
 import { HotkeyReplayDetector } from './detector/hotkeyReplayDetector';
-import { EntryView } from "./entry/entryView"
+import { ReplayDetailsDialog } from "./entry/replayDetailsDialog"
 import { ConsoleUploader } from './uploader/consoleUploder';
-import { EntryEvents } from './entry/entryEvents';
+import { ReplayDetailsEvents } from './entry/replayDetailsEvents';
 
 
-const entryView = new EntryView();
+const entryView = new ReplayDetailsDialog();
 const rdl = new ReplayDetectionListener(entryView, notifyUploader);
 const hrd = new HotkeyReplayDetector();
 
@@ -50,10 +50,10 @@ app.whenReady().then(() => {
   hrd.register(rdl);
 })
 
-ipcMain.on(EntryEvents.DIALOG.CANCEL, () => {
+ipcMain.on(ReplayDetailsEvents.DIALOG.CANCEL, () => {
   console.log("Cancel");
 });
 
-ipcMain.on(EntryEvents.DIALOG.APPLY, (event, data) => {
+ipcMain.on(ReplayDetailsEvents.DIALOG.APPLY, (event, data) => {
   console.log("Data: ", data)
 });

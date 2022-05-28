@@ -23,16 +23,16 @@ function bindFromForm() {
 function bindButtons() {
   var applyBtn = document.getElementById("entry-apply-btn");
   applyBtn.addEventListener("click", (event) => {
-    ipcRenderer.send("Entry.Dialog.Apply", bindFromForm());
+    ipcRenderer.send("ReplayDetails.Dialog.Apply", bindFromForm());
   });
 
   var cancelBtn = document.getElementById("entry-cancel-btn");
   cancelBtn.addEventListener("click", (event) => {
-    ipcRenderer.send("Entry.Dialog.Cancel");
+    ipcRenderer.send("ReplayDetails.Dialog.Cancel");
   });
 }
 
-ipcRenderer.on("Entry.Dialog.Initialize", (event, data) => {
+ipcRenderer.on("ReplayDetails.Dialog.Initialize", (event, data) => {
   console.log("Received Entry.Initialize");
   console.log(JSON.stringify(data));
   bindToForm(data);
