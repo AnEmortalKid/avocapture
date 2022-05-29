@@ -17,10 +17,17 @@ function notifyUploader(data) {
   uploader.upload(data);
 }
 
+let win;
+
 const createWindow = () => {
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 800,
-    height: 600
+    height: 600,
+    webPreferences: {
+      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
   })
 
   // and load the index.html of the app.
@@ -58,4 +65,6 @@ ipcMain.on(ReplayDetailsEvents.DIALOG.APPLY, (event, data) => {
   console.log("Data: ", data)
   entryView.destroy();
   notifyUploader(data);
+  console.log('send event');
+  win.webContents.send("ReplayDetails.Add", { data: 'foo' });
 });

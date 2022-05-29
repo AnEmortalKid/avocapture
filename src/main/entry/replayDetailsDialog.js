@@ -7,13 +7,17 @@ export class ReplayDetailsDialog {
   create(contextData) {
     // todo better state handling
     const entryWindow = new BrowserWindow({
-      width: 400,
-      height: 400,
+      width: 800,
+      height: 180,
+      frame: false,
+      titleBarOverlay: true,
+      resizable: false,
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: false,
       },
     })
+    entryWindow.setBackgroundColor("#d7dbe3");
     entryWindow.setAlwaysOnTop(true, "screen-saver");
     entryWindow.setVisibleOnAllWorkspaces(true);
     entryWindow.setFullScreenable(false);

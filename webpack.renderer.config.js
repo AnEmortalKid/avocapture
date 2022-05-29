@@ -1,5 +1,6 @@
 const rules = require('./webpack.rules');
 const path = require("path");
+
 const CopyPlugin = require("copy-webpack-plugin");
 
 const assets = ["css"];

@@ -1,4 +1,3 @@
-const { globalShortcut, desktopCapturer } = require('electron')
 import { ReplayDetector } from './replayDetector'
 const path = require('path')
 
@@ -32,25 +31,6 @@ export class HotkeyReplayDetector extends ReplayDetector {
     this.keyListener = (e, down) => {
       if (e.state == "DOWN" && e.name == "NUMPAD DIVIDE") {
         listener.detected("From NodeGlobal");
-
-        // console.log('registering listener')
-        // const ret = globalShortcut.register('numadd', () => {
-        //   console.log('numadd is pressed')
-        //   listener.detected("fooBarVas.vid")
-        // })
-
-        // if (!ret) {
-        //   console.log('registration failed')
-        // }
-
-        // const ret2 = globalShortcut.register('numdiv ', () => {
-        //   console.log('numdiv  is pressed')
-        //   listener.detected("fooBarVas.vid")
-        // })
-
-        // if (!ret2) {
-        //   console.log('registration failed')
-        // }
       }
     };
 

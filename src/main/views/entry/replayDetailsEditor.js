@@ -1,6 +1,6 @@
-console.log('entryEditor');
-
 const { ipcRenderer } = require("electron");
+
+console.log('entryEditor');
 
 const replayId = "replay.id";
 const replayPrefix = "replay.prefix";
@@ -11,6 +11,7 @@ function bindToForm(data) {
 
   document.getElementById(replayId).value = id;
   document.getElementById(replayPrefix).value = prefix;
+  document.getElementById(replayTitle).focus();
 }
 
 function bindFromForm() {

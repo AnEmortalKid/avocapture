@@ -7,25 +7,26 @@
   <meta charset="UTF-8">
   <title>Name Replay</title>
   <link rel="stylesheet" href="../../css/w3.css" />
-  <link rel="stylesheet" href="../../css/w3-theme-indigo.css" />
+  <link rel="stylesheet" href="../../css/theme.css" />
 </head>
 
-<header class="w3-container">
-  <div class="w3-center">
-    <h3>Name this replay</h3>
-  </div>
+<header class="w3-container w3-theme-l4 w3-card">
+  <h4 class="w3-center">Name Replay</h4>
 </header>
-<div id="form-container">
-  <form class="w3-container w3-card-4">
-    <p>
-      <label>Prefix:</label>
-      <input id="replay.prefix" class="w3-input w3-border-0" type="text">
-    </p>
 
-    <p>
-      <label>Title:</label>
-      <input id="replay.title" class="w3-input w3-border-0" type="text">
-    </p>
+<div id="form-container" class="w3-theme-l4">
+
+  <form class="w3-container">
+    <div class="w3-row-padding">
+      <div class="w3-third">
+        <label>Prefix</label>
+        <input id="replay.prefix" class="w3-input w3-border" type="text" placeholder="Prefix">
+      </div>
+      <div class="w3-rest">
+        <label>Title</label>
+        <input id="replay.title" class="w3-input w3-border" type="text" placeholder="Title">
+      </div>
+    </div>
 
     <input id="replay.id" hidden />
     <input type="submit" hidden />
@@ -33,13 +34,14 @@
 </div>
 
 
-<footer class="w3-container w3-padding">
+<footer class="w3-container w3-padding w3-theme-l4">
   <div class="w3-bar w3-center">
-    <button class="w3-button w3-round w3-theme-d4" id="entry-apply-btn">Apply</button>
-    <button class="w3-button w3-round w3-theme-d4" id="entry-cancel-btn">Close</button>
+    <button class="w3-button w3-round w3-theme-action" id="entry-apply-btn">Apply</button>
+    <button class="w3-button w3-round w3-theme-action" id="entry-cancel-btn">Close</button>
   </div>
 </footer>
 
 <script src="./replayDetailsEditor.js"></script>
+
 
 </html>
