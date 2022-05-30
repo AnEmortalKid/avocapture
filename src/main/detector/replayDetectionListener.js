@@ -17,13 +17,15 @@ export class ReplayDetectionListener {
    * @param {object} replayData
    */
   detected(replayData) {
+    // TODO capture ID and then request ID name from the editor
+    // notify main of captured
     const passData = {
       prefix: this.prefix,
       replayUuid: uuidv4(),
       ...replayData
     }
 
-    // TODO capture ID and then request ID name from the editor
+
     // TO abstract away the filepath etc
 
     // create modal, get entry data
