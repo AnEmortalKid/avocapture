@@ -16,7 +16,7 @@
 
 <div id="form-container" class="w3-theme-l4">
 
-  <form class="w3-container">
+  <form class="w3-container" onsubmit="submitData()">
     <div class="w3-row-padding">
       <div class="w3-third">
         <label>Prefix</label>
@@ -28,7 +28,7 @@
       </div>
     </div>
 
-    <input id="replay.id" hidden />
+    <input id="replay.uuid" hidden />
     <input type="submit" hidden />
   </form>
 </div>

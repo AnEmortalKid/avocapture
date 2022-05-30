@@ -1,23 +1,32 @@
 
-const { desktopCapturer } = require('electron')
+import { v4 as uuidv4 } from 'uuid';
+
 export class ReplayDetectionListener {
 
-  constructor(entryView) {
+  constructor(replayDialog) {
     console.log('initializing');
-    this.entryView = entryView;
+    this.replayDialog = replayDialog;
   }
 
-  detected(fileName) {
-    console.log('detected ', fileName)
+  setPrefix(prefix) {
+    this.prefix = prefix;
+  }
 
-    // desktopCapturer.getSources({ types: ['window', 'screen'] }).then(async sources => {
-    //   for (const source of sources) {
-    //     console.log(source.name, "-", source.id);
-    //   }
-    //   return
-    // });
+  /**
+   * 
+   * @param {object} replayData
+   */
+  detected(replayData) {
+    const passData = {
+      prefix: this.prefix,
+      replayUuid: uuidv4(),
+      ...replayData
+    }
+
+    // TODO capture ID and then request ID name from the editor
+    // TO abstract away the filepath etc
 
     // create modal, get entry data
-    this.entryView.create({ id: fileName, prefix: "notified" });
+    this.replayDialog.create(passData);
   }
 }

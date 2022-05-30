@@ -29,7 +29,13 @@ export class ReplayDetailsDialog {
 
     entryWindow.once("ready-to-show", () => {
       console.log("Broadcasting Event");
-      entryWindow.webContents.send(ReplayDetailsEvents.DIALOG.INITIALIZE, { id: contextData.id, prefix: "foo" });
+      entryWindow.webContents.on("before-input-event", (event, input) => {
+        if (input.key == "Escape") {
+          entryWindow.destroy();
+        }
+      });
+
+      entryWindow.webContents.send(ReplayDetailsEvents.DIALOG.INITIALIZE, contextData);
       entryWindow.moveTop();
       entryWindow.show();
       entryWindow.focus();
@@ -37,6 +43,7 @@ export class ReplayDetailsDialog {
 
     this.entryWindow = entryWindow;
   }
+
   destroy() {
     this.entryWindow.close();
   }

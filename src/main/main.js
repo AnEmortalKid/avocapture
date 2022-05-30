@@ -51,6 +51,9 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
 
+  // TODO set global prefix in UI and pass it down later
+  rdl.setPrefix("Prefix");
+
   uploader.initialize();
 
   hrd.register(rdl);
@@ -66,5 +69,5 @@ ipcMain.on(ReplayDetailsEvents.DIALOG.APPLY, (event, data) => {
   entryView.destroy();
   notifyUploader(data);
   console.log('send event');
-  win.webContents.send("ReplayDetails.Add", { data: 'foo' });
+  win.webContents.send("ReplayDetails.Add", data);
 });
