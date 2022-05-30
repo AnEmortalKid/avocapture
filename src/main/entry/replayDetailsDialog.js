@@ -24,7 +24,7 @@ export class ReplayDetailsDialog {
     entryWindow.setTitle("Entry");
 
     entryWindow.loadURL(
-      path.resolve(__dirname, "views", "entry", "index.html")
+      path.resolve(__dirname, "views", "replay", "index.html")
     );
 
     entryWindow.once("ready-to-show", () => {

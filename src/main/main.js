@@ -12,11 +12,17 @@ import { HotkeySettingsDialog } from './detector/settings/hotkeySettingsDialog';
 const replayDialog = new ReplayDetailsDialog();
 const replaySaver = new ReplaySaver();
 const rdl = new ReplayDetectionListener(replayDialog, replaySaver);
-const hrd = new HotkeyReplayDetector();
+
+const hotkeyReplayDetector = new HotkeyReplayDetector();
+const hotkeySettingsDialog = new HotkeySettingsDialog();
 const uploader = new ConsoleUploader();
 
 function notifyUploader(data) {
   uploader.upload(data);
+}
+
+function logOn(name) {
+  console.log(`Received [${name}]`);
 }
 
 let win;
@@ -42,7 +48,7 @@ const createWindow = () => {
 
 app.on('window-all-closed', () => {
   console.log('tearing down');
-  hrd.teardown();
+  hotkeyReplayDetector.teardown();
   if (process.platform !== 'darwin') app.quit()
 })
 
@@ -58,7 +64,12 @@ app.whenReady().then(() => {
 
   uploader.initialize();
 
-  hrd.register(rdl);
+  // TODO grab from store
+  hotkeyReplayDetector.initialize({
+    vKey: 111,
+    browserName: "NumpadDivide"
+  });
+  hotkeyReplayDetector.register(rdl);
 })
 
 ipcMain.on(ReplayDetailsEvents.DIALOG.CANCEL, () => {
@@ -75,7 +86,27 @@ ipcMain.on(ReplayDetailsEvents.DIALOG.APPLY, (event, data) => {
   win.webContents.send("ReplayDetails.Add", replaySaver.getReplayData(data.replayUuid));
 });
 
-ipcMain.on('Hotkey.Settings.Initialize', (event, data) => {
-  const hsd = new HotkeySettingsDialog();
-  hsd.create({});
+ipcMain.on('HotkeySettings.Initialize', (event, data) => {
+  logOn('HotkeySettings.Initialize');
+  // todo grab from store
+  hotkeySettingsDialog.create({
+    vKey: 111,
+    browserName: "NumpadDivide"
+  });
+});
+
+ipcMain.on('HotkeySettings.Modifying', (event, data) => {
+  logOn('HotkeySettings.Modifying');
+  hotkeyReplayDetector.pause();
+});
+
+ipcMain.on('HotkeySettings.Dialog.Apply', (event, data) => {
+  logOn('HotkeySettings.Dialog.Apply');
+  // TODO save to store
+  hotkeyReplayDetector.initialize(data);
+});
+
+ipcMain.on('HotkeySettings.Dialog.Cancel', (event, data) => {
+  logOn('HotkeySettings.Dialog.Cancel');
+  hotkeyReplayDetector.unpause();
 });

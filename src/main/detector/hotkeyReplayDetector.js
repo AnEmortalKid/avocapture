@@ -11,20 +11,18 @@ const windowsOptions = isProduction ? { serverPath: path.join(__dirname, "node_m
 
 console.log("DIR: ", __dirname)
 import { GlobalKeyboardListener } from "node-global-key-listener";
-const v = new GlobalKeyboardListener({
+const globalKeyboardListener = new GlobalKeyboardListener({
   windows: {
-    onError: (errorCode) => console.error("ERROR: " + errorCode),
-    onInfo: (info) => console.info("INFO: " + info),
+    onError: (errorCode) => console.error("[gkl] ERROR: " + errorCode),
+    onInfo: (info) => console.info("[gkl] INFO: " + info),
     // TODO fix this pathing
     serverPath: path.join(__dirname, "../../node_modules/node-global-key-listener/bin/WinKeyServer.exe")
   },
   mac: {
-    onError: (errorCode) => console.error("ERROR: " + errorCode),
+    onError: (errorCode) => console.error("[gkl] ERROR: " + errorCode),
   }
 }
 );
-
-
 
 
 function getLastCreated(a, b) {
@@ -60,15 +58,37 @@ function findLastReplay() {
 }
 
 export class HotkeyReplayDetector extends ReplayDetector {
-  initialize() {
+
+  initialize(hotkeySettings) {
+    console.log('[hrd init] ', hotkeySettings);
     return;
+  }
+
+  pause() {
+    // on modify, remove the listener to avoid global conflicts
+    console.log('pausing');
+    globalKeyboardListener.removeListener(this.keyListener);
+    console.log('removed');
+  }
+
+  unpause() {
+    // readd listener 
+    console.log('unpausing');
+    globalKeyboardListener.addListener(this.keyListener);
   }
 
   register(listener) {
     console.log('registering listeners');
+    this.listener = listener;
 
     // do nothing atm
-    this.keyListener = (e, down) => {
+    this.keyListener = this.createKeyListener(this.listener);
+    globalKeyboardListener.addListener(this.keyListener);
+  }
+
+  createKeyListener(listener) {
+    return (e, down) => {
+      console.log(`${e.name} [${e.rawKey._nameRaw}] [${e.vKey}]`)
       // TODO hotkey config
       if (e.state == "DOWN" && e.name == "NUMPAD DOT") {
 
@@ -86,11 +106,10 @@ export class HotkeyReplayDetector extends ReplayDetector {
         listener.detected({ fileName: last.name, filePath: last.path });
       }
     };
-
-    v.addListener(this.keyListener);
   }
 
   teardown() {
-    v.removeListener(this.keyListener);
+    globalKeyboardListener.removeListener(this.keyListener);
+    globalKeyboardListener.kill();
   }
 }

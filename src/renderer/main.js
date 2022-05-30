@@ -5,7 +5,7 @@ console.log(
 );
 
 document.getElementById("settings").onclick = () => {
-  ipcRenderer.send("Hotkey.Settings.Initialize", {});
+  ipcRenderer.send("HotkeySettings.Initialize", {});
 }
 
 ipcRenderer.on("ReplayDetails.Add", (event, data) => {
