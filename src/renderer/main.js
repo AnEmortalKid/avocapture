@@ -11,9 +11,10 @@ document.getElementById("detector.settings").onclick = () => {
 ipcRenderer.on("ReplayDetails.Add", (event, data) => {
   console.log("Received ReplayDetails.Add");
   console.log(JSON.stringify(data));
-  const sp = document.createElement("span");
-  sp.textContent = JSON.stringify(data);
-  document.getElementById("replays.list").appendChild(sp);
+
+  const item = document.createElement("li");
+  item.textContent = data.title
+  document.getElementById("replays.list").appendChild(item);
 });
 
 ipcRenderer.on("AppSettings.Initialize", (event, data) => {
