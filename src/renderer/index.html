@@ -4,9 +4,10 @@
 <head>
   <meta charset="UTF-8">
   <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'"> -->
-  <title>Hello World!</title>
+  <title>Avocapture</title>
   <link rel="stylesheet" href="../css/w3.css" />
-  <link rel="stylesheet" href="../css/w3-theme-indigo.css" />
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../font-awesome-4.7.0/css/font-awesome.min.css">
 </head>
 
 
@@ -15,42 +16,52 @@
 </header>
 
 <body>
-  <div class="w3-row-padding">
-    <div class="w3-third">
-      <label>Prefix</label>
-      <input id="app.prefix" class="w3-input w3-border" type="text" placeholder="Prefix">
+
+  <div class="w3-container w3-card">
+    <h2>App Settings</h2>
+    <div class="w3-row w3-section w3-row-padding">
+      <div class="w3-col m8">
+        <label>Prefix</label>
+        <input id="app.prefix" class="w3-input w3-border" type="text" placeholder="Prefix">
+      </div>
     </div>
   </div>
 
-  <div>
-
-    <button id="settings" class="w3-button w3-round w3-theme-d4">Settings</button>
+  <div class="w3-card">
     <div class="w3-container">
       <h2>Detection Mode</h2>
-      <select class="w3-select" name="option">
-        <option value="" disabled selected>Choose your option</option>
-        <option value="1">Option 1</option>
-        <option value="2">Option 2</option>
-        <option value="3">Option 3</option>
-      </select>
+      <div class="w3-row w3-section w3-row-padding">
+        <div class="w3-col m8">
+          <select class="w3-select" name="option">
+            <option value="hotkey" selected>Hotkey</option>
+          </select>
+        </div>
+        <div class="w3-col m4">
+          <i class="w3-xxlarge fa fa-gear" id="detector.settings"></i>
+        </div>
+      </div>
     </div>
 
     <div class="w3-container">
       <h2>Upload Mode</h2>
-      <select class="w3-select" name="option">
-        <option value="" disabled selected>Choose your option</option>
-        <option value="1">Option 1</option>
-        <option value="2">Option 2</option>
-        <option value="3">Option 3</option>
-      </select>
+      <div class="w3-row w3-section w3-row-padding">
+        <div class="w3-col m8">
+          <select class="w3-select" name="option">
+            <option value="none" disabled selected>None</option>
+          </select>
+        </div>
+        <div class="w3-col m4">
+          <i class="w3-xxlarge fa fa-gear" id="uploader.settings"></i>
+        </div>
+      </div>
     </div>
-
   </div>
 
+  <div class="w3-container">
+    <h2>List</h2>
+    <div id="list">
 
-
-  <div id="list">
-
+    </div>
   </div>
 </body>
 

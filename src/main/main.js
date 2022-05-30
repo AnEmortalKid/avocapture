@@ -8,6 +8,7 @@ import { ReplayDetailsEvents } from './entry/replayDetailsEvents';
 import { ReplaySaver } from './saver/replaySaver';
 import { HotkeySettingsDialog } from './detector/settings/hotkeySettingsDialog';
 import { AppSettings } from './settings/appSettings';
+import { readlink } from 'fs';
 
 
 const appSettings = new AppSettings();
@@ -113,4 +114,11 @@ ipcMain.on('HotkeySettings.Dialog.Cancel', (event, data) => {
   logOn('HotkeySettings.Dialog.Cancel');
   hotkeyReplayDetector.notifyModifyCancel();
   hotkeySettingsDialog.destroy();
+});
+
+ipcMain.on('AppSettings.Apply', (event, data) => {
+  logOn('AppSettings.Apply');
+  console.log(data);
+  appSettings.saveApp(data);
+  replayDetectionListener.setPrefix(data.prefix);
 });

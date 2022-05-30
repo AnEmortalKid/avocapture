@@ -1,9 +1,3 @@
-
-
-- Prefix settings in main UI -> propagate to some state
-  - Perhaps an AppSettings
-
-- Settings view for the HotkeyDetector
   - Think about how other things would plug into it
 
 
@@ -13,11 +7,12 @@
 - Callback/way to track a replay "uploaded" , pass something to uploader to NotifyCompletion
   - Main UI updates state with a little Green checkmark or something
 
-- Use electron-store to save locs
  - need schema etc
 
 
  ## Keys
+
+ `DONE`
 
  - Browser: "NumpadSubtract"
  - Global: VK_STUFF
@@ -32,4 +27,3 @@
    vKey: 111,
    browserName: "NumpadSubtract"
  }
- 

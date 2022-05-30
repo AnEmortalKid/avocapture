@@ -7,7 +7,6 @@ var nextHotkey = {
 }
 
 function bindToForm(data) {
-  // TODO convert Visible Value -> Global Listener
   console.log('BindingToForm ', data);
   const input = document.getElementById(selectedHotkey);
   if (data) {
@@ -32,7 +31,7 @@ function broadcastModifying() {
 }
 
 function bindFromForm() {
-  // TODO stash in the input
+  // TODO stash in the input?
   const input = document.getElementById(selectedHotkey);
   return {
     vKey: nextHotkey.vKey,
