@@ -6,6 +6,7 @@ import { ReplayDetailsDialog } from "./entry/replayDetailsDialog"
 import { ConsoleUploader } from './uploader/consoleUploder';
 import { ReplayDetailsEvents } from './entry/replayDetailsEvents';
 import { ReplaySaver } from './saver/replaySaver';
+import { HotkeySettingsDialog } from './detector/settings/hotkeySettingsDialog';
 
 
 const replayDialog = new ReplayDetailsDialog();
@@ -72,4 +73,9 @@ ipcMain.on(ReplayDetailsEvents.DIALOG.APPLY, (event, data) => {
   console.log('send event');
   replaySaver.setTitle(data);
   win.webContents.send("ReplayDetails.Add", replaySaver.getReplayData(data.replayUuid));
+});
+
+ipcMain.on('Hotkey.Settings.Initialize', (event, data) => {
+  const hsd = new HotkeySettingsDialog();
+  hsd.create({});
 });

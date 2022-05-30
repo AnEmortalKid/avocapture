@@ -6,6 +6,6 @@ export class ConsoleUploader extends ReplayUploader {
     console.log('[consoleUploader] init')
   }
   upload(fileName) {
-    console.log('[uploading]')
+    console.log('[Seeing] ', fileName)
   }
 }

@@ -36,11 +36,9 @@ function getLastCreated(a, b) {
 
 function findLastReplay() {
   const directoryPath = path.join(userHomeDir, 'Videos');
-  //passsing directoryPath and callback function
   const files = fs.readdirSync(directoryPath);
 
   var latest;
-
   for (var file of files) {
     var fullPath = path.join(directoryPath, file)
     var stat = fs.lstatSync(fullPath, { bigint: true });
@@ -93,7 +91,6 @@ export class HotkeyReplayDetector extends ReplayDetector {
   }
 
   teardown() {
-    // globalShortcut.unregisterAll();
     v.removeListener(this.keyListener);
   }
 }

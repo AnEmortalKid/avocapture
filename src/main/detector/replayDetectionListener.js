@@ -18,8 +18,6 @@ export class ReplayDetectionListener {
    * @param {object} replayData
    */
   detected(replayData) {
-    // TODO capture ID and then request ID name from the editor
-    // notify main of captured
     const replayUuid = uuidv4();
 
     this.replaySaver.storeReplay({
@@ -27,10 +25,7 @@ export class ReplayDetectionListener {
       ...replayData
     })
 
-
-    // TO abstract away the filepath etc
-
-    // create modal, get entry data
+    // create modal, get user input
     this.replayDialog.create({
       prefix: this.prefix,
       replayUuid: replayUuid

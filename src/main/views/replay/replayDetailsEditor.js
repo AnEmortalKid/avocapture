@@ -1,7 +1,5 @@
 const { ipcRenderer } = require("electron");
 
-console.log('entryEditor');
-
 const replayId = "replay.uuid";
 const replayPrefix = "replay.prefix";
 const replayTitle = "replay.title";
