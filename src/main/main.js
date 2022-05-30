@@ -5,12 +5,13 @@ import { HotkeyReplayDetector } from './detector/hotkeyReplayDetector';
 import { ReplayDetailsDialog } from "./entry/replayDetailsDialog"
 import { ConsoleUploader } from './uploader/consoleUploder';
 import { ReplayDetailsEvents } from './entry/replayDetailsEvents';
+import { ReplaySaver } from './saver/replaySaver';
 
 
-const entryView = new ReplayDetailsDialog();
-const rdl = new ReplayDetectionListener(entryView);
+const replayDialog = new ReplayDetailsDialog();
+const replaySaver = new ReplaySaver();
+const rdl = new ReplayDetectionListener(replayDialog, replaySaver);
 const hrd = new HotkeyReplayDetector();
-
 const uploader = new ConsoleUploader();
 
 function notifyUploader(data) {
@@ -61,13 +62,14 @@ app.whenReady().then(() => {
 
 ipcMain.on(ReplayDetailsEvents.DIALOG.CANCEL, () => {
   console.log("Cancel");
-  entryView.destroy();
+  replayDialog.destroy();
 });
 
 ipcMain.on(ReplayDetailsEvents.DIALOG.APPLY, (event, data) => {
-  console.log("Data: ", data)
-  entryView.destroy();
+  console.log("Applying: ", data)
+  replayDialog.destroy();
   notifyUploader(data);
   console.log('send event');
-  win.webContents.send("ReplayDetails.Add", data);
+  replaySaver.setTitle(data);
+  win.webContents.send("ReplayDetails.Add", replaySaver.getReplayData(data.replayUuid));
 });
