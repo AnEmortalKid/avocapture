@@ -15,3 +15,10 @@ ipcRenderer.on("ReplayDetails.Add", (event, data) => {
   sp.textContent = JSON.stringify(data);
   document.getElementById("list").appendChild(sp);
 });
+
+ipcRenderer.on("AppSettings.Initialize", (event, data) => {
+  console.log('[AppSettings.Initialize] ', data);
+  document.getElementById('app.prefix').value = data.prefix;
+
+  // TODO on change, fire savelet to main
+});

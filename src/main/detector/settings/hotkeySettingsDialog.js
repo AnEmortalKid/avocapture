@@ -4,7 +4,6 @@ import *  as path from "path"
 export class HotkeySettingsDialog {
 
   create(contextData) {
-    // todo better state handling
     const entryWindow = new BrowserWindow({
       width: 200,
       height: 200,

@@ -61,14 +61,23 @@ export class HotkeyReplayDetector extends ReplayDetector {
 
   initialize(hotkeySettings) {
     console.log('[hrd init] ', hotkeySettings);
+    this.keyListener = this.createKeyListener(hotkeySettings);
     return;
   }
 
-  pause() {
-    // on modify, remove the listener to avoid global conflicts
-    console.log('pausing');
+  notifyModifying() {
+    // remove current listener to avoid collisions
     globalKeyboardListener.removeListener(this.keyListener);
-    console.log('removed');
+  }
+
+  notifyModifyApply(newSettings) {
+    this.keyListener = this.createKeyListener(newSettings).bind(this);
+    globalKeyboardListener.addListener(this.keyListener);
+  }
+
+  notifyModifyCancel() {
+    // re-add old listener
+    globalKeyboardListener.addListener(this.keyListener);
   }
 
   unpause() {
@@ -77,25 +86,24 @@ export class HotkeyReplayDetector extends ReplayDetector {
     globalKeyboardListener.addListener(this.keyListener);
   }
 
-  register(listener) {
+  register(detectListener) {
     console.log('registering listeners');
-    this.listener = listener;
+    this.detectListener = detectListener;
 
-    // do nothing atm
-    this.keyListener = this.createKeyListener(this.listener);
+    // rebind this now that the detectListener is passed to us
+    this.keyListener = this.keyListener.bind(this);
     globalKeyboardListener.addListener(this.keyListener);
   }
 
-  createKeyListener(listener) {
+  createKeyListener(settings) {
     return (e, down) => {
-      console.log(`${e.name} [${e.rawKey._nameRaw}] [${e.vKey}]`)
       // TODO hotkey config
       if (e.state == "DOWN" && e.name == "NUMPAD DOT") {
 
         // TODO timeout configurable depending on replay save speed
         setTimeout(() => {
           const last = findLastReplay();
-          listener.detected({ fileName: last.name, filePath: last.path });
+          this.detectListener.detected({ fileName: last.name, filePath: last.path });
         }, 500);
       }
       // TODO FOR TEST ONLY
@@ -103,7 +111,10 @@ export class HotkeyReplayDetector extends ReplayDetector {
 
         // TODO timeout configurable depending on replay save speed
         const last = findLastReplay();
-        listener.detected({ fileName: last.name, filePath: last.path });
+        this.detectListener.detected({ fileName: last.name, filePath: last.path });
+      }
+      if (e.state == "DOWN" && e.vKey == settings.vKey) {
+        console.log('What we wanted!');
       }
     };
   }

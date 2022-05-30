@@ -7,11 +7,14 @@ import { ConsoleUploader } from './uploader/consoleUploder';
 import { ReplayDetailsEvents } from './entry/replayDetailsEvents';
 import { ReplaySaver } from './saver/replaySaver';
 import { HotkeySettingsDialog } from './detector/settings/hotkeySettingsDialog';
+import { AppSettings } from './settings/appSettings';
 
+
+const appSettings = new AppSettings();
 
 const replayDialog = new ReplayDetailsDialog();
 const replaySaver = new ReplaySaver();
-const rdl = new ReplayDetectionListener(replayDialog, replaySaver);
+const replayDetectionListener = new ReplayDetectionListener(replayDialog, replaySaver);
 
 const hotkeyReplayDetector = new HotkeyReplayDetector();
 const hotkeySettingsDialog = new HotkeySettingsDialog();
@@ -43,7 +46,6 @@ const createWindow = () => {
 
   // Open the DevTools.
   win.webContents.openDevTools();
-
 }
 
 app.on('window-all-closed', () => {
@@ -59,17 +61,18 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
 
-  // TODO set global prefix in UI and pass it down later
-  rdl.setPrefix("Prefix");
-
-  uploader.initialize();
-
-  // TODO grab from store
-  hotkeyReplayDetector.initialize({
-    vKey: 111,
-    browserName: "NumpadDivide"
+  win.webContents.on('did-finish-load', () => {
+    win.webContents.send('AppSettings.Initialize', appSettings.getApp());
   });
-  hotkeyReplayDetector.register(rdl);
+
+  replayDetectionListener.setPrefix(appSettings.getApp().prefix);
+  uploader.initialize();
+  hotkeyReplayDetector.initialize(
+    appSettings.get('hotkeyDetector', {
+      vKey: 111,
+      browserName: "NumpadDivide"
+    }));
+  hotkeyReplayDetector.register(replayDetectionListener);
 })
 
 ipcMain.on(ReplayDetailsEvents.DIALOG.CANCEL, () => {
@@ -88,25 +91,26 @@ ipcMain.on(ReplayDetailsEvents.DIALOG.APPLY, (event, data) => {
 
 ipcMain.on('HotkeySettings.Initialize', (event, data) => {
   logOn('HotkeySettings.Initialize');
-  // todo grab from store
-  hotkeySettingsDialog.create({
+  hotkeySettingsDialog.create(appSettings.get('hotkeyDetector', {
     vKey: 111,
     browserName: "NumpadDivide"
-  });
+  }));
 });
 
 ipcMain.on('HotkeySettings.Modifying', (event, data) => {
   logOn('HotkeySettings.Modifying');
-  hotkeyReplayDetector.pause();
+  hotkeyReplayDetector.notifyModifying();
 });
 
 ipcMain.on('HotkeySettings.Dialog.Apply', (event, data) => {
   logOn('HotkeySettings.Dialog.Apply');
-  // TODO save to store
-  hotkeyReplayDetector.initialize(data);
+  appSettings.save('hotkeyDetector', data);
+  hotkeyReplayDetector.notifyModifyApply(data);
+  hotkeySettingsDialog.destroy();
 });
 
 ipcMain.on('HotkeySettings.Dialog.Cancel', (event, data) => {
   logOn('HotkeySettings.Dialog.Cancel');
-  hotkeyReplayDetector.unpause();
+  hotkeyReplayDetector.notifyModifyCancel();
+  hotkeySettingsDialog.destroy();
 });

@@ -8,6 +8,7 @@ var nextHotkey = {
 
 function bindToForm(data) {
   // TODO convert Visible Value -> Global Listener
+  console.log('BindingToForm ', data);
   const input = document.getElementById(selectedHotkey);
   if (data) {
     const { vKey, browserName } = data;
