@@ -7,7 +7,9 @@ const os = require("os");
 const userHomeDir = os.homedir();
 
 const isProduction = process.env.NODE_ENV === "production";
-const windowsOptions = isProduction ? { serverPath: path.join(__dirname, "node_modules/node-global-key-listener/bin/WinKeyServer.exe") } : {};
+const windowsOptions = isProduction ?
+  { serverPath: path.join(__dirname, "../../node_modules/node-global-key-listener/bin/WinKeyServer.exe") } :
+  { serverPath: path.join(__dirname, "../../node_modules/node-global-key-listener/bin/WinKeyServer.exe") };
 
 console.log("DIR: ", __dirname)
 import { GlobalKeyboardListener } from "node-global-key-listener";
@@ -15,8 +17,7 @@ const globalKeyboardListener = new GlobalKeyboardListener({
   windows: {
     onError: (errorCode) => console.error("[gkl] ERROR: " + errorCode),
     onInfo: (info) => console.info("[gkl] INFO: " + info),
-    // TODO fix this pathing
-    serverPath: path.join(__dirname, "../../node_modules/node-global-key-listener/bin/WinKeyServer.exe")
+    ...windowsOptions
   },
   mac: {
     onError: (errorCode) => console.error("[gkl] ERROR: " + errorCode),

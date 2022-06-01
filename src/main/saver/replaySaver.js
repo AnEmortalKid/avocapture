@@ -25,7 +25,7 @@ export class ReplaySaver {
     entry.title = finalTitle;
 
     const extension = path.extname(entry.filePath);
-    const newFilePath = path.join(path.dirname(entry.filePath), entry.title + "." + extension)
+    const newFilePath = path.join(path.dirname(entry.filePath), entry.title + extension)
     fs.renameSync(
       entry.filePath,
       newFilePath

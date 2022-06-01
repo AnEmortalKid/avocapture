@@ -48,11 +48,14 @@ function bindButtons() {
 }
 
 function submitData() {
+  const data = bindFromForm();
   ipcRenderer.send("HotkeySettings.Dialog.Apply", bindFromForm());
+  ipcRenderer.send("PluginSettings.Apply", { pluginName: 'hotkey-detector', data: data });
 }
 
 function cancelForm() {
   ipcRenderer.send("HotkeySettings.Dialog.Cancel");
+  ipcRenderer.send("PluginSettings.Cancel");
 }
 
 ipcRenderer.on("HotkeySettings.Dialog.Initialize", (event, data) => {

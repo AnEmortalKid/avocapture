@@ -1,7 +1,5 @@
+- HotkeySettings and Dialog flow
   - Think about how other things would plug into it
-
-
-- List of Replays captured this session
 
 
 - Callback/way to track a replay "uploaded" , pass something to uploader to NotifyCompletion
@@ -12,18 +10,9 @@
 
  ## Keys
 
- `DONE`
+- Need to figure out the `const production` part for the WinKeyServer filepath
+  - path isn't different somehow?
 
- - Browser: "NumpadSubtract"
- - Global: VK_STUFF
+## Plugin Flow
 
- Both are 109
-
- -> Browser -> Set "NumpadSubtract" as the name, but keycode as the value
- -> Global -> use e.vKey as the value
-
- -- settings:  
- {
-   vKey: 111,
-   browserName: "NumpadSubtract"
- }
+* Update from hotkeySettings everywhere to plugin generic settings

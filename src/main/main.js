@@ -92,6 +92,7 @@ ipcMain.on(ReplayDetailsEvents.DIALOG.APPLY, (event, data) => {
 
 ipcMain.on('HotkeySettings.Initialize', (event, data) => {
   logOn('HotkeySettings.Initialize');
+  // TODO consistent plugin name
   hotkeySettingsDialog.create(appSettings.get('hotkeyDetector', {
     vKey: 111,
     browserName: "NumpadDivide"
@@ -121,4 +122,28 @@ ipcMain.on('AppSettings.Apply', (event, data) => {
   console.log(data);
   appSettings.saveApp(data);
   replayDetectionListener.setPrefix(data.prefix);
+});
+
+ipcMain.on('PluginSettings.Apply', (event, data) => {
+  logOn('PluginSettings.Apply');
+  console.log(data);
+});
+
+ipcMain.on('PluginSettings.Cancel', (event, data) => {
+  logOn('PluginSettings.Cancel');
+});
+
+ipcMain.on('PluginSettings.Modify', (event, data) => {
+  logOn('PluginSettings.Modify');
+  console.log(data);
+});
+
+ipcMain.on('PluginSettings.Initialize', (event, data) => {
+  logOn('PluginSettings.Initialize');
+  console.log(data);
+  // TODO consistent plugin name
+  // hotkeySettingsDialog.create(appSettings.get('hotkeyDetector', {
+  //   vKey: 111,
+  //   browserName: "NumpadDivide"
+  // }));
 });

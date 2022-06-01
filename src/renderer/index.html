@@ -18,11 +18,30 @@
 <body>
 
   <div class="w3-container w3-card">
-    <h2>App Settings</h2>
     <div class="w3-row w3-section w3-row-padding">
-      <div class="w3-col m8">
+      <div class="w3-col">
         <label>Prefix</label>
         <input id="app.prefix" class="w3-input w3-border" type="text" placeholder="Prefix">
+      </div>
+    </div>
+    <!-- try grid -->
+    <div class="w3-row-padding">
+      <div class="w3-half">
+        <label>First Name</label>
+        <input class="w3-input w3-border" type="text" placeholder="Two">
+      </div>
+      <div class="w3-half">
+        <label>Last Name</label>
+        <div class="w3-row w3-section w3-row-padding">
+          <div class="w3-col m8">
+            <select class="w3-select" name="option" id="detector.name">
+              <option value="hotkey" data-plugin-name="hotkey-detector" selected>Hotkey</option>
+            </select>
+          </div>
+          <div class="w3-col m4">
+            <i class="w3-xxlarge fa fa-gear" id="detector.settings"></i>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -32,8 +51,8 @@
       <h2>Detection Mode</h2>
       <div class="w3-row w3-section w3-row-padding">
         <div class="w3-col m8">
-          <select class="w3-select" name="option">
-            <option value="hotkey" selected>Hotkey</option>
+          <select class="w3-select" name="option" id="detector.name">
+            <option value="hotkey" data-plugin-name="hotkey-detector" selected>Hotkey</option>
           </select>
         </div>
         <div class="w3-col m4">

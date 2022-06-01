@@ -1,11 +1,17 @@
 const ipcRenderer = window.require('electron').ipcRenderer;
 
+const detectorSelection = document.getElementById("detector.name");
+const uploaderSelection = document.getElementById("uploader.name");
+
 console.log(
   '👋 This message is being logged by "renderer.js", included via webpack'
 );
 
 document.getElementById("detector.settings").onclick = () => {
   ipcRenderer.send("HotkeySettings.Initialize", {});
+  const selected = detectorSelection.options[detectorSelection.selectedIndex];
+  const name = selected.dataset.pluginName;
+  ipcRenderer.send("PluginSettings.Initialize", { pluginName: name });
 }
 
 ipcRenderer.on("ReplayDetails.Add", (event, data) => {

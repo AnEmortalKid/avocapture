@@ -16,13 +16,13 @@ module.exports = {
         }]
       }
     }],
-    // [
-    //   "@timfish/forge-externals-plugin",
-    //   {
-    //     "externals": ["node-global-key-listener"],
-    //     "includeDeps": true
-    //   }
-    // ]
+    [
+      "@timfish/forge-externals-plugin",
+      {
+        "externals": ["node-global-key-listener"],
+        "includeDeps": true
+      }
+    ]
   ],
   makers: [
     {

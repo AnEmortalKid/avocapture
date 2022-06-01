@@ -1,6 +1,7 @@
 const Store = require('electron-store');
 const store = new Store();
 
+// TODO make plugin specific slots
 export class AppSettings {
 
   saveApp(settings) {
