@@ -1,4 +1,4 @@
-import { ReplayDetector } from './replayDetector'
+import { ReplayDetectorExtension } from './replayDetectorExtension'
 const path = require('path')
 const fs = require('fs');
 
@@ -58,7 +58,7 @@ function findLastReplay() {
   return latest;
 }
 
-export class HotkeyReplayDetector extends ReplayDetector {
+export class HotkeyReplayDetector extends ReplayDetectorExtension {
 
   initialize(hotkeySettings) {
     console.log('[hrd init] ', hotkeySettings);
@@ -81,10 +81,9 @@ export class HotkeyReplayDetector extends ReplayDetector {
     globalKeyboardListener.addListener(this.keyListener);
   }
 
-  unpause() {
-    // readd listener 
-    console.log('unpausing');
-    globalKeyboardListener.addListener(this.keyListener);
+  teardown() {
+    globalKeyboardListener.removeListener(this.keyListener);
+    globalKeyboardListener.kill();
   }
 
   register(detectListener) {
@@ -120,8 +119,5 @@ export class HotkeyReplayDetector extends ReplayDetector {
     };
   }
 
-  teardown() {
-    globalKeyboardListener.removeListener(this.keyListener);
-    globalKeyboardListener.kill();
-  }
+
 }

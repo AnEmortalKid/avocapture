@@ -1,5 +1,5 @@
 
-export class BasePlugin {
+export class BaseExtension {
 
   name() {
     // todo maybe don't need if things export?

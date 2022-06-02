@@ -33,10 +33,6 @@ function notifyUploader(data) {
   uploader.upload(data);
 }
 
-function logOn(name) {
-  console.log(`Received [${name}]`);
-}
-
 function logOn(name, data) {
   console.log(`Received [${name}]`, data);
 }
