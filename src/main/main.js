@@ -21,6 +21,14 @@ const hotkeyReplayDetector = new HotkeyReplayDetector();
 const hotkeySettingsDialog = new HotkeySettingsDialog();
 const uploader = new ConsoleUploader();
 
+const plugins = {};
+
+// TODO load plugins
+
+function getPlugin(pluginName) {
+  return plugins[pluginName];
+}
+
 function notifyUploader(data) {
   uploader.upload(data);
 }
@@ -130,10 +138,14 @@ ipcMain.on('AppSettings.Apply', (event, data) => {
 
 ipcMain.on('PluginSettings.Apply', (event, data) => {
   logOn('PluginSettings.Apply', data);
+  // find plugin by name
+  // notifyModifyApply(data)
 });
 
 ipcMain.on('PluginSettings.Cancel', (event, data) => {
   logOn('PluginSettings.Cancel');
+  // find plugin by name
+  // notifyModifyCancel()
 });
 
 ipcMain.on('PluginSettings.Modify', (event, data) => {
@@ -144,7 +156,9 @@ ipcMain.on('PluginSettings.Modify', (event, data) => {
 });
 
 ipcMain.on('PluginSettings.Initialize', (event, data) => {
-  logOn('PluginSettings.Initialize');
+  logOn('PluginSettings.Initialize', data);
+
+  // find plugin extension by name
   console.log(data);
   // TODO consistent plugin name
   // hotkeySettingsDialog.create(appSettings.get('hotkeyDetector', {
