@@ -3,7 +3,7 @@ const { app, BrowserWindow, ipcMain } = require('electron')
 import { ReplayDetectionListener } from './detector/replayDetectionListener';
 import { HotkeyReplayDetector } from './detector/hotkeyReplayDetector';
 import { ReplayDetailsDialog } from "./entry/replayDetailsDialog"
-import { ConsoleUploader } from './uploader/consoleUploder';
+import { ConsoleUploader } from './uploader/consoleUploderExtension';
 import { ReplayDetailsEvents } from './entry/replayDetailsEvents';
 import { ReplaySaver } from './saver/replaySaver';
 import { HotkeySettingsDialog } from './detector/settings/hotkeySettingsDialog';

@@ -1,8 +1,6 @@
-export class ReplayUploader {
+import { BaseExtension } from "../extensions/baseExtension";
 
-  initialize() {
-    throw new Error("Unimplemented");
-  }
+export class ReplayUploaderExtension extends BaseExtension {
 
   upload(replayData) {
     throw new Error("Unimplemented");
