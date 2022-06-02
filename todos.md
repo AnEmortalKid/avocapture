@@ -30,3 +30,24 @@ Remove invalid chars like `/` or `\`
 -- Configure location to search
 -- ? Searcher? 
 --- Search on Hotkey
+
+
+## Plugin notes
+
+```json
+
+avocapture: {
+  name: pluginName,
+  settings: index.html
+  export:  { detector }
+  exports: main.js
+}
+```
+
+```
+plugin/
+  settings/
+    index.html
+    main.js
+  module.js
+```
