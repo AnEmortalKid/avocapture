@@ -10,78 +10,64 @@
   <link rel="stylesheet" href="../font-awesome-4.7.0/css/font-awesome.min.css">
 </head>
 
-
 <header class="w3-container w3-theme w3-card">
   <h4 class="w3-center">Avocapture</h4>
 </header>
 
 <body>
 
-  <div class="w3-container w3-card">
-    <div class="w3-row w3-section w3-row-padding">
-      <div class="w3-col">
+  <div class="w3-container w3-card w3-padding">
+    <div class="w3-row w3-row-padding">
+
+      <div class="w3-col w3-third">
         <label>Prefix</label>
-        <input id="app.prefix" class="w3-input w3-border" type="text" placeholder="Prefix">
+        <div class="w3-row">
+          <input id="app.prefix" class="w3-input w3-border" type="text" placeholder="Prefix">
+        </div>
       </div>
-    </div>
-    <!-- try grid -->
-    <div class="w3-row-padding">
-      <div class="w3-half">
-        <label>First Name</label>
-        <input class="w3-input w3-border" type="text" placeholder="Two">
-      </div>
-      <div class="w3-half">
-        <label>Last Name</label>
-        <div class="w3-row w3-section w3-row-padding">
-          <div class="w3-col m8">
+
+      <div class="w3-col w3-third m4">
+        <div class="w3-row">
+          <div class="w3-col">
+            <label>Detector</label>
+            <i class="w3-large w3-right fa fa-gear" id="detector.settings"></i>
+          </div>
+        </div>
+        <div class="w3-row w3-row-padding w3-stretch">
+          <div class="w3-col">
             <select class="w3-select" name="option" id="detector.name">
               <option value="hotkey" data-plugin-name="hotkey-detector" selected>Hotkey</option>
             </select>
           </div>
-          <div class="w3-col m4">
-            <i class="w3-xxlarge fa fa-gear" id="detector.settings"></i>
+
+        </div>
+      </div>
+
+      <div class="w3-col w3-third">
+        <div class="w3-row">
+          <div class="w3-col">
+            <label>Uploader</label>
+            <i class="w3-large w3-right fa fa-gear" id="uploader.settings"></i>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="w3-card">
-    <div class="w3-container">
-      <h2>Detection Mode</h2>
-      <div class="w3-row w3-section w3-row-padding">
-        <div class="w3-col m8">
-          <select class="w3-select" name="option" id="detector.name">
-            <option value="hotkey" data-plugin-name="hotkey-detector" selected>Hotkey</option>
-          </select>
-        </div>
-        <div class="w3-col m4">
-          <i class="w3-xxlarge fa fa-gear" id="detector.settings"></i>
-        </div>
-      </div>
-    </div>
-
-    <div class="w3-container">
-      <h2>Upload Mode</h2>
-      <div class="w3-row w3-section w3-row-padding">
-        <div class="w3-col m8">
-          <select class="w3-select" name="option">
-            <option value="none" disabled selected>None</option>
-          </select>
-        </div>
-        <div class="w3-col m4">
-          <i class="w3-xxlarge fa fa-gear" id="uploader.settings"></i>
+        <div class="w3-row w3-row-padding w3-stretch">
+          <div class="w3-col">
+            <select class="w3-select" name="option">
+              <option value="none" disabled selected>None</option>
+            </select>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
   <div class="w3-container">
-    <h2>List</h2>
+    <h4 class="w3-center">Saved Replays</h4>
+    <div class="w3-container">
+      <ul class="w3-ul" id="replays.list">
 
-    <ul class="w3-ul" id="replays.list">
-
-    </ul>
+      </ul>
+    </div>
   </div>
 </body>
 

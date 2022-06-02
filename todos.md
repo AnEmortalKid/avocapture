@@ -16,3 +16,13 @@
 ## Plugin Flow
 
 * Update from hotkeySettings everywhere to plugin generic settings
+
+
+## Prefix
+
+Remove invalid chars like `/` or `\`
+
+## HOtkey
+
+- Check initial settings not defaulting to a correct keybind listeer until something presses apply
+- Maybe not the worst thing to require one time setup ^
