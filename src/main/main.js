@@ -29,6 +29,10 @@ function logOn(name) {
   console.log(`Received [${name}]`);
 }
 
+function logOn(name, data) {
+  console.log(`Received [${name}]`, data);
+}
+
 let win;
 
 const createWindow = () => {
@@ -91,7 +95,7 @@ ipcMain.on(ReplayDetailsEvents.DIALOG.APPLY, (event, data) => {
 });
 
 ipcMain.on('HotkeySettings.Initialize', (event, data) => {
-  logOn('HotkeySettings.Initialize');
+  logOn('HotkeySettings.Initialize', data);
   // TODO consistent plugin name
   hotkeySettingsDialog.create(appSettings.get('hotkeyDetector', {
     vKey: 111,
@@ -105,7 +109,7 @@ ipcMain.on('HotkeySettings.Modifying', (event, data) => {
 });
 
 ipcMain.on('HotkeySettings.Dialog.Apply', (event, data) => {
-  logOn('HotkeySettings.Dialog.Apply');
+  logOn('HotkeySettings.Dialog.Apply', data);
   appSettings.save('hotkeyDetector', data);
   hotkeyReplayDetector.notifyModifyApply(data);
   hotkeySettingsDialog.destroy();
@@ -125,8 +129,7 @@ ipcMain.on('AppSettings.Apply', (event, data) => {
 });
 
 ipcMain.on('PluginSettings.Apply', (event, data) => {
-  logOn('PluginSettings.Apply');
-  console.log(data);
+  logOn('PluginSettings.Apply', data);
 });
 
 ipcMain.on('PluginSettings.Cancel', (event, data) => {
@@ -134,8 +137,10 @@ ipcMain.on('PluginSettings.Cancel', (event, data) => {
 });
 
 ipcMain.on('PluginSettings.Modify', (event, data) => {
-  logOn('PluginSettings.Modify');
-  console.log(data);
+  logOn('PluginSettings.Modify', data);
+
+  // find plugin extension by name
+  // notifyModifying()
 });
 
 ipcMain.on('PluginSettings.Initialize', (event, data) => {
