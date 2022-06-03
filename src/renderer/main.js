@@ -8,7 +8,6 @@ console.log(
 );
 
 document.getElementById("detector.settings").onclick = () => {
-  ipcRenderer.send("HotkeySettings.Initialize", {});
   const selected = detectorSelection.options[detectorSelection.selectedIndex];
   const name = selected.dataset.pluginName;
   ipcRenderer.send("PluginSettings.Initialize", { pluginName: name });

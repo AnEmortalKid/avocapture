@@ -27,6 +27,8 @@ let currentPlugin;
 
 const plugins = {};
 
+// TODO save picked extensions
+
 // TODO load plugins
 plugins["hotkey-detector"] = hotkeyReplayDetector;
 
@@ -91,6 +93,7 @@ app.whenReady().then(() => {
 
   replayDetectionListener.setPrefix(appSettings.getApp().prefix);
   uploader.initialize();
+
   hotkeyReplayDetector.initialize(
     appSettings.get('hotkeyDetector', {
       vKey: 111,
@@ -113,32 +116,32 @@ ipcMain.on(ReplayDetailsEvents.DIALOG.APPLY, (event, data) => {
   win.webContents.send("ReplayDetails.Add", replaySaver.getReplayData(data.replayUuid));
 });
 
-ipcMain.on('HotkeySettings.Initialize', (event, data) => {
-  logOn('HotkeySettings.Initialize', data);
-  // TODO consistent plugin name
-  // hotkeySettingsDialog.create(appSettings.get('hotkeyDetector', {
-  //   vKey: 111,
-  //   browserName: "NumpadDivide"
-  // }));
-});
+// ipcMain.on('HotkeySettings.Initialize', (event, data) => {
+//   logOn('HotkeySettings.Initialize', data);
+//   // TODO consistent plugin name
+//   // hotkeySettingsDialog.create(appSettings.get('hotkeyDetector', {
+//   //   vKey: 111,
+//   //   browserName: "NumpadDivide"
+//   // }));
+// });
 
-ipcMain.on('HotkeySettings.Modifying', (event, data) => {
-  logOn('HotkeySettings.Modifying');
-  hotkeyReplayDetector.notifyModifying();
-});
+// ipcMain.on('HotkeySettings.Modifying', (event, data) => {
+//   logOn('HotkeySettings.Modifying');
+//   hotkeyReplayDetector.notifyModifying();
+// });
 
-ipcMain.on('HotkeySettings.Dialog.Apply', (event, data) => {
-  logOn('HotkeySettings.Dialog.Apply', data);
-  appSettings.save('hotkeyDetector', data);
-  hotkeyReplayDetector.notifyModifyApply(data);
-  hotkeySettingsDialog.destroy();
-});
+// ipcMain.on('HotkeySettings.Dialog.Apply', (event, data) => {
+//   logOn('HotkeySettings.Dialog.Apply', data);
+//   appSettings.save('hotkeyDetector', data);
+//   hotkeyReplayDetector.notifyModifyApply(data);
+//   hotkeySettingsDialog.destroy();
+// });
 
-ipcMain.on('HotkeySettings.Dialog.Cancel', (event, data) => {
-  logOn('HotkeySettings.Dialog.Cancel');
-  hotkeyReplayDetector.notifyModifyCancel();
-  hotkeySettingsDialog.destroy();
-});
+// ipcMain.on('HotkeySettings.Dialog.Cancel', (event, data) => {
+//   logOn('HotkeySettings.Dialog.Cancel');
+//   hotkeyReplayDetector.notifyModifyCancel();
+//   hotkeySettingsDialog.destroy();
+// });
 
 ipcMain.on('AppSettings.Apply', (event, data) => {
   logOn('AppSettings.Apply');
@@ -149,8 +152,6 @@ ipcMain.on('AppSettings.Apply', (event, data) => {
 
 ipcMain.on('PluginSettings.Apply', (event, data) => {
   logOn('PluginSettings.Apply', data);
-  // find plugin by name
-  // notifyModifyApply(data)
 
   // TODO get name better , maybe plugin context somehow?
   const pluginName = currentPlugin.name();
@@ -162,13 +163,8 @@ ipcMain.on('PluginSettings.Apply', (event, data) => {
 
 ipcMain.on('PluginSettings.Cancel', (event, data) => {
   logOn('PluginSettings.Cancel');
-  // find plugin by name
-  // notifyModifyCancel()
-
-  // todo set editing plugin (OR get data somehow)
 
   currentPlugin.notifyModifyCancel();
-
   pluginSettingsDialog.destroy();
   currentPlugin = null;
 });
