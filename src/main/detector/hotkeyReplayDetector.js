@@ -60,6 +60,10 @@ function findLastReplay() {
 
 export class HotkeyReplayDetector extends ReplayDetectorExtension {
 
+  name() {
+    return "hotkey-detector";
+  }
+
   initialize(hotkeySettings) {
     console.log('[hrd init] ', hotkeySettings);
     this.keyListener = this.createKeyListener(hotkeySettings);

@@ -9,6 +9,7 @@ import { ReplaySaver } from './saver/replaySaver';
 import { HotkeySettingsDialog } from './detector/settings/hotkeySettingsDialog';
 import { AppSettings } from './settings/appSettings';
 import { readlink } from 'fs';
+import { ExtensionSettingsDialog } from './extensions/extensionSettingsDialog';
 
 
 const appSettings = new AppSettings();
@@ -21,9 +22,21 @@ const hotkeyReplayDetector = new HotkeyReplayDetector();
 const hotkeySettingsDialog = new HotkeySettingsDialog();
 const uploader = new ConsoleUploader();
 
+let pluginSettingsDialog;
+let currentPlugin;
+
 const plugins = {};
 
 // TODO load plugins
+plugins["hotkey-detector"] = hotkeyReplayDetector;
+
+// TODO get plugin settings defaults
+const pluginSettingsDefaults = {
+  "hotkey-detector": {
+    vKey: 111,
+    browserName: "NumpadDivide"
+  }
+}
 
 function getPlugin(pluginName) {
   return plugins[pluginName];
@@ -53,8 +66,10 @@ const createWindow = () => {
   // and load the index.html of the app.
   win.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
+  win.removeMenu();
+
   // Open the DevTools.
-  win.webContents.openDevTools();
+  // win.webContents.openDevTools();
 }
 
 app.on('window-all-closed', () => {
@@ -101,10 +116,10 @@ ipcMain.on(ReplayDetailsEvents.DIALOG.APPLY, (event, data) => {
 ipcMain.on('HotkeySettings.Initialize', (event, data) => {
   logOn('HotkeySettings.Initialize', data);
   // TODO consistent plugin name
-  hotkeySettingsDialog.create(appSettings.get('hotkeyDetector', {
-    vKey: 111,
-    browserName: "NumpadDivide"
-  }));
+  // hotkeySettingsDialog.create(appSettings.get('hotkeyDetector', {
+  //   vKey: 111,
+  //   browserName: "NumpadDivide"
+  // }));
 });
 
 ipcMain.on('HotkeySettings.Modifying', (event, data) => {
@@ -136,12 +151,26 @@ ipcMain.on('PluginSettings.Apply', (event, data) => {
   logOn('PluginSettings.Apply', data);
   // find plugin by name
   // notifyModifyApply(data)
+
+  // TODO get name better , maybe plugin context somehow?
+  const pluginName = currentPlugin.name();
+  appSettings.save(pluginName, data);
+  currentPlugin.notifyModifyApply(data);
+  pluginSettingsDialog.destroy();
+  currentPlugin = null;
 });
 
 ipcMain.on('PluginSettings.Cancel', (event, data) => {
   logOn('PluginSettings.Cancel');
   // find plugin by name
   // notifyModifyCancel()
+
+  // todo set editing plugin (OR get data somehow)
+
+  currentPlugin.notifyModifyCancel();
+
+  pluginSettingsDialog.destroy();
+  currentPlugin = null;
 });
 
 ipcMain.on('PluginSettings.Modify', (event, data) => {
@@ -149,6 +178,7 @@ ipcMain.on('PluginSettings.Modify', (event, data) => {
 
   // find plugin extension by name
   // notifyModifying()
+  currentPlugin.notifyModifying();
 });
 
 ipcMain.on('PluginSettings.Initialize', (event, data) => {
@@ -156,9 +186,15 @@ ipcMain.on('PluginSettings.Initialize', (event, data) => {
 
   // find plugin extension by name
   console.log(data);
-  // TODO consistent plugin name
-  // hotkeySettingsDialog.create(appSettings.get('hotkeyDetector', {
-  //   vKey: 111,
-  //   browserName: "NumpadDivide"
-  // }));
+  const pluginName = data.pluginName;
+
+  // get data from store
+  const pluginSettings = appSettings.get(pluginName, pluginSettingsDefaults[pluginName]);
+  pluginSettingsDialog = new ExtensionSettingsDialog({
+    pluginName: pluginName,
+    settings: pluginSettings.data
+  });
+
+  currentPlugin = getPlugin(pluginName);
+  currentPlugin.notifyModifying();
 });
