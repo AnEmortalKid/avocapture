@@ -35,7 +35,6 @@ Remove invalid chars like `/` or `\`
 ## Plugin notes
 
 ```json
-
 avocapture: {
   name: pluginName,
   settings: index.html
