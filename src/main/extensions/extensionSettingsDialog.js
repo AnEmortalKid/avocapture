@@ -10,6 +10,7 @@ export class ExtensionSettingsDialog {
   constructor(extensionData) {
     const { pluginName, settings } = extensionData;
 
+    // TODO get prefered window size
     const settingsWindow = new BrowserWindow({
       width: 300,
       height: 300,
@@ -26,6 +27,7 @@ export class ExtensionSettingsDialog {
     settingsWindow.setFullScreenable(false);
     settingsWindow.setTitle("Hotkey Settings");
 
+    // TODO get a relative dir to "plugin install"
     settingsWindow.loadURL(
       path.resolve(__dirname, "views", "hotkey", "index.html")
     );

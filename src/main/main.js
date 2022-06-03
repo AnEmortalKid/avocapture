@@ -8,8 +8,8 @@ import { ReplayDetailsEvents } from './entry/replayDetailsEvents';
 import { ReplaySaver } from './saver/replaySaver';
 import { HotkeySettingsDialog } from './detector/settings/hotkeySettingsDialog';
 import { AppSettings } from './settings/appSettings';
-import { readlink } from 'fs';
 import { ExtensionSettingsDialog } from './extensions/extensionSettingsDialog';
+import { ExtensionEvents } from './extensions/extensionEvents';
 
 
 const appSettings = new AppSettings();
@@ -150,8 +150,8 @@ ipcMain.on('AppSettings.Apply', (event, data) => {
   replayDetectionListener.setPrefix(data.prefix);
 });
 
-ipcMain.on('PluginSettings.Apply', (event, data) => {
-  logOn('PluginSettings.Apply', data);
+ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.APPLY, (event, data) => {
+  logOn(ExtensionEvents.PLUGIN_SETTINGS.APPLY, data);
 
   // TODO get name better , maybe plugin context somehow?
   const pluginName = currentPlugin.name();
@@ -161,24 +161,24 @@ ipcMain.on('PluginSettings.Apply', (event, data) => {
   currentPlugin = null;
 });
 
-ipcMain.on('PluginSettings.Cancel', (event, data) => {
-  logOn('PluginSettings.Cancel');
+ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.CANCEL, (event, data) => {
+  logOn(ExtensionEvents.PLUGIN_SETTINGS.CANCEL);
 
   currentPlugin.notifyModifyCancel();
   pluginSettingsDialog.destroy();
   currentPlugin = null;
 });
 
-ipcMain.on('PluginSettings.Modify', (event, data) => {
-  logOn('PluginSettings.Modify', data);
+ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.MODIFY, (event, data) => {
+  logOn(ExtensionEvents.PLUGIN_SETTINGS.MODIFY, data);
 
   // find plugin extension by name
   // notifyModifying()
   currentPlugin.notifyModifying();
 });
 
-ipcMain.on('PluginSettings.Initialize', (event, data) => {
-  logOn('PluginSettings.Initialize', data);
+ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.INITIALIZE, (event, data) => {
+  logOn(ExtensionEvents.PLUGIN_SETTINGS.INITIALIZE, data);
 
   // find plugin extension by name
   console.log(data);
