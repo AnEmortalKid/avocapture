@@ -49,7 +49,7 @@ function bindButtons() {
 
 function submitData() {
   const data = bindFromForm();
-  ipcRenderer.send("PluginSettings.Apply", { pluginName: 'hotkey-detector', data: data });
+  ipcRenderer.send("PluginSettings.Apply", { pluginName: 'hotkey-detector', settings: data });
 }
 
 function cancelForm() {

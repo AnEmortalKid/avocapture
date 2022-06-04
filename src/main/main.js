@@ -10,6 +10,7 @@ import { HotkeySettingsDialog } from './detector/settings/hotkeySettingsDialog';
 import { AppSettings } from './settings/appSettings';
 import { ExtensionSettingsDialog } from './extensions/extensionSettingsDialog';
 import { ExtensionEvents } from './extensions/extensionEvents';
+import { PluginSettingsStore } from './settings/pluginSettings';
 
 const path = require('path')
 const fs = require('fs');
@@ -19,7 +20,8 @@ const os = require("os");
 const userHomeDir = os.homedir();
 
 
-const appSettings = new AppSettings();
+const appSettingsStore = new AppSettings();
+const pluginSettingsStore = new PluginSettingsStore();
 
 const replayDialog = new ReplayDetailsDialog();
 const replaySaver = new ReplaySaver();
@@ -39,15 +41,12 @@ const plugins = {};
 // TODO load plugins
 plugins["hotkey-detector"] = hotkeyReplayDetector;
 
-// TODO get plugin settings defaults
-const pluginSettingsDefaults = {
-  "hotkey-detector": {
-    vKey: 111,
-    browserName: "NumpadDivide",
-    replayDirectory: path.join(userHomeDir, 'Videos'),
-    timeoutMS: 500
-  }
-}
+pluginSettingsStore.setDefaults("hotkey-detector", {
+  vKey: 111,
+  browserName: "NumpadDivide",
+  replayDirectory: path.join(userHomeDir, 'Videos'),
+  timeoutMS: 500
+});
 
 function getPlugin(pluginName) {
   return plugins[pluginName];
@@ -96,15 +95,16 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
 
+  const appSettings = appSettingsStore.get();
   win.webContents.on('did-finish-load', () => {
-    win.webContents.send('AppSettings.Initialize', appSettings.getApp());
+    win.webContents.send('AppSettings.Initialize', appSettings);
   });
 
-  replayDetectionListener.setPrefix(appSettings.getApp().prefix);
+  replayDetectionListener.setPrefix(appSettings.prefix);
   uploader.initialize();
 
-  const psd = pluginSettingsDefaults['hotkey-detector'];
-  hotkeyReplayDetector.initialize(appSettings.get('hotkeyDetector', psd));
+  const settings = pluginSettingsStore.get('hotkey-detector');
+  hotkeyReplayDetector.initialize(settings);
   hotkeyReplayDetector.register(replayDetectionListener);
 })
 
@@ -122,47 +122,21 @@ ipcMain.on(ReplayDetailsEvents.DIALOG.APPLY, (event, data) => {
   win.webContents.send("ReplayDetails.Add", replaySaver.getReplayData(data.replayUuid));
 });
 
-// ipcMain.on('HotkeySettings.Initialize', (event, data) => {
-//   logOn('HotkeySettings.Initialize', data);
-//   // TODO consistent plugin name
-//   // hotkeySettingsDialog.create(appSettings.get('hotkeyDetector', {
-//   //   vKey: 111,
-//   //   browserName: "NumpadDivide"
-//   // }));
-// });
-
-// ipcMain.on('HotkeySettings.Modifying', (event, data) => {
-//   logOn('HotkeySettings.Modifying');
-//   hotkeyReplayDetector.notifyModifying();
-// });
-
-// ipcMain.on('HotkeySettings.Dialog.Apply', (event, data) => {
-//   logOn('HotkeySettings.Dialog.Apply', data);
-//   appSettings.save('hotkeyDetector', data);
-//   hotkeyReplayDetector.notifyModifyApply(data);
-//   hotkeySettingsDialog.destroy();
-// });
-
-// ipcMain.on('HotkeySettings.Dialog.Cancel', (event, data) => {
-//   logOn('HotkeySettings.Dialog.Cancel');
-//   hotkeyReplayDetector.notifyModifyCancel();
-//   hotkeySettingsDialog.destroy();
-// });
-
 ipcMain.on('AppSettings.Apply', (event, data) => {
-  logOn('AppSettings.Apply');
-  console.log(data);
-  appSettings.saveApp(data);
+  logOn('AppSettings.Apply', data);
+  appSettingsStore.save(data);
+
   replayDetectionListener.setPrefix(data.prefix);
 });
 
+// TODO event must have { pluginName, settings }
 ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.APPLY, (event, data) => {
   logOn(ExtensionEvents.PLUGIN_SETTINGS.APPLY, data);
 
-  // TODO get name better , maybe plugin context somehow?
+  // TODO get plugin name / current saving context somehow
   const pluginName = currentPlugin.name();
-  appSettings.save(pluginName, data);
-  currentPlugin.notifyModifyApply(data);
+  pluginSettingsStore.save(pluginName, data.settings);
+  currentPlugin.notifyModifyApply(data.settings);
   pluginSettingsDialog.destroy();
   currentPlugin = null;
 });
@@ -170,6 +144,7 @@ ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.APPLY, (event, data) => {
 ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.CANCEL, (event, data) => {
   logOn(ExtensionEvents.PLUGIN_SETTINGS.CANCEL);
 
+  // TODO get plugin name
   currentPlugin.notifyModifyCancel();
   pluginSettingsDialog.destroy();
   currentPlugin = null;
@@ -178,23 +153,19 @@ ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.CANCEL, (event, data) => {
 ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.MODIFY, (event, data) => {
   logOn(ExtensionEvents.PLUGIN_SETTINGS.MODIFY, data);
 
-  // find plugin extension by name
-  // notifyModifying()
+  // TODO get plugin name
   currentPlugin.notifyModifying();
 });
 
 ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.INITIALIZE, (event, data) => {
   logOn(ExtensionEvents.PLUGIN_SETTINGS.INITIALIZE, data);
 
-  // find plugin extension by name
-  console.log(data);
   const pluginName = data.pluginName;
+  const pluginSettings = pluginSettingsStore.get(pluginName);
 
-  // get data from store
-  const pluginSettings = appSettings.get(pluginName, pluginSettingsDefaults[pluginName]);
   pluginSettingsDialog = new ExtensionSettingsDialog({
     pluginName: pluginName,
-    settings: pluginSettings.data
+    settings: pluginSettings
   });
 
   currentPlugin = getPlugin(pluginName);
