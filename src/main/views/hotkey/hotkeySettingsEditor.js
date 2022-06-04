@@ -12,7 +12,7 @@ function bindToForm(data) {
   if (data) {
     const { vKey, browserName } = data;
     input.value = browserName;
-    nextHotkey.keyCode = vKey
+    nextHotkey.vKey = vKey
     nextHotkey.browserName = browserName
   }
 
@@ -55,15 +55,6 @@ function submitData() {
 function cancelForm() {
   ipcRenderer.send("PluginSettings.Cancel");
 }
-
-ipcRenderer.on("HotkeySettings.Dialog.Initialize", (event, data) => {
-  console.log("Received HotkeySettings.Initialize");
-  console.log(JSON.stringify(data));
-  bindToForm(data);
-  bindButtons();
-  broadcastModifying();
-});
-
 
 ipcRenderer.on("PluginSettings.Initialize.hotkey-detector", (event, data) => {
   console.log("Received PluginSettings.Initialize");

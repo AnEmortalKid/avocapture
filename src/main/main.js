@@ -11,6 +11,13 @@ import { AppSettings } from './settings/appSettings';
 import { ExtensionSettingsDialog } from './extensions/extensionSettingsDialog';
 import { ExtensionEvents } from './extensions/extensionEvents';
 
+const path = require('path')
+const fs = require('fs');
+
+// TODO dir config
+const os = require("os");
+const userHomeDir = os.homedir();
+
 
 const appSettings = new AppSettings();
 
@@ -36,7 +43,9 @@ plugins["hotkey-detector"] = hotkeyReplayDetector;
 const pluginSettingsDefaults = {
   "hotkey-detector": {
     vKey: 111,
-    browserName: "NumpadDivide"
+    browserName: "NumpadDivide",
+    replayDirectory: path.join(userHomeDir, 'Videos'),
+    timeoutMS: 500
   }
 }
 
@@ -94,11 +103,8 @@ app.whenReady().then(() => {
   replayDetectionListener.setPrefix(appSettings.getApp().prefix);
   uploader.initialize();
 
-  hotkeyReplayDetector.initialize(
-    appSettings.get('hotkeyDetector', {
-      vKey: 111,
-      browserName: "NumpadDivide"
-    }));
+  const psd = pluginSettingsDefaults['hotkey-detector'];
+  hotkeyReplayDetector.initialize(appSettings.get('hotkeyDetector', psd));
   hotkeyReplayDetector.register(replayDetectionListener);
 })
 

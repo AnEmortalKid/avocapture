@@ -33,9 +33,8 @@ function getLastCreated(a, b) {
   return a;
 }
 
-function findLastReplay() {
-  const directoryPath = path.join(userHomeDir, 'Videos');
-  const files = fs.readdirSync(directoryPath);
+function findLastReplay(replayDirectory) {
+  const files = fs.readdirSync(replayDirectory);
 
   var latest;
   for (var file of files) {
@@ -65,7 +64,7 @@ export class HotkeyReplayDetector extends ReplayDetectorExtension {
   }
 
   initialize(hotkeySettings) {
-    console.log('[hrd init] ', hotkeySettings);
+    this.settings = hotkeySettings;
     this.keyListener = this.createKeyListener(hotkeySettings);
     return;
   }
@@ -76,6 +75,7 @@ export class HotkeyReplayDetector extends ReplayDetectorExtension {
   }
 
   notifyModifyApply(newSettings) {
+    this.settings = newSettings;
     this.keyListener = this.createKeyListener(newSettings).bind(this);
     globalKeyboardListener.addListener(this.keyListener);
   }
@@ -101,24 +101,11 @@ export class HotkeyReplayDetector extends ReplayDetectorExtension {
 
   createKeyListener(settings) {
     return (e, down) => {
-      // TODO hotkey config
-      if (e.state == "DOWN" && e.name == "NUMPAD DOT") {
-
-        // TODO timeout configurable depending on replay save speed
+      if (e.state == "DOWN" && e.vKey == settings.vKey) {
         setTimeout(() => {
           const last = findLastReplay();
           this.detectListener.detected({ fileName: last.name, filePath: last.path });
-        }, 500);
-      }
-      // TODO FOR TEST ONLY
-      if (e.state == "DOWN" && e.name == "NUMPAD DIVIDE") {
-
-        // TODO timeout configurable depending on replay save speed
-        const last = findLastReplay();
-        this.detectListener.detected({ fileName: last.name, filePath: last.path });
-      }
-      if (e.state == "DOWN" && e.vKey == settings.vKey) {
-        console.log('What we wanted!');
+        }, settings.timeoutMS);
       }
     };
   }
