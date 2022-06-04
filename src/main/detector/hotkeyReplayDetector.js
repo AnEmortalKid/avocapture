@@ -38,7 +38,7 @@ function findLastReplay(replayDirectory) {
 
   var latest;
   for (var file of files) {
-    var fullPath = path.join(directoryPath, file)
+    var fullPath = path.join(replayDirectory, file)
     var stat = fs.lstatSync(fullPath, { bigint: true });
     if (stat.isDirectory()) {
       continue;
@@ -103,7 +103,9 @@ export class HotkeyReplayDetector extends ReplayDetectorExtension {
     return (e, down) => {
       if (e.state == "DOWN" && e.vKey == settings.vKey) {
         setTimeout(() => {
-          const last = findLastReplay();
+          // TODO fix this hardcoded directory and get the saved settings OR defaults
+          const repDir = "C:\\Users\\Jan\\Videos";
+          const last = findLastReplay(repDir);
           this.detectListener.detected({ fileName: last.name, filePath: last.path });
         }, settings.timeoutMS);
       }
