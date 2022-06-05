@@ -13,6 +13,12 @@ function bindToForm(data) {
 }
 
 function bindFromForm() {
+
+  // TODO clean up input
+  var cleanTitle = document.getElementById(replayTitle).value
+  var cleanPrefix = document.getElementById(replayPrefix).value
+
+
   return {
     prefix: document.getElementById(replayPrefix).value,
     title: document.getElementById(replayTitle).value,
