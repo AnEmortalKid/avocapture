@@ -4,6 +4,12 @@ const replayId = "replay.uuid";
 const replayPrefix = "replay.prefix";
 const replayTitle = "replay.title";
 
+function cleaner(str) {
+  return str.replaceAll("\\", "")
+    .replaceAll(".", "")
+    .replaceAll("/", "");
+}
+
 function bindToForm(data) {
   const { prefix, replayUuid } = data;
 
@@ -13,15 +19,12 @@ function bindToForm(data) {
 }
 
 function bindFromForm() {
-
-  // TODO clean up input
-  var cleanTitle = document.getElementById(replayTitle).value
-  var cleanPrefix = document.getElementById(replayPrefix).value
-
+  const cleanTitle = cleaner(document.getElementById(replayTitle).value)
+  const cleanPrefix = cleaner(document.getElementById(replayPrefix).value)
 
   return {
-    prefix: document.getElementById(replayPrefix).value,
-    title: document.getElementById(replayTitle).value,
+    prefix: cleanPrefix,
+    title: cleanTitle,
     replayUuid: document.getElementById(replayId).value
   }
 }
