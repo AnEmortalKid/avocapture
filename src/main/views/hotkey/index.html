@@ -8,6 +8,7 @@
   <title>Hotkey Settings</title>
   <link rel="stylesheet" href="../../css/w3.css" />
   <link rel="stylesheet" href="../../css/theme.css" />
+  <link rel="stylesheet" href="../../font-awesome-4.7.0/css/font-awesome.min.css">
 </head>
 
 <header class="w3-container w3-theme-l4 w3-card">
@@ -26,17 +27,19 @@
 
     <div class="w3-row-padding">
       <div class="w3-third">
-        <label>Delay</label>
+        <label>Delay Milliseconds</label>
         <input id="hotkey.delayMS" class="w3-input w3-border" type="text" placeholder="Delay">
       </div>
     </div>
 
     <div class="w3-row-padding">
       <div class="w3-third">
-        <!-- need to use the preload and IPC rendering stuff -->
-        <!-- TODO sample https://jaketrent.com/post/select-directory-in-electron -->
         <label>Replay Directory</label>
-        <input id="hotkey.replayLocation" class="w3-input w3-border" type="text" placeholder="Directory">
+        <!-- improve LAYOUT -->
+        <div class="w3-row-padding w3-row">
+          <input id="hotkey.replayLocation" class="w3-input w3-border" type="text" placeholder="Directory">
+          <i id="hotkey.replayLocation.button" class="w3-large w3-right fa fa-folder-open" id="detector.settings"></i>
+        </div>
       </div>
     </div>
 

@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron')
+const { app, BrowserWindow, ipcMain, dialog } = require('electron')
 
 import { ReplayDetectionListener } from './detector/replayDetectionListener';
 import { HotkeyReplayDetector } from './detector/hotkeyReplayDetector';
@@ -45,7 +45,7 @@ pluginSettingsStore.setDefaults("hotkey-detector", {
   vKey: 111,
   browserName: "NumpadDivide",
   replayDirectory: path.join(userHomeDir, 'Videos'),
-  timeoutMS: 500
+  hotkeyDelayMS: 500
 });
 
 function getPlugin(pluginName) {
@@ -170,4 +170,14 @@ ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.INITIALIZE, (event, data) => {
 
   currentPlugin = getPlugin(pluginName);
   currentPlugin.notifyModifying();
+});
+
+ipcMain.on('select-directory', async (event, arg) => {
+  const result = await dialog.showOpenDialog(win, {
+    properties: ['openDirectory']
+  });
+
+  event.sender.send('select-directory-response', result.filePaths);
+  // Set it back to focus
+  pluginSettingsDialog.focus();
 });

@@ -1,10 +1,16 @@
 const { ipcRenderer } = require("electron");
 
 const selectedHotkey = "hotkey.selected";
+const replayFolder = "hotkey.replayLocation";
+const hotkeyDelay = "hotkey.delayMS";
 
 var nextHotkey = {
   vKey: '', browserName: ''
 }
+
+document.getElementById("hotkey.replayLocation.button").addEventListener('click', () => {
+  ipcRenderer.send('select-directory', { replyMsg: "hotkey-dector.selected.directory" })
+});
 
 function bindToForm(data) {
   console.log('BindingToForm ', data);
@@ -23,19 +29,28 @@ function bindToForm(data) {
     nextHotkey.vKey = e.keyCode;
     e.preventDefault();
   });
-}
 
-function broadcastModifying() {
-  console.log('broadcastModifying');
-  ipcRenderer.send("HotkeySettings.Modifying", {});
+
+
+  const delayInput = document.getElementById(hotkeyDelay);
+  delayInput.value = data.hotkeyDelayMS
+
+  const replayDirInput = document.getElementById(replayFolder);
+  replayDirInput.value = data.replayDirectory;
 }
 
 function bindFromForm() {
   // TODO stash in the input?
   const input = document.getElementById(selectedHotkey);
+
+  const delayInput = document.getElementById(hotkeyDelay);
+
+  const replayDirInput = document.getElementById(replayFolder);
   return {
     vKey: nextHotkey.vKey,
-    browserName: nextHotkey.browserName
+    browserName: nextHotkey.browserName,
+    hotkeyDelayMS: delayInput.value,
+    replayDirectory: replayDirInput.value
   }
 }
 
@@ -49,6 +64,7 @@ function bindButtons() {
 
 function submitData() {
   const data = bindFromForm();
+  // TODO disable/don't apply if invalid
   ipcRenderer.send("PluginSettings.Apply", { pluginName: 'hotkey-detector', settings: data });
 }
 
@@ -61,6 +77,9 @@ ipcRenderer.on("PluginSettings.Initialize.hotkey-detector", (event, data) => {
   console.log(JSON.stringify(data));
   bindToForm(data);
   bindButtons();
-  // ? maybe we don't need this
-  // ipcRenderer.send("PluginSettings.Modify", {});
+});
+
+// TODO better name for this 
+ipcRenderer.on('select-directory-response', (event, data) => {
+  document.getElementById(replayFolder).value = data;
 });

@@ -45,4 +45,8 @@ export class ExtensionSettingsDialog {
     this.entryWindow.close();
   }
 
+  focus() {
+    this.entryWindow.focus();
+  }
+
 }
