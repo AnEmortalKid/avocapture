@@ -90,6 +90,10 @@ const createWindow = () => {
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
   mainWindow.removeMenu();
+
+  mainWindow.setIcon(
+    path.resolve(__dirname, "images", "logo_256.png")
+  );
 }
 
 app.on('window-all-closed', () => {
