@@ -63,10 +63,10 @@ function logOn(name, data) {
   console.log(`Received [${name}]`, data);
 }
 
-let win;
+let mainWindow;
 
 const createWindow = () => {
-  win = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
@@ -77,9 +77,9 @@ const createWindow = () => {
   })
 
   // and load the index.html of the app.
-  win.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
-  win.removeMenu();
+  mainWindow.removeMenu();
 }
 
 app.on('window-all-closed', () => {
@@ -96,8 +96,8 @@ app.whenReady().then(() => {
   })
 
   const appSettings = appSettingsStore.get();
-  win.webContents.on('did-finish-load', () => {
-    win.webContents.send('AppSettings.Initialize', appSettings);
+  mainWindow.webContents.on('did-finish-load', () => {
+    mainWindow.webContents.send('AppSettings.Initialize', appSettings);
   });
 
   replayDetectionListener.setPrefix(appSettings.prefix);
@@ -119,7 +119,7 @@ ipcMain.on(ReplayDetailsEvents.DIALOG.APPLY, (event, data) => {
   notifyUploader(data);
   console.log('send event');
   replaySaver.setTitle(data);
-  win.webContents.send("ReplayDetails.Add", replaySaver.getReplayData(data.replayUuid));
+  mainWindow.webContents.send("ReplayDetails.Add", replaySaver.getReplayData(data.replayUuid));
 });
 
 ipcMain.on('AppSettings.Apply', (event, data) => {
@@ -159,7 +159,7 @@ ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.INITIALIZE, (event, data) => {
   pluginSettingsDialog = new ExtensionSettingsDialog({
     pluginName: pluginName,
     settings: pluginSettings
-  });
+  }, mainWindow);
 
   const currentPlugin = getPlugin(pluginName)
   currentPluginContext = {
@@ -169,7 +169,7 @@ ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.INITIALIZE, (event, data) => {
 });
 
 ipcMain.on('select-directory', async (event, arg) => {
-  const result = await dialog.showOpenDialog(win, {
+  const result = await dialog.showOpenDialog(mainWindow, {
     properties: ['openDirectory']
   });
 

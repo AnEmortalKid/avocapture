@@ -7,7 +7,7 @@ export class ExtensionSettingsDialog {
   * 
   * @param { pluginName, settings} extensionData 
   */
-  constructor(extensionData) {
+  constructor(extensionData, parent) {
     const { pluginName, settings } = extensionData;
 
     // TODO get prefered window size
@@ -18,6 +18,7 @@ export class ExtensionSettingsDialog {
       modal: true,
       titleBarOverlay: false,
       resizable: true,
+      parent: parent,
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: false,
