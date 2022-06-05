@@ -12,8 +12,8 @@ export class ExtensionSettingsDialog {
 
     // TODO get prefered window size
     const settingsWindow = new BrowserWindow({
-      width: 300,
-      height: 300,
+      width: 500,
+      height: 500,
       frame: false,
       modal: true,
       titleBarOverlay: false,
