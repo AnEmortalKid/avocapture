@@ -51,6 +51,16 @@ pluginSettingsStore.setDefaults("hotkey-detector", {
   hotkeyDelayMS: 500
 });
 
+const pluginDisplaySettings = {
+  "hotkey-detector": {
+    "view": path.resolve(__dirname, "views", "hotkey", "index.html"),
+    "dimensions": {
+      "width": 500,
+      "height": 500
+    }
+  }
+}
+
 function getPlugin(pluginName) {
   return plugins[pluginName];
 }
@@ -158,7 +168,8 @@ ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.INITIALIZE, (event, data) => {
 
   pluginSettingsDialog = new ExtensionSettingsDialog({
     pluginName: pluginName,
-    settings: pluginSettings
+    settings: pluginSettings,
+    displaySettings: pluginDisplaySettings[pluginName]
   }, mainWindow);
 
   const currentPlugin = getPlugin(pluginName)

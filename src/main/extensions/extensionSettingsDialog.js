@@ -8,12 +8,11 @@ export class ExtensionSettingsDialog {
   * @param { pluginName, settings} extensionData 
   */
   constructor(extensionData, parent) {
-    const { pluginName, settings } = extensionData;
+    const { pluginName, settings, displaySettings } = extensionData;
 
-    // TODO get prefered window size
     const settingsWindow = new BrowserWindow({
-      width: 500,
-      height: 500,
+      width: displaySettings.dimensions.width ?? 400,
+      height: displaySettings.dimensions.height ?? 400,
       frame: false,
       modal: true,
       titleBarOverlay: false,
@@ -28,10 +27,7 @@ export class ExtensionSettingsDialog {
     settingsWindow.setFullScreenable(false);
     settingsWindow.removeMenu();
 
-    // TODO get a relative dir to "plugin install"
-    settingsWindow.loadURL(
-      path.resolve(__dirname, "views", "hotkey", "index.html")
-    );
+    settingsWindow.loadURL(displaySettings.view);
 
     settingsWindow.once("ready-to-show", () => {
       console.log("Broadcasting Event");
