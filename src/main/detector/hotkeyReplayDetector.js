@@ -2,17 +2,9 @@ import { ReplayDetectorExtension } from './replayDetectorExtension'
 const path = require('path')
 const fs = require('fs');
 
-// TODO dir config
-const os = require("os");
-const userHomeDir = os.homedir();
-
-const isProduction = process.env.NODE_ENV === "production";
-const windowsOptions = isProduction ?
-  { serverPath: path.join(__dirname, "../../node_modules/node-global-key-listener/bin/WinKeyServer.exe") } :
-  { serverPath: path.join(__dirname, "../../node_modules/node-global-key-listener/bin/WinKeyServer.exe") };
-
-console.log("DIR: ", __dirname)
 import { GlobalKeyboardListener } from "node-global-key-listener";
+
+const windowsOptions = { serverPath: path.join(__dirname, "../../node_modules/node-global-key-listener/bin/WinKeyServer.exe") }
 const globalKeyboardListener = new GlobalKeyboardListener({
   windows: {
     onError: (errorCode) => console.error("[gkl] ERROR: " + errorCode),
@@ -103,14 +95,11 @@ export class HotkeyReplayDetector extends ReplayDetectorExtension {
     return (e, down) => {
       if (e.state == "DOWN" && e.vKey == settings.vKey) {
         setTimeout(() => {
-          // TODO fix this hardcoded directory and get the saved settings OR defaults
-          const repDir = "C:\\Users\\Jan\\Videos";
-          const last = findLastReplay(repDir);
+          const last = findLastReplay(this.settings.replayDirectory);
           this.detectListener.detected({ fileName: last.name, filePath: last.path });
         }, settings.timeoutMS);
       }
     };
   }
-
 
 }

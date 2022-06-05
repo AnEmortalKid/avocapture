@@ -14,8 +14,8 @@ export class ExtensionSettingsDialog {
     const settingsWindow = new BrowserWindow({
       width: 300,
       height: 300,
-      frame: true,
-      modal: false,
+      frame: false,
+      modal: true,
       titleBarOverlay: false,
       resizable: true,
       webPreferences: {
@@ -25,7 +25,7 @@ export class ExtensionSettingsDialog {
     })
     settingsWindow.setBackgroundColor("#d7dbe3");
     settingsWindow.setFullScreenable(false);
-    settingsWindow.setTitle("Hotkey Settings");
+    settingsWindow.removeMenu();
 
     // TODO get a relative dir to "plugin install"
     settingsWindow.loadURL(

@@ -46,6 +46,18 @@ avocapture: {
 ```
 
 ```
+module.exports = 
+  displaySettings: {
+    width, height
+  },
+  extensionSettings: {
+    defaults: {
+      
+    }
+  }
+```
+
+```
 plugin/
   settings/
     index.html

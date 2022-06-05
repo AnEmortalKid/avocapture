@@ -15,7 +15,6 @@ import { PluginSettingsStore } from './settings/pluginSettings';
 const path = require('path')
 const fs = require('fs');
 
-// TODO dir config
 const os = require("os");
 const userHomeDir = os.homedir();
 
@@ -28,11 +27,15 @@ const replaySaver = new ReplaySaver();
 const replayDetectionListener = new ReplayDetectionListener(replayDialog, replaySaver);
 
 const hotkeyReplayDetector = new HotkeyReplayDetector();
-const hotkeySettingsDialog = new HotkeySettingsDialog();
+
 const uploader = new ConsoleUploader();
 
 let pluginSettingsDialog;
-let currentPlugin;
+
+let currentPluginContext = {
+  pluginName: null,
+  plugin: null
+}
 
 const plugins = {};
 
@@ -77,9 +80,6 @@ const createWindow = () => {
   win.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
   win.removeMenu();
-
-  // Open the DevTools.
-  // win.webContents.openDevTools();
 }
 
 app.on('window-all-closed', () => {
@@ -129,32 +129,25 @@ ipcMain.on('AppSettings.Apply', (event, data) => {
   replayDetectionListener.setPrefix(data.prefix);
 });
 
-// TODO event must have { pluginName, settings }
 ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.APPLY, (event, data) => {
   logOn(ExtensionEvents.PLUGIN_SETTINGS.APPLY, data);
 
-  // TODO get plugin name / current saving context somehow
-  const pluginName = currentPlugin.name();
+  const { pluginName, plugin } = currentPluginContext;
   pluginSettingsStore.save(pluginName, data.settings);
-  currentPlugin.notifyModifyApply(data.settings);
+  plugin.notifyModifyApply(data.settings);
+
   pluginSettingsDialog.destroy();
-  currentPlugin = null;
+  currentPluginContext = {}
 });
 
 ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.CANCEL, (event, data) => {
   logOn(ExtensionEvents.PLUGIN_SETTINGS.CANCEL);
 
-  // TODO get plugin name
-  currentPlugin.notifyModifyCancel();
+  const { plugin } = currentPluginContext;
+
+  plugin.notifyModifyCancel();
   pluginSettingsDialog.destroy();
-  currentPlugin = null;
-});
-
-ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.MODIFY, (event, data) => {
-  logOn(ExtensionEvents.PLUGIN_SETTINGS.MODIFY, data);
-
-  // TODO get plugin name
-  currentPlugin.notifyModifying();
+  currentPluginContext = {}
 });
 
 ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.INITIALIZE, (event, data) => {
@@ -168,7 +161,10 @@ ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.INITIALIZE, (event, data) => {
     settings: pluginSettings
   });
 
-  currentPlugin = getPlugin(pluginName);
+  const currentPlugin = getPlugin(pluginName)
+  currentPluginContext = {
+    pluginName: pluginName, plugin: currentPlugin
+  }
   currentPlugin.notifyModifying();
 });
 

@@ -81,5 +81,7 @@ ipcRenderer.on("PluginSettings.Initialize.hotkey-detector", (event, data) => {
 
 // TODO better name for this 
 ipcRenderer.on('select-directory-response', (event, data) => {
-  document.getElementById(replayFolder).value = data;
+  if (data) {
+    document.getElementById(replayFolder).value = data;
+  }
 });
