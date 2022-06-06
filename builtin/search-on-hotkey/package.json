@@ -1,0 +1,31 @@
+{
+  "name": "search-on-hotkey",
+  "version": "0.1.0",
+  "description": "An extension for avocapture that searches the filesystem when a hotkey is pressed",
+  "main": "extension.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "avocapture"
+  ],
+  "author": "",
+  "license": "MIT",
+  "avocapture": {
+    "name": "search-on-hotkey",
+    "type": "detector",
+    "settings": {
+      "defaults": {
+        "vKey": 111,
+        "browserName": "NumpadDivide",
+        "replayDirectory": "~/Videos",
+        "hotkeyDelayMS": 500
+      },
+      "view": {
+        "entry": "index.html",
+        "width": 500,
+        "height": 500
+      }
+    }
+  }
+}
