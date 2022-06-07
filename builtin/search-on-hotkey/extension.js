@@ -1,12 +1,11 @@
 class TestDetector {
   // TODO need to figure out how to make an extensible module here
-
   name() {
     return "TestDet";
   }
 
   register(listener) {
-    throw new Error("Unimplemented");
+    console.log('register', listener);
   }
 
   /**
@@ -15,21 +14,21 @@ class TestDetector {
    * @param {*} settings the settings specific to this extension
    */
   initialize(settings) {
-    throw new Error("Unimplemented");
+    console.log('initialize ', settings);
   }
 
   /**
    * Destroys any state the extension requires
    */
   teardown() {
-    throw new Error("Unimplemented");
+    console.log("teardown");
   }
 
   /**
    * The extension's settings are in the process of being modified
    */
   notifyModifying() {
-    throw new Error("Unimplemented");
+    console.log("notifyModifying");
   }
 
   /**
@@ -38,14 +37,14 @@ class TestDetector {
    * @param {*} newSettings the new settings
    */
   notifyModifyApply(newSettings) {
-    throw new Error("Unimplemented");
+    console.log("notifyModifyApply", newSettings);
   }
 
   /**
    * The extension's settings were not changed.
    */
   notifyModifyCancel() {
-    throw new Error("Unimplemented");
+    console.log("notifyModifyCancel");
   }
 }
 

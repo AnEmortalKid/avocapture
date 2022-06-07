@@ -2,19 +2,10 @@ import path from 'path';
 import * as fs from "fs"
 
 import { createRequire } from "module";
+import LoadedExtension from './loadedExtension';
 const require = createRequire(import.meta.url);
 
 // TODO figure out the right path
-const __dirname = path.resolve();
-const builtIns = path.join(__dirname, "builtin")
-const files = fs.readdirSync(builtIns, { withFileTypes: true });
-
-for (var file of files) {
-  if (file.isDirectory()) {
-    loadExtension(path.join(builtIns, file.name))
-  }
-}
-
 function getMethods(obj) {
   let properties = new Set()
   let currentObj = obj
@@ -60,18 +51,31 @@ function loadExtension(extensionPath) {
   console.log(JSON.stringify(pjson.avocapture));
 
   var ExtensionClass = require(path.join(extensionPath, pjson.main));
-  var extension = new ExtensionClass();
-  checkExtension(extension, pjson.avocapture.type);
+  var extensionInstance = new ExtensionClass();
+  checkExtension(extensionInstance, pjson.avocapture.type);
 
   console.log(pjson.avocapture.name);
 
-  const extensionData = {
-    instance: extension,
-    configuration: pjson.avocapture,
-    extensionPath: extensionPath
-  }
-
   // TODO need to npm install on that directory
 
-  return extensionData
+  return new LoadedExtension(extensionInstance, pjson.avocapture, extensionPath);
+}
+
+export default class ExtensionLoader {
+
+  loadExtensions(directory) {
+    const files = fs.readdirSync(directory, { withFileTypes: true });
+
+    var extensions = []
+    for (var file of files) {
+      if (file.isDirectory()) {
+        extensions.push(
+          loadExtension(path.join(directory, file.name))
+        )
+      }
+    }
+
+    return extensions
+  }
+
 }

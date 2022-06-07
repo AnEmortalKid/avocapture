@@ -11,6 +11,7 @@ import { AppSettings } from './settings/appSettings';
 import { ExtensionSettingsDialog } from './extensions/extensionSettingsDialog';
 import { ExtensionEvents } from './extensions/extensionEvents';
 import { PluginSettingsStore } from './settings/pluginSettings';
+import ExtensionLoader from './extensions/loader/extensionLoader';
 
 const path = require('path')
 const fs = require('fs');
@@ -30,12 +31,36 @@ const hotkeyReplayDetector = new HotkeyReplayDetector();
 
 const uploader = new ConsoleUploader();
 
+const extensionLoader = new ExtensionLoader();
+
 let pluginSettingsDialog;
 
 let currentPluginContext = {
   pluginName: null,
   plugin: null
 }
+
+// Load built ins first
+const builtIns = path.resolve(__dirname, "builtin");
+const builtInExtensions = extensionLoader.loadExtensions(builtIns);
+
+const extensions = {}
+// TODO remove hardcoded once extensions are done
+const detectorNames = ["hotkey-detector"];
+const uploaderNames = [];
+// TODO deal with the other plugins dir at some point
+for (var builtIn of builtInExtensions) {
+  extensions[builtIn.name()] = builtIn
+  if (builtIn.type() === "detector") {
+    detectorNames.push(builtIn.name())
+  }
+  if (builtIn.type() === "uploader") {
+    uploaderNames.push(builtIn.name())
+  }
+}
+
+// TODO get app settings, pick last picked extension
+// TODO load to UI
 
 const plugins = {};
 
@@ -79,6 +104,7 @@ const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    frame: true,
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       nodeIntegration: true,
@@ -89,7 +115,7 @@ const createWindow = () => {
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
-  mainWindow.removeMenu();
+  // mainWindow.removeMenu();
 
   mainWindow.setIcon(
     path.resolve(__dirname, "images", "logo_256.png")
@@ -109,9 +135,16 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
 
+  // TODO include selected detector, uploader
   const appSettings = appSettingsStore.get();
+  const currSettings = {
+    ...appSettings,
+    detectors: detectorNames,
+    uploaders: uploaderNames
+  }
+
   mainWindow.webContents.on('did-finish-load', () => {
-    mainWindow.webContents.send('AppSettings.Initialize', appSettings);
+    mainWindow.webContents.send('AppSettings.Initialize', currSettings);
   });
 
   replayDetectionListener.setPrefix(appSettings.prefix);
@@ -141,6 +174,20 @@ ipcMain.on('AppSettings.Apply', (event, data) => {
   appSettingsStore.save(data);
 
   replayDetectionListener.setPrefix(data.prefix);
+});
+
+ipcMain.on('AppSettings.Apply.Prefix', (event, prefix) => {
+  logOn('AppSettings.Apply.Prefix', prefix);
+  appSettingsStore.save('prefix', prefix);
+  replayDetectionListener.setPrefix(prefix);
+});
+
+ipcMain.on('AppSettings.Extension.Select', (event, data) => {
+  logOn('AppSettings.Extension.Select', data);
+
+  // save selected extension
+  // deactivate old extension
+  // activate new extension
 });
 
 ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.APPLY, (event, data) => {

@@ -43,5 +43,13 @@ module.exports = {
         },
       ],
     }),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, "builtin"),
+          to: path.resolve(__dirname, ".webpack/main", "builtin"),
+        },
+      ],
+    }),
   ]
 };

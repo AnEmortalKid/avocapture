@@ -7,6 +7,10 @@ export class AppSettings {
     store.set('app', appSettings);
   }
 
+  save(subKey, value) {
+    store.set('app.' + subKey, value);
+  }
+
   get() {
     return store.get('app', {
       prefix: "Prefix"
