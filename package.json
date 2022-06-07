@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Capture bugs for Issue Council but much nicer",
   "main": "./.webpack/main",
+  "type": "module",
   "scripts": {
     "start": "electron-forge start",
     "test": "echo \"Error: no test specified\" && exit 1",
