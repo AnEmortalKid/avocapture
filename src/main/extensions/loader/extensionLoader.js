@@ -5,7 +5,6 @@ import { createRequire } from "module";
 import LoadedExtension from './loadedExtension';
 const require = createRequire(import.meta.url);
 
-// TODO figure out the right path
 function getMethods(obj) {
   let properties = new Set()
   let currentObj = obj
@@ -15,7 +14,8 @@ function getMethods(obj) {
   return [...properties.keys()].filter(item => typeof obj[item] === 'function')
 }
 
-function checkExtension(extension, type) {
+function checkExtension(extension, name, type) {
+  console.log('Checking extension [', name, ']')
   // check bases first
   const checkMethods = ["initialize",
     "teardown",
@@ -36,14 +36,12 @@ function checkExtension(extension, type) {
     }
   }
 
-  // todo pass name
   if (missing.length > 0) {
-    throw new Error("Extension did not declare " + missing)
+    throw new Error("Extension " + name + " did not declare functions: [" + missing + "]")
   }
 
 }
 
-// TODO use a specified path
 function loadExtension(extensionPath) {
   let pjson = require(path.join(extensionPath, "package.json"));
 
@@ -52,7 +50,7 @@ function loadExtension(extensionPath) {
 
   var ExtensionClass = require(path.join(extensionPath, pjson.main));
   var extensionInstance = new ExtensionClass();
-  checkExtension(extensionInstance, pjson.avocapture.type);
+  checkExtension(extensionInstance, pjson.avocapture.name, pjson.avocapture.type);
 
   console.log(pjson.avocapture.name);
 

@@ -23,4 +23,11 @@ export default class LoadedExtension {
   type() {
     return this.configuration.type
   }
+
+  display() {
+    if (this.configuration.display) {
+      return this.configuration.display
+    }
+    return this.name();
+  }
 }

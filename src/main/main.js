@@ -12,6 +12,7 @@ import { ExtensionSettingsDialog } from './extensions/extensionSettingsDialog';
 import { ExtensionEvents } from './extensions/extensionEvents';
 import { PluginSettingsStore } from './settings/pluginSettings';
 import ExtensionLoader from './extensions/loader/extensionLoader';
+import { builtinModules } from 'module';
 
 const path = require('path')
 const fs = require('fs');
@@ -46,16 +47,22 @@ const builtInExtensions = extensionLoader.loadExtensions(builtIns);
 
 const extensions = {}
 // TODO remove hardcoded once extensions are done
-const detectorNames = ["hotkey-detector"];
+const detectorNames = [{ pluginName: "hotkey-detector", displayName: "Hotkey" }];
 const uploaderNames = [];
 // TODO deal with the other plugins dir at some point
 for (var builtIn of builtInExtensions) {
   extensions[builtIn.name()] = builtIn
+
+  const pluginObj = {
+    pluginName: builtIn.name(),
+    displayName: builtIn.display()
+  }
+
   if (builtIn.type() === "detector") {
-    detectorNames.push(builtIn.name())
+    detectorNames.push(pluginObj)
   }
   if (builtIn.type() === "uploader") {
-    uploaderNames.push(builtIn.name())
+    uploaderNames.push(pluginObj)
   }
 }
 
@@ -190,25 +197,31 @@ ipcMain.on('AppSettings.Extension.Select', (event, data) => {
   // activate new extension
 });
 
-ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.APPLY, (event, data) => {
-  logOn(ExtensionEvents.PLUGIN_SETTINGS.APPLY, data);
-
+function pluginApply(data) {
   const { pluginName, plugin } = currentPluginContext;
   pluginSettingsStore.save(pluginName, data.settings);
   plugin.notifyModifyApply(data.settings);
 
   pluginSettingsDialog.destroy();
   currentPluginContext = {}
-});
+}
 
-ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.CANCEL, (event, data) => {
-  logOn(ExtensionEvents.PLUGIN_SETTINGS.CANCEL);
-
+function pluginCancel() {
   const { plugin } = currentPluginContext;
 
   plugin.notifyModifyCancel();
   pluginSettingsDialog.destroy();
   currentPluginContext = {}
+}
+
+ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.APPLY, (event, data) => {
+  logOn(ExtensionEvents.PLUGIN_SETTINGS.APPLY, data);
+  pluginApply(data);
+});
+
+ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.CANCEL, (event, data) => {
+  logOn(ExtensionEvents.PLUGIN_SETTINGS.CANCEL);
+  pluginCancel();
 });
 
 ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.INITIALIZE, (event, data) => {
@@ -221,7 +234,7 @@ ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.INITIALIZE, (event, data) => {
     pluginName: pluginName,
     settings: pluginSettings,
     displaySettings: pluginDisplaySettings[pluginName]
-  }, mainWindow);
+  }, mainWindow, pluginCancel);
 
   const currentPlugin = getPlugin(pluginName)
   currentPluginContext = {

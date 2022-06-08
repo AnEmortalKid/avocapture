@@ -14,6 +14,7 @@
   "avocapture": {
     "name": "search-on-hotkey",
     "type": "detector",
+    "display": "Search on Hotkey",
     "settings": {
       "defaults": {
         "vKey": 111,

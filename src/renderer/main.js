@@ -18,12 +18,30 @@ document.getElementById("detector.settings").onclick = () => {
   ipcRenderer.send("PluginSettings.Initialize", { pluginName: name });
 }
 
+function createSelect(pluginName, displayName) {
+  /* <option value="hotkey" data-plugin-name="hotkey-detector">Second</option> */
+  const opt = document.createElement('option');
+  opt.dataset.pluginName = pluginName;
+  opt.value = displayName;
+  opt.text = displayName;
+  return opt;
+}
+
+function addDetectors(settings) {
+  for (var detectorOption of settings.detectors) {
+    detectorSelection.appendChild(createSelect(detectorOption.pluginName, detectorOption.displayName));
+  }
+}
+
 function bindToUI(settings) {
   prefixInput.value = settings.prefix;
 
   prefixInput.addEventListener('change', (event) => {
     ipcRenderer.send('AppSettings.Apply.Prefix', event.target.value);
   });
+
+  addDetectors(settings);
+
 }
 
 detectorSelection.addEventListener('change', () => {
