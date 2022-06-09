@@ -72,7 +72,7 @@ function hotkeyAsExtension() {
         hotkeyDelayMS: 500
       },
       view: {
-        entry: path.resolve(__dirname, "views", "hotkey", "index.html"),
+        entry: "index.html",
         width: 500,
         height: 500
       }
@@ -80,7 +80,7 @@ function hotkeyAsExtension() {
   }
 
   return new LoadedExtension(hotkeyReplayDetector, avocaptureConfig,
-    path.resolve(__dirname)
+    path.resolve(__dirname, "views", "hotkey")
   );
 }
 
@@ -259,7 +259,7 @@ ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.INITIALIZE, (event, data) => {
 
   // TODO consolidate these, formalize
   const dialogViewSettings = {
-    view: extensionSettings.view.entry,
+    viewPath: path.join(extensions[pluginName].extensionPath, extensionSettings.view.entry),
     dimensions: {
       width: extensionSettings.view.width,
       height: extensionSettings.view.height
