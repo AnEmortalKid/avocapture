@@ -1,11 +1,11 @@
 class TestDetector {
   // TODO need to figure out how to make an extensible module here
   name() {
-    return "TestDet";
+    return "ConsoleEcho";
   }
 
   register(listener) {
-    console.log('register', listener);
+    console.log('[console-echo] register', listener);
   }
 
   /**
@@ -14,21 +14,21 @@ class TestDetector {
    * @param {*} settings the settings specific to this extension
    */
   initialize(settings) {
-    console.log('initialize ', settings);
+    console.log('[console-echo] initialize ', settings);
   }
 
   /**
    * Destroys any state the extension requires
    */
   teardown() {
-    console.log("teardown");
+    console.log("[console-echo] teardown");
   }
 
   /**
    * The extension's settings are in the process of being modified
    */
   notifyModifying() {
-    console.log("notifyModifying");
+    console.log("[console-echo] notifyModifying");
   }
 
   /**
@@ -37,14 +37,14 @@ class TestDetector {
    * @param {*} newSettings the new settings
    */
   notifyModifyApply(newSettings) {
-    console.log("notifyModifyApply", newSettings);
+    console.log("[console-echo] notifyModifyApply", newSettings);
   }
 
   /**
    * The extension's settings were not changed.
    */
   notifyModifyCancel() {
-    console.log("notifyModifyCancel");
+    console.log("[console-echo] notifyModifyCancel");
   }
 }
 

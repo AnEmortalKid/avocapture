@@ -32,3 +32,11 @@ plugin/
     main.js
   module.js
 ```
+
+
+- save selected extensions
+  - wire extension unselect / teardown and re-select
+- load selected extension on open app
+- plug extension to extension dialog - view might not be working for console-echo thingy
+  - add frame so we can see dev tools
+- npm install extension modules

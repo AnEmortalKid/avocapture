@@ -6,13 +6,12 @@ import { ReplayDetailsDialog } from "./entry/replayDetailsDialog"
 import { ConsoleUploader } from './uploader/consoleUploderExtension';
 import { ReplayDetailsEvents } from './entry/replayDetailsEvents';
 import { ReplaySaver } from './saver/replaySaver';
-import { HotkeySettingsDialog } from './detector/settings/hotkeySettingsDialog';
 import { AppSettings } from './settings/appSettings';
 import { ExtensionSettingsDialog } from './extensions/extensionSettingsDialog';
 import { ExtensionEvents } from './extensions/extensionEvents';
 import { PluginSettingsStore } from './settings/pluginSettings';
 import ExtensionLoader from './extensions/loader/extensionLoader';
-import { builtinModules } from 'module';
+import LoadedExtension from './extensions/loader/loadedExtension';
 
 const path = require('path')
 const fs = require('fs');
@@ -41,11 +40,58 @@ let currentPluginContext = {
   plugin: null
 }
 
+function hotkeyAsExtension() {
+  // "avocapture": {
+  //   "name": "search-on-hotkey",
+  //   "type": "detector",
+  //   "display": "Search on Hotkey",
+  //   "settings": {
+  //     "defaults": {
+  //       "vKey": 111,
+  //       "browserName": "NumpadDivide",
+  //       "replayDirectory": "~/Videos",
+  //       "hotkeyDelayMS": 500
+  //     },
+  //     "view": {
+  //       "entry": "index.html",
+  //       "width": 500,
+  //       "height": 500
+  //     }
+  //   }
+  // }
+
+  const avocaptureConfig = {
+    name: "hotkey-detector",
+    type: "detector",
+    display: "Hotkey",
+    settings: {
+      defaults: {
+        vKey: 111,
+        browserName: "NumpadDivide",
+        replayDirectory: path.join(userHomeDir, 'Videos'),
+        hotkeyDelayMS: 500
+      },
+      view: {
+        entry: path.resolve(__dirname, "views", "hotkey", "index.html"),
+        width: 500,
+        height: 500
+      }
+    }
+  }
+
+  return new LoadedExtension(hotkeyReplayDetector, avocaptureConfig,
+    path.resolve(__dirname)
+  );
+}
+
 // Load built ins first
 const builtIns = path.resolve(__dirname, "builtin");
 const builtInExtensions = extensionLoader.loadExtensions(builtIns);
 
 const extensions = {}
+const hkExt = hotkeyAsExtension()
+extensions[hkExt.name()] = hkExt
+
 // TODO remove hardcoded once extensions are done
 const detectorNames = [{ pluginName: "hotkey-detector", displayName: "Hotkey" }];
 const uploaderNames = [];
@@ -66,36 +112,12 @@ for (var builtIn of builtInExtensions) {
   }
 }
 
+function getExtension(extensionName) {
+  return extensions[extensionName].instance
+}
+
 // TODO get app settings, pick last picked extension
 // TODO load to UI
-
-const plugins = {};
-
-// TODO save picked extensions
-
-// TODO load plugins
-plugins["hotkey-detector"] = hotkeyReplayDetector;
-
-pluginSettingsStore.setDefaults("hotkey-detector", {
-  vKey: 111,
-  browserName: "NumpadDivide",
-  replayDirectory: path.join(userHomeDir, 'Videos'),
-  hotkeyDelayMS: 500
-});
-
-const pluginDisplaySettings = {
-  "hotkey-detector": {
-    "view": path.resolve(__dirname, "views", "hotkey", "index.html"),
-    "dimensions": {
-      "width": 500,
-      "height": 500
-    }
-  }
-}
-
-function getPlugin(pluginName) {
-  return plugins[pluginName];
-}
 
 function notifyUploader(data) {
   uploader.upload(data);
@@ -192,7 +214,11 @@ ipcMain.on('AppSettings.Apply.Prefix', (event, prefix) => {
 ipcMain.on('AppSettings.Extension.Select', (event, data) => {
   logOn('AppSettings.Extension.Select', data);
 
+  //  { type , name }
+
   // save selected extension
+  appSettingsStore.save('extensions.selected.' + data.type, data.name);
+
   // deactivate old extension
   // activate new extension
 });
@@ -229,14 +255,24 @@ ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.INITIALIZE, (event, data) => {
 
   const pluginName = data.pluginName;
   const pluginSettings = pluginSettingsStore.get(pluginName);
+  const extensionSettings = extensions[pluginName].configuration.settings;
+
+  // TODO consolidate these, formalize
+  const dialogViewSettings = {
+    view: extensionSettings.view.entry,
+    dimensions: {
+      width: extensionSettings.view.width,
+      height: extensionSettings.view.height
+    }
+  }
 
   pluginSettingsDialog = new ExtensionSettingsDialog({
     pluginName: pluginName,
     settings: pluginSettings,
-    displaySettings: pluginDisplaySettings[pluginName]
+    displaySettings: dialogViewSettings
   }, mainWindow, pluginCancel);
 
-  const currentPlugin = getPlugin(pluginName)
+  const currentPlugin = getExtension(pluginName)
   currentPluginContext = {
     pluginName: pluginName, plugin: currentPlugin
   }

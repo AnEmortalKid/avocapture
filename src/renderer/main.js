@@ -47,7 +47,7 @@ function bindToUI(settings) {
 detectorSelection.addEventListener('change', () => {
   const selected = detectorSelection.options[detectorSelection.selectedIndex];
   const name = selected.dataset.pluginName;
-  ipcRenderer.send('AppSettings.Extension.Select', { detector: name });
+  ipcRenderer.send('AppSettings.Extension.Select', { type: 'detector', name: name });
 });
 
 ipcRenderer.on("ReplayDetails.Add", (event, data) => {
