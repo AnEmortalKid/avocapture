@@ -45,3 +45,7 @@ plugin/
 - extension manager
   - finish wiring flow
   - remove anything from main that doesn't defer to it
+  - consider putting things in an ExtensionSettingsApp/Flow/Handler style class
+
+  - Handler (manager, mainWindow);
+    - Handler -> also provides the extension actions like 'select directory'
