@@ -6,15 +6,16 @@ export class PluginSettingsStore {
 
   // TODO add keypath/pathify function
   get(pluginName) {
-    const defaults = store.get(pluginName + '.defaults');
-    return store.get(pluginName + '.settings', defaults ? defaults : {});
+    const defaults = store.get(keyPath + pluginName + '.defaults');
+    return store.get(keyPath + pluginName + '.settings', defaults ? defaults : {});
   }
 
   save(pluginName, newSettings) {
-    store.set(pluginName + '.settings', newSettings);
+    store.set(keyPath + pluginName + '.settings', newSettings);
   }
 
   setDefaults(pluginName, defaults) {
-    store.set(pluginName + '.defaults', defaults);
+    store.delete(keyPath + pluginName);
+    store.set(keyPath + pluginName + '.defaults', defaults ? defaults : {});
   }
 }

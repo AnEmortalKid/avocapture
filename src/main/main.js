@@ -8,9 +8,9 @@ import { ReplayDetailsEvents } from './entry/replayDetailsEvents';
 import { ReplaySaver } from './saver/replaySaver';
 import { AppSettings } from './settings/appSettings';
 import { PluginSettingsStore } from './settings/pluginSettings';
-import ExtensionLoader from './extensions/loader/extensionLoader';
 import LoadedExtension from './extensions/loader/loadedExtension';
 import ExtensionManager from './extensions/extensionManager';
+import ExtensionSettingsApp from './extensions/extensionSettingsApp';
 
 const path = require('path')
 const fs = require('fs');
@@ -30,8 +30,8 @@ const hotkeyReplayDetector = new HotkeyReplayDetector();
 
 const uploader = new ConsoleUploader();
 
-const extensionLoader = new ExtensionLoader();
 const extensionManager = new ExtensionManager();
+const extensionsApp = new ExtensionSettingsApp(extensionManager);
 
 let pluginSettingsDialog;
 
@@ -116,7 +116,7 @@ const createWindow = () => {
     path.resolve(__dirname, "images", "logo_256.png")
   );
 
-  extensionManager.setMainWindow(mainWindow);
+  extensionsApp.setMainWindow(mainWindow);
 }
 
 app.on('window-all-closed', () => {
