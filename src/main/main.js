@@ -7,11 +7,10 @@ import { ConsoleUploader } from './uploader/consoleUploderExtension';
 import { ReplayDetailsEvents } from './entry/replayDetailsEvents';
 import { ReplaySaver } from './saver/replaySaver';
 import { AppSettings } from './settings/appSettings';
-import { ExtensionSettingsDialog } from './extensions/extensionSettingsDialog';
-import { ExtensionEvents } from './extensions/extensionEvents';
 import { PluginSettingsStore } from './settings/pluginSettings';
 import ExtensionLoader from './extensions/loader/extensionLoader';
 import LoadedExtension from './extensions/loader/loadedExtension';
+import ExtensionManager from './extensions/extensionManager';
 
 const path = require('path')
 const fs = require('fs');
@@ -32,13 +31,9 @@ const hotkeyReplayDetector = new HotkeyReplayDetector();
 const uploader = new ConsoleUploader();
 
 const extensionLoader = new ExtensionLoader();
+const extensionManager = new ExtensionManager();
 
 let pluginSettingsDialog;
-
-let currentPluginContext = {
-  pluginName: null,
-  plugin: null
-}
 
 function hotkeyAsExtension() {
   // "avocapture": {
@@ -86,35 +81,8 @@ function hotkeyAsExtension() {
 
 // Load built ins first
 const builtIns = path.resolve(__dirname, "builtin");
-const builtInExtensions = extensionLoader.loadExtensions(builtIns);
-
-const extensions = {}
-const hkExt = hotkeyAsExtension()
-extensions[hkExt.name()] = hkExt
-
-// TODO remove hardcoded once extensions are done
-const detectorNames = [{ pluginName: "hotkey-detector", displayName: "Hotkey" }];
-const uploaderNames = [];
-// TODO deal with the other plugins dir at some point
-for (var builtIn of builtInExtensions) {
-  extensions[builtIn.name()] = builtIn
-
-  const pluginObj = {
-    pluginName: builtIn.name(),
-    displayName: builtIn.display()
-  }
-
-  if (builtIn.type() === "detector") {
-    detectorNames.push(pluginObj)
-  }
-  if (builtIn.type() === "uploader") {
-    uploaderNames.push(pluginObj)
-  }
-}
-
-function getExtension(extensionName) {
-  return extensions[extensionName].instance
-}
+extensionManager.loadExtensions(builtIns)
+extensionManager.tempPut(hotkeyAsExtension())
 
 // TODO get app settings, pick last picked extension
 // TODO load to UI
@@ -141,14 +109,14 @@ const createWindow = () => {
     },
   })
 
-  // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
   // mainWindow.removeMenu();
-
   mainWindow.setIcon(
     path.resolve(__dirname, "images", "logo_256.png")
   );
+
+  extensionManager.setMainWindow(mainWindow);
 }
 
 app.on('window-all-closed', () => {
@@ -168,8 +136,8 @@ app.whenReady().then(() => {
   const appSettings = appSettingsStore.get();
   const currSettings = {
     ...appSettings,
-    detectors: detectorNames,
-    uploaders: uploaderNames
+    detectors: extensionManager.getExtensions("detector"),
+    uploaders: extensionManager.getExtensions("uploader")
   }
 
   mainWindow.webContents.on('did-finish-load', () => {
@@ -179,8 +147,12 @@ app.whenReady().then(() => {
   replayDetectionListener.setPrefix(appSettings.prefix);
   uploader.initialize();
 
-  const settings = pluginSettingsStore.get('hotkey-detector');
-  hotkeyReplayDetector.initialize(settings);
+  // const settings = pluginSettingsStore.get('hotkey-detector');
+  // TODO get this from settings
+  extensionManager.activate("hotkey-detector");
+
+  // todo get active detector
+  //hotkeyReplayDetector.initialize(settings);
   hotkeyReplayDetector.register(replayDetectionListener);
 })
 
@@ -223,62 +195,6 @@ ipcMain.on('AppSettings.Extension.Select', (event, data) => {
   // activate new extension
 });
 
-function pluginApply(data) {
-  const { pluginName, plugin } = currentPluginContext;
-  pluginSettingsStore.save(pluginName, data.settings);
-  plugin.notifyModifyApply(data.settings);
-
-  pluginSettingsDialog.destroy();
-  currentPluginContext = {}
-}
-
-function pluginCancel() {
-  const { plugin } = currentPluginContext;
-
-  plugin.notifyModifyCancel();
-  pluginSettingsDialog.destroy();
-  currentPluginContext = {}
-}
-
-ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.APPLY, (event, data) => {
-  logOn(ExtensionEvents.PLUGIN_SETTINGS.APPLY, data);
-  pluginApply(data);
-});
-
-ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.CANCEL, (event, data) => {
-  logOn(ExtensionEvents.PLUGIN_SETTINGS.CANCEL);
-  pluginCancel();
-});
-
-ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.INITIALIZE, (event, data) => {
-  logOn(ExtensionEvents.PLUGIN_SETTINGS.INITIALIZE, data);
-
-  const pluginName = data.pluginName;
-  const pluginSettings = pluginSettingsStore.get(pluginName);
-  const extensionSettings = extensions[pluginName].configuration.settings;
-
-  // TODO consolidate these, formalize
-  const dialogViewSettings = {
-    viewPath: path.join(extensions[pluginName].extensionPath, extensionSettings.view.entry),
-    dimensions: {
-      width: extensionSettings.view.width,
-      height: extensionSettings.view.height
-    }
-  }
-
-  pluginSettingsDialog = new ExtensionSettingsDialog({
-    pluginName: pluginName,
-    settings: pluginSettings,
-    displaySettings: dialogViewSettings
-  }, mainWindow, pluginCancel);
-
-  const currentPlugin = getExtension(pluginName)
-  currentPluginContext = {
-    pluginName: pluginName, plugin: currentPlugin
-  }
-  currentPlugin.notifyModifying();
-});
-
 ipcMain.on('select-directory', async (event, arg) => {
   const result = await dialog.showOpenDialog(mainWindow, {
     properties: ['openDirectory']
@@ -286,5 +202,6 @@ ipcMain.on('select-directory', async (event, arg) => {
 
   event.sender.send('select-directory-response', result.filePaths);
   // Set it back to focus
+  // TODO figure switching this bit / where to place it
   pluginSettingsDialog.focus();
 });

@@ -28,7 +28,6 @@ export class ExtensionSettingsDialog {
     settingsWindow.setFullScreenable(false);
     settingsWindow.removeMenu();
 
-    // TODO needs to be the path for console-echo
     settingsWindow.loadURL(displaySettings.viewPath);
 
     settingsWindow.once("ready-to-show", () => {

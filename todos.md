@@ -40,3 +40,8 @@ plugin/
 - plug extension to extension dialog - view might not be working for console-echo thingy
   - add frame so we can see dev tools
 - npm install extension modules
+
+
+- extension manager
+  - finish wiring flow
+  - remove anything from main that doesn't defer to it
