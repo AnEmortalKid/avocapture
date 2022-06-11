@@ -28,7 +28,6 @@ export class ReplayDetailsDialog {
     );
 
     entryWindow.once("ready-to-show", () => {
-      console.log("Broadcasting Event");
       entryWindow.webContents.on("before-input-event", (event, input) => {
         if (input.key == "Escape") {
           entryWindow.destroy();

@@ -1,11 +1,8 @@
 import { ExtensionEvents } from "./extensionEvents";
 import { ExtensionSettingsDialog } from "./extensionSettingsDialog";
 import path from "path";
-import { ipcMain } from "electron";
-
-function logOn(name, data) {
-  console.log(`Received [${name}]`, data);
-}
+import { ipcMain, dialog } from "electron";
+import logOn from "../logger/eventLogger";
 
 /**
  * Responsible for managing the interaction between a user and an extension's settings
@@ -16,7 +13,6 @@ export default class ExtensionSettingsApp {
 
     // tracks name of extension being edited
     this.editingContext = null;
-
     this.registerEvents();
   }
 
@@ -66,10 +62,20 @@ export default class ExtensionSettingsApp {
     this.extensionManager.edit(pluginName);
   }
 
+  async handleSelectDirectory(event, arg) {
+    const result = await dialog.showOpenDialog(this.mainWindow, {
+      properties: ['openDirectory']
+    });
+
+    event.sender.send('select-directory-response', result.filePaths);
+    this.pluginSettingsDialog.focus();
+  }
+
   registerEvents() {
     ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.APPLY, this.handleExtensionApply.bind(this));
     ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.CANCEL, this.handleExtensionCancel.bind(this));
     ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.INITIALIZE, this.handleExtensionEdit.bind(this));
+    ipcMain.on(ExtensionEvents.ACTIONS.SELECT_DIRECTORY, this.handleSelectDirectory.bind(this));
   }
 
 }

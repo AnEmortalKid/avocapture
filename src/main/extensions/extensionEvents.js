@@ -4,6 +4,8 @@ export const ExtensionEvents = {
     CANCEL: "PluginSettings.Cancel",
     INITIALIZE: "PluginSettings.Initialize",
     MODIFY: "PluginSettings.Modify"
+  },
+  ACTIONS: {
+    SELECT_DIRECTORY: "select-directory"
   }
-
 }

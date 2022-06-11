@@ -31,7 +31,6 @@ export class ExtensionSettingsDialog {
     settingsWindow.loadURL(displaySettings.viewPath);
 
     settingsWindow.once("ready-to-show", () => {
-      console.log("Broadcasting Event");
       settingsWindow.webContents.send("PluginSettings.Initialize." + pluginName, settings);
       settingsWindow.show();
     });

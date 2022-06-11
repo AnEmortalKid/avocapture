@@ -11,6 +11,8 @@ import { PluginSettingsStore } from './settings/pluginSettings';
 import LoadedExtension from './extensions/loader/loadedExtension';
 import ExtensionManager from './extensions/extensionManager';
 import ExtensionSettingsApp from './extensions/extensionSettingsApp';
+import logOn from './logger/eventLogger';
+import { AppEvents } from './events/appEvents';
 
 const path = require('path')
 const fs = require('fs');
@@ -33,28 +35,7 @@ const uploader = new ConsoleUploader();
 const extensionManager = new ExtensionManager();
 const extensionsApp = new ExtensionSettingsApp(extensionManager);
 
-let pluginSettingsDialog;
-
 function hotkeyAsExtension() {
-  // "avocapture": {
-  //   "name": "search-on-hotkey",
-  //   "type": "detector",
-  //   "display": "Search on Hotkey",
-  //   "settings": {
-  //     "defaults": {
-  //       "vKey": 111,
-  //       "browserName": "NumpadDivide",
-  //       "replayDirectory": "~/Videos",
-  //       "hotkeyDelayMS": 500
-  //     },
-  //     "view": {
-  //       "entry": "index.html",
-  //       "width": 500,
-  //       "height": 500
-  //     }
-  //   }
-  // }
-
   const avocaptureConfig = {
     name: "hotkey-detector",
     type: "detector",
@@ -89,10 +70,6 @@ extensionManager.tempPut(hotkeyAsExtension())
 
 function notifyUploader(data) {
   uploader.upload(data);
-}
-
-function logOn(name, data) {
-  console.log(`Received [${name}]`, data);
 }
 
 let mainWindow;
@@ -147,22 +124,21 @@ app.whenReady().then(() => {
   replayDetectionListener.setPrefix(appSettings.prefix);
   uploader.initialize();
 
-  // const settings = pluginSettingsStore.get('hotkey-detector');
   // TODO get this from settings
   extensionManager.activate("hotkey-detector");
 
-  // todo get active detector
-  //hotkeyReplayDetector.initialize(settings);
+  // TODO get active detector
   hotkeyReplayDetector.register(replayDetectionListener);
 })
 
 ipcMain.on(ReplayDetailsEvents.DIALOG.CANCEL, () => {
-  console.log("Cancel");
+  logOn(ReplayDetailsEvents.DIALOG.CANCEL, data);
   replayDialog.destroy();
 });
 
 ipcMain.on(ReplayDetailsEvents.DIALOG.APPLY, (event, data) => {
-  console.log("Applying: ", data)
+  logOn(ReplayDetailsEvents.DIALOG.APPLY, data);
+
   replayDialog.destroy();
   notifyUploader(data);
   console.log('send event');
@@ -170,38 +146,28 @@ ipcMain.on(ReplayDetailsEvents.DIALOG.APPLY, (event, data) => {
   mainWindow.webContents.send("ReplayDetails.Add", replaySaver.getReplayData(data.replayUuid));
 });
 
-ipcMain.on('AppSettings.Apply', (event, data) => {
-  logOn('AppSettings.Apply', data);
+ipcMain.on(AppEvents.SETTINGS.APPLY, (event, data) => {
+  logOn(AppEvents.SETTINGS.APPLY, data);
   appSettingsStore.save(data);
 
   replayDetectionListener.setPrefix(data.prefix);
 });
 
-ipcMain.on('AppSettings.Apply.Prefix', (event, prefix) => {
-  logOn('AppSettings.Apply.Prefix', prefix);
+ipcMain.on(AppEvents.SETTINGS.APPLY_PREFIX, (event, prefix) => {
+  logOn(AppEvents.SETTINGS.APPLY_PREFIX, prefix);
   appSettingsStore.save('prefix', prefix);
   replayDetectionListener.setPrefix(prefix);
 });
 
-ipcMain.on('AppSettings.Extension.Select', (event, data) => {
-  logOn('AppSettings.Extension.Select', data);
+ipcMain.on(AppEvents.SETTINGS.SELECT_EXTENSION, (event, data) => {
+  logOn(AppEvents.SETTINGS.SELECT_EXTENSION, data);
 
   //  { type , name }
 
   // save selected extension
   appSettingsStore.save('extensions.selected.' + data.type, data.name);
 
+  // TODO
   // deactivate old extension
   // activate new extension
-});
-
-ipcMain.on('select-directory', async (event, arg) => {
-  const result = await dialog.showOpenDialog(mainWindow, {
-    properties: ['openDirectory']
-  });
-
-  event.sender.send('select-directory-response', result.filePaths);
-  // Set it back to focus
-  // TODO figure switching this bit / where to place it
-  pluginSettingsDialog.focus();
 });

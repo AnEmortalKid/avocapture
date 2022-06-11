@@ -24,7 +24,6 @@ export class HotkeySettingsDialog {
     );
 
     entryWindow.once("ready-to-show", () => {
-      console.log("Broadcasting Event");
       entryWindow.webContents.send("HotkeySettings.Dialog.Initialize", contextData);
       entryWindow.show();
     });
