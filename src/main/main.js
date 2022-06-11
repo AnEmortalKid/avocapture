@@ -110,7 +110,7 @@ app.whenReady().then(() => {
   })
 
   // TODO include selected detector, uploader
-  const appSettings = appSettingsStore.get();
+  const appSettings = appSettingsStore.getAll();
   const currSettings = {
     ...appSettings,
     detectors: extensionManager.getExtensions("detector"),
@@ -131,7 +131,7 @@ app.whenReady().then(() => {
   hotkeyReplayDetector.register(replayDetectionListener);
 })
 
-ipcMain.on(ReplayDetailsEvents.DIALOG.CANCEL, () => {
+ipcMain.on(ReplayDetailsEvents.DIALOG.CANCEL, (event, data) => {
   logOn(ReplayDetailsEvents.DIALOG.CANCEL, data);
   replayDialog.destroy();
 });
@@ -163,11 +163,8 @@ ipcMain.on(AppEvents.SETTINGS.SELECT_EXTENSION, (event, data) => {
   logOn(AppEvents.SETTINGS.SELECT_EXTENSION, data);
 
   //  { type , name }
-
-  // save selected extension
+  const old = appSettingsStore.get('extensions.selected.' + data.type);
   appSettingsStore.save('extensions.selected.' + data.type, data.name);
-
-  // TODO
-  // deactivate old extension
-  // activate new extension
+  extensionManager.deactivate(old);
+  extensionManager.activate(data.name);
 });

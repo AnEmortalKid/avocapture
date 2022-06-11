@@ -1,9 +1,15 @@
 const Store = require('electron-store');
 const store = new Store();
 
+const keyPath = "app";
+
+const appDefaults = {
+  prefix: "Prefix"
+};
+
 export class AppSettings {
 
-  save(appSettings) {
+  saveAll(appSettings) {
     store.set('app', appSettings);
   }
 
@@ -11,10 +17,13 @@ export class AppSettings {
     store.set('app.' + subKey, value);
   }
 
-  get() {
-    return store.get('app', {
-      prefix: "Prefix"
-    });
+  get(subkey) {
+    const data = store.get('app.' + subkey);
+    return data;
+  }
+
+  getAll() {
+    return store.get('app', appDefaults);
   }
 
 }
