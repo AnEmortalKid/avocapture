@@ -51,6 +51,16 @@ export default class ExtensionManager {
   tempPut(loadedExtension) {
     this.extensions[loadedExtension.name()] = loadedExtension
     extensionSettingsStore.setDefaults(loadedExtension.name(), loadedExtension.configuration.settings.defaults);
+    const pluginObj = {
+      pluginName: loadedExtension.name(),
+      displayName: loadedExtension.display()
+    }
+    if (loadedExtension.type() === "detector") {
+      this.detectorNames.push(pluginObj)
+    }
+    if (loadedExtension.type() === "uploader") {
+      this.uploaderNames.push(pluginObj)
+    }
   }
 
   getExtensions(type) {

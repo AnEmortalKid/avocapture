@@ -36,6 +36,10 @@ plugin/
 
 - save selected extensions
   - wire extension unselect / teardown and re-select
+   - Debug through flow since something isn't activating correctly
+   - perhaps it is the selection part / not activating / hotkey
+   - add a `none` option for selection
+   - load extensions to frontend + set selected
 - load selected extension on open app
 - npm install extension modules
 

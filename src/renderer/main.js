@@ -18,7 +18,7 @@ document.getElementById("detector.settings").onclick = () => {
   ipcRenderer.send("PluginSettings.Initialize", { pluginName: name });
 }
 
-function createSelect(pluginName, displayName) {
+function createSelectOption(pluginName, displayName) {
   /* <option value="hotkey" data-plugin-name="hotkey-detector">Second</option> */
   const opt = document.createElement('option');
   opt.dataset.pluginName = pluginName;
@@ -29,7 +29,12 @@ function createSelect(pluginName, displayName) {
 
 function addDetectors(settings) {
   for (var detectorOption of settings.detectors) {
-    detectorSelection.appendChild(createSelect(detectorOption.pluginName, detectorOption.displayName));
+    // TODO set selected
+    const option = createSelectOption(detectorOption.pluginName, detectorOption.displayName);
+    detectorSelection.appendChild(option);
+    if (settings.selected?.detector == detectorOption.pluginName) {
+      option.selected = true;
+    }
   }
 }
 

@@ -22,7 +22,6 @@ const userHomeDir = os.homedir();
 
 
 const appSettingsStore = new AppSettings();
-const pluginSettingsStore = new PluginSettingsStore();
 
 const replayDialog = new ReplayDetailsDialog();
 const replaySaver = new ReplaySaver();
@@ -125,10 +124,16 @@ app.whenReady().then(() => {
   uploader.initialize();
 
   // TODO get this from settings
-  extensionManager.activate("hotkey-detector");
+  const selectedByType = appSettingsStore.get('extensions.selected');
+  // TODO For keys
+  if (selectedByType.detector) {
+    extensionManager.activate(selectedByType.detector);
+    const detector = extensionManager.getExtension(selectedByType.detector);
+    detector.instance.register(replayDetectionListener);
+  }
 
   // TODO get active detector
-  hotkeyReplayDetector.register(replayDetectionListener);
+
 })
 
 ipcMain.on(ReplayDetailsEvents.DIALOG.CANCEL, (event, data) => {
@@ -167,4 +172,9 @@ ipcMain.on(AppEvents.SETTINGS.SELECT_EXTENSION, (event, data) => {
   appSettingsStore.save('extensions.selected.' + data.type, data.name);
   extensionManager.deactivate(old);
   extensionManager.activate(data.name);
+
+  if (data.type === "detector") {
+    const detector = extensionManager.getExtension(data.name);
+    detector.instance.register(replayDetectionListener);
+  }
 });
