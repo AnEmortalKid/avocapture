@@ -13,6 +13,7 @@ import ExtensionSettingsApp from './extensions/extensionSettingsApp';
 import logOn from './logger/eventLogger';
 import { AppEvents } from './events/appEvents';
 
+
 const path = require('path')
 const fs = require('fs');
 
@@ -58,10 +59,16 @@ function hotkeyAsExtension() {
   );
 }
 
-// Load built ins first
-const builtIns = path.resolve(__dirname, "builtin");
-extensionManager.loadExtensions(builtIns)
-extensionManager.tempPut(hotkeyAsExtension())
+function installBuiltins() {
+  const builtIns = path.resolve(__dirname, "builtin");
+  const files = fs.readdirSync(builtIns, { withFileTypes: true });
+
+  for (var file of files) {
+    if (file.isDirectory()) {
+      extensionManager.install("builtin", path.join(builtIns, file.name))
+    }
+  }
+}
 
 function notifyUploader(data) {
   uploader.upload(data);
@@ -114,6 +121,11 @@ app.whenReady().then(() => {
   mainWindow.webContents.on('did-finish-load', () => {
     mainWindow.webContents.send('AppSettings.Initialize', currSettings);
   });
+
+
+  installBuiltins();
+  extensionManager.loadInstalled();
+  extensionManager.tempPut(hotkeyAsExtension());
 
   replayDetectionListener.setPrefix(appSettings.prefix);
 

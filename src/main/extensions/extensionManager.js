@@ -1,9 +1,14 @@
-import { ipcMain } from "electron";
+import { ipcMain, app } from "electron";
 import ExtensionLoader from "./loader/extensionLoader";
 import { ExtensionSettingsStore } from "../settings/extensionSettings";
+import { copyDirectory } from "./installer/dirCopy";
+import NpmInstaller from "./installer/npmInstaller";
+import copyAssets from "./installer/assetCopier";
+const path = require("path")
 
 const extensionLoader = new ExtensionLoader();
 const extensionSettingsStore = new ExtensionSettingsStore();
+const installer = new NpmInstaller();
 
 function log(method, msg) {
   console.log(`[ExtensionManager.${method}]`, msg);
@@ -24,8 +29,35 @@ export default class ExtensionManager {
     this.uploaderNames = [];
   }
 
+  /**
+   * must be called once app data is available
+   * @param {} filePath 
+   */
+  install(subDir, extensionPath) {
+    const destinationRoot = app.getPath("userData");
+    const extensionDir = path.basename(extensionPath);
+    const installDestination = path.join(destinationRoot, subDir, extensionDir);
+    // copy recursive
+    copyDirectory(extensionPath, installDestination);
+    installer.install(installDestination);
+
+    // place the assets in there
+    copyAssets(installDestination);
+  }
+
+  loadInstalled() {
+    // check both locations
+    const destinationRoot = app.getPath("userData");
+    const builtinPath = path.join(destinationRoot, "builtin");
+    this.loadExtensions(builtinPath);
+
+    // const additionalPath = path.join(destinationRoot, "extensions");
+    //  this.loadExtensions(additionalPath);
+  }
+
   loadExtensions(filePath) {
-    log('logExtensions', filePath);
+
+    log('loadExtensions', filePath);
     const loaded = extensionLoader.loadExtensions(filePath);
     for (var extension of loaded) {
       this.extensions[extension.name()] = extension

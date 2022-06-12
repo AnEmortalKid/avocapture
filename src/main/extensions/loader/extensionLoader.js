@@ -1,9 +1,12 @@
 import path from 'path';
 import * as fs from "fs"
+import app from 'electron';
 
 import { createRequire } from "module";
 import LoadedExtension from './loadedExtension';
 const require = createRequire(import.meta.url);
+
+
 
 function getMethods(obj) {
   let properties = new Set()
@@ -43,6 +46,7 @@ function checkExtension(extension, name, type) {
 }
 
 function loadExtension(extensionPath) {
+  // asume the extension has been installed
   let pjson = require(path.join(extensionPath, "package.json"));
 
   console.log(pjson);
@@ -51,10 +55,6 @@ function loadExtension(extensionPath) {
   var ExtensionClass = require(path.join(extensionPath, pjson.main));
   var extensionInstance = new ExtensionClass();
   checkExtension(extensionInstance, pjson.avocapture.name, pjson.avocapture.type);
-
-  console.log(pjson.avocapture.name);
-
-  // TODO need to npm install on that directory
 
   return new LoadedExtension(extensionInstance, pjson.avocapture, extensionPath);
 }
