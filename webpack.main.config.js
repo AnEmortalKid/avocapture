@@ -48,6 +48,12 @@ module.exports = {
         {
           from: path.resolve(__dirname, "builtin"),
           to: path.resolve(__dirname, ".webpack/main", "builtin"),
+          globOptions: {
+            ignore: [
+              '**/node_modules/**',
+              '**/package-lock.json'
+            ]
+          }
         },
       ],
     }),

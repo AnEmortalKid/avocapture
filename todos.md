@@ -38,5 +38,4 @@ plugin/
 
 ## extensions
 
-- rename PluginSettings event to ExtensionSettings
 - remove pluginName from around

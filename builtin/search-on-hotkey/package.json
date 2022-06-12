@@ -28,5 +28,9 @@
         "height": 500
       }
     }
+  },
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "node-global-key-listener": "^0.1.1"
   }
 }

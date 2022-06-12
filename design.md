@@ -25,10 +25,10 @@ INPUT
 
 ### Plugin Settings
 
-* Save -> broadcast "PluginSettings.Apply" : `{ pluginName: id, data: {} }`
-* Cancel -> broadcast "PluginSettings.Cancel"
-* Modify -> broadcast "PluginSettings.Modify": `{ pluginName: id }`
+* Save -> broadcast "ExtensionSettings.Apply" : `{ pluginName: id, data: {} }`
+* Cancel -> broadcast "ExtensionSettings.Cancel"
+* Modify -> broadcast "ExtensionSettings.Modify": `{ pluginName: id }`
 
 #### Renderer
 
-* Init -> broadcast "PluginSettings.Initialize.pluginName"
+* Init -> broadcast "ExtensionSettings.Initialize.pluginName"
