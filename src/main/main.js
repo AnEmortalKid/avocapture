@@ -108,7 +108,6 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
 
-  // TODO include selected detector, uploader
   const appSettings = appSettingsStore.getAll();
   const currSettings = {
     ...appSettings,
@@ -121,18 +120,17 @@ app.whenReady().then(() => {
   });
 
   replayDetectionListener.setPrefix(appSettings.prefix);
-  uploader.initialize();
 
-  // TODO get this from settings
-  const selectedByType = appSettingsStore.get('extensions.selected');
-  // TODO For keys
+  const selectedByType = appSettings.extensions?.selected;
   if (selectedByType.detector) {
     extensionManager.activate(selectedByType.detector);
     const detector = extensionManager.getExtension(selectedByType.detector);
     detector.instance.register(replayDetectionListener);
   }
 
-  // TODO get active detector
+  if (selectedByType.uploader) {
+    extensionManager.activate(selectedByType.uploader);
+  }
 
 })
 
@@ -170,11 +168,18 @@ ipcMain.on(AppEvents.SETTINGS.SELECT_EXTENSION, (event, data) => {
   //  { type , name }
   const old = appSettingsStore.get('extensions.selected.' + data.type);
   appSettingsStore.save('extensions.selected.' + data.type, data.name);
-  extensionManager.deactivate(old);
-  extensionManager.activate(data.name);
+  // going from none to something, old would be null
+  if (old) {
+    extensionManager.deactivate(old);
+  }
 
-  if (data.type === "detector") {
-    const detector = extensionManager.getExtension(data.name);
-    detector.instance.register(replayDetectionListener);
+  // allow selecting none
+  if (data.name) {
+    extensionManager.activate(data.name);
+
+    if (data.type === "detector") {
+      const detector = extensionManager.getExtension(data.name);
+      detector.instance.register(replayDetectionListener);
+    }
   }
 });

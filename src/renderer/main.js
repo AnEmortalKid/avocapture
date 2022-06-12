@@ -28,11 +28,11 @@ function createSelectOption(pluginName, displayName) {
 }
 
 function addDetectors(settings) {
+  const selectedDetector = settings.extensions?.selected?.detector;
   for (var detectorOption of settings.detectors) {
-    // TODO set selected
     const option = createSelectOption(detectorOption.pluginName, detectorOption.displayName);
     detectorSelection.appendChild(option);
-    if (settings.selected?.detector == detectorOption.pluginName) {
+    if (selectedDetector == detectorOption.pluginName) {
       option.selected = true;
     }
   }

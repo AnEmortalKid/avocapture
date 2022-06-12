@@ -14,7 +14,12 @@ export class AppSettings {
   }
 
   save(subKey, value) {
-    store.set('app.' + subKey, value);
+    if (value) {
+      store.set('app.' + subKey, value);
+    }
+    else {
+      store.delete('app.' + subKey);
+    }
   }
 
   get(subkey) {
