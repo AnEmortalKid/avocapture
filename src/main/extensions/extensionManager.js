@@ -1,9 +1,9 @@
 import { ipcMain } from "electron";
 import ExtensionLoader from "./loader/extensionLoader";
-import { PluginSettingsStore } from "../settings/pluginSettings";
+import { ExtensionSettingsStore } from "../settings/extensionSettings";
 
 const extensionLoader = new ExtensionLoader();
-const extensionSettingsStore = new PluginSettingsStore();
+const extensionSettingsStore = new ExtensionSettingsStore();
 
 function log(method, msg) {
   console.log(`[ExtensionManager.${method}]`, msg);
@@ -32,17 +32,16 @@ export default class ExtensionManager {
       // TODO what if we have to migrate
       extensionSettingsStore.setDefaults(extension.name(), extension.configuration.settings.defaults);
 
-      // todo change this
-      const pluginObj = {
-        pluginName: extension.name(),
+      const extensionData = {
+        extensionName: extension.name(),
         displayName: extension.display()
       }
 
       if (extension.type() === "detector") {
-        this.detectorNames.push(pluginObj)
+        this.detectorNames.push(extensionData)
       }
       if (extension.type() === "uploader") {
-        this.uploaderNames.push(pluginObj)
+        this.uploaderNames.push(extensionData)
       }
     }
   }
@@ -51,15 +50,15 @@ export default class ExtensionManager {
   tempPut(loadedExtension) {
     this.extensions[loadedExtension.name()] = loadedExtension
     extensionSettingsStore.setDefaults(loadedExtension.name(), loadedExtension.configuration.settings.defaults);
-    const pluginObj = {
-      pluginName: loadedExtension.name(),
+    const extensionData = {
+      extensionName: loadedExtension.name(),
       displayName: loadedExtension.display()
     }
     if (loadedExtension.type() === "detector") {
-      this.detectorNames.push(pluginObj)
+      this.detectorNames.push(extensionData)
     }
     if (loadedExtension.type() === "uploader") {
-      this.uploaderNames.push(pluginObj)
+      this.uploaderNames.push(extensionData)
     }
   }
 
@@ -95,7 +94,6 @@ export default class ExtensionManager {
 
   edit(extensionName) {
     log('edit', extensionName);
-    // TODO this should launch the settings dialog
     const instance = this.extensions[extensionName].instance
     instance.notifyModifying()
     this.editingContext = extensionName

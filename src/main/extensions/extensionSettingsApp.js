@@ -21,45 +21,56 @@ export default class ExtensionSettingsApp {
   }
 
   handleExtensionApply(event, data) {
-    logOn(ExtensionEvents.PLUGIN_SETTINGS.APPLY, data);
-    this.pluginSettingsDialog.destroy();
-    this.extensionManager.applyEdit(data.pluginName, data.settings);
+    logOn(ExtensionEvents.EXTENSION_SETTINGS.APPLY, data);
     this.editingContext = null;
+    this.extensionManager.applyEdit(data.extensionName, data.settings);
+    this.extensionSettingsDialog.destroy();
   }
 
   handleExtensionCancel(event, data) {
-    logOn(ExtensionEvents.PLUGIN_SETTINGS.CANCEL);
+    logOn(ExtensionEvents.EXTENSION_SETTINGS.CANCEL);
     this.extensionManager.cancelEdit(this.editingContext);
-    this.pluginSettingsDialog.destroy();
     this.editingContext = null;
+    this.extensionSettingsDialog.destroy();
+  }
+
+  extensionDialogClose() {
+    logOn('ExtensionSettingsDialog.CloseFrame');
+    // nothing has acted on it, cancel the state
+    if (this.editingContext) {
+      this.extensionManager.cancelEdit(this.editingContext);
+      this.editingContext = null;
+    }
   }
 
   handleExtensionEdit(event, data) {
-    logOn(ExtensionEvents.PLUGIN_SETTINGS.INITIALIZE, data);
+    logOn(ExtensionEvents.EXTENSION_SETTINGS.INITIALIZE, data);
 
-    const pluginName = data.pluginName;
-    const extension = this.extensionManager.getExtension(pluginName);
-    const pluginSettings = this.extensionManager.getExtensionSettings(pluginName);
-    const extensionSettings = extension.configuration.settings;
+    const extensionName = data.extensionName;
+    const extension = this.extensionManager.getExtension(extensionName);
+    const savedExtensionSettings = this.extensionManager.getExtensionSettings(extensionName);
+    const extensionDefinedSettings = extension.configuration.settings;
 
     // TODO consolidate these, formalize
-    const dialogViewSettings = {
-      viewPath: path.join(extension.extensionPath, extensionSettings.view.entry),
-      dimensions: {
-        width: extensionSettings.view.width,
-        height: extensionSettings.view.height
+    if (extensionDefinedSettings.view) {
+      const dialogViewSettings = {
+        viewPath: path.join(extension.extensionPath, extensionDefinedSettings.view.entry),
+        dimensions: {
+          width: extensionDefinedSettings.view.width,
+          height: extensionDefinedSettings.view.height
+        }
       }
+
+      this.extensionSettingsDialog = new ExtensionSettingsDialog({
+        name: extensionName,
+        settings: savedExtensionSettings,
+        displaySettings: dialogViewSettings
+      }, this.mainWindow, this.extensionDialogClose.bind(this));
+
+
+      this.editingContext = extensionName;
+      this.extensionManager.edit(extensionName);
     }
-
-    this.pluginSettingsDialog = new ExtensionSettingsDialog({
-      pluginName: pluginName,
-      settings: pluginSettings,
-      displaySettings: dialogViewSettings
-    }, this.mainWindow, this.handleExtensionCancel.bind(this));
-
-
-    this.editingContext = pluginName;
-    this.extensionManager.edit(pluginName);
   }
 
   async handleSelectDirectory(event, arg) {
@@ -68,13 +79,13 @@ export default class ExtensionSettingsApp {
     });
 
     event.sender.send('select-directory-response', result.filePaths);
-    this.pluginSettingsDialog.focus();
+    this.extensionSettingsDialog.focus();
   }
 
   registerEvents() {
-    ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.APPLY, this.handleExtensionApply.bind(this));
-    ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.CANCEL, this.handleExtensionCancel.bind(this));
-    ipcMain.on(ExtensionEvents.PLUGIN_SETTINGS.INITIALIZE, this.handleExtensionEdit.bind(this));
+    ipcMain.on(ExtensionEvents.EXTENSION_SETTINGS.APPLY, this.handleExtensionApply.bind(this));
+    ipcMain.on(ExtensionEvents.EXTENSION_SETTINGS.CANCEL, this.handleExtensionCancel.bind(this));
+    ipcMain.on(ExtensionEvents.EXTENSION_SETTINGS.INITIALIZE, this.handleExtensionEdit.bind(this));
     ipcMain.on(ExtensionEvents.ACTIONS.SELECT_DIRECTORY, this.handleSelectDirectory.bind(this));
   }
 

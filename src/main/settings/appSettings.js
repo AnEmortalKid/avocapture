@@ -1,7 +1,8 @@
+import toKeyPath from './settingsKeyUtil';
+
 const Store = require('electron-store');
 const store = new Store();
-
-const keyPath = "app";
+const settingsSubKey = "app";
 
 const appDefaults = {
   prefix: "Prefix"
@@ -10,25 +11,27 @@ const appDefaults = {
 export class AppSettings {
 
   saveAll(appSettings) {
-    store.set('app', appSettings);
+    store.set(settingsSubKey, appSettings);
   }
 
   save(subKey, value) {
+    const keyPath = toKeyPath(settingsSubKey, subKey);
     if (value) {
-      store.set('app.' + subKey, value);
+      store.set(keyPath, value);
     }
     else {
-      store.delete('app.' + subKey);
+      store.delete(keyPath);
     }
   }
 
-  get(subkey) {
-    const data = store.get('app.' + subkey);
+  get(subKey) {
+    const keyPath = toKeyPath(settingsSubKey, subKey);
+    const data = store.get(keyPath);
     return data;
   }
 
   getAll() {
-    return store.get('app', appDefaults);
+    return store.get(settingsSubKey, appDefaults);
   }
 
 }

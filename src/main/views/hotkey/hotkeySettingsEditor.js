@@ -65,15 +65,15 @@ function bindButtons() {
 function submitData() {
   const data = bindFromForm();
   // TODO disable/don't apply if invalid
-  ipcRenderer.send("PluginSettings.Apply", { pluginName: 'hotkey-detector', settings: data });
+  ipcRenderer.send("ExtensionSettings.Apply", { extensionName: 'hotkey-detector', settings: data });
 }
 
 function cancelForm() {
-  ipcRenderer.send("PluginSettings.Cancel");
+  ipcRenderer.send("ExtensionSettings.Cancel");
 }
 
-ipcRenderer.on("PluginSettings.Initialize.hotkey-detector", (event, data) => {
-  console.log("Received PluginSettings.Initialize");
+ipcRenderer.on("ExtensionSettings.Initialize.hotkey-detector", (event, data) => {
+  console.log("Received ExtensionSettings.Initialize");
   console.log(JSON.stringify(data));
   bindToForm(data);
   bindButtons();

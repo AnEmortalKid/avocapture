@@ -14,14 +14,14 @@ function logOn(name, data) {
 
 document.getElementById("detector.settings").onclick = () => {
   const selected = detectorSelection.options[detectorSelection.selectedIndex];
-  const name = selected.dataset.pluginName;
-  ipcRenderer.send("PluginSettings.Initialize", { pluginName: name });
+  const name = selected.dataset.extensionName;
+  ipcRenderer.send("ExtensionSettings.Initialize", { extensionName: name });
 }
 
-function createSelectOption(pluginName, displayName) {
-  /* <option value="hotkey" data-plugin-name="hotkey-detector">Second</option> */
+function createSelectOption(extensionName, displayName) {
+  /* <option value="hotkey" data-extension-name="hotkey-detector">Second</option> */
   const opt = document.createElement('option');
-  opt.dataset.pluginName = pluginName;
+  opt.dataset.extensionName = extensionName;
   opt.value = displayName;
   opt.text = displayName;
   return opt;
@@ -30,9 +30,9 @@ function createSelectOption(pluginName, displayName) {
 function addDetectors(settings) {
   const selectedDetector = settings.extensions?.selected?.detector;
   for (var detectorOption of settings.detectors) {
-    const option = createSelectOption(detectorOption.pluginName, detectorOption.displayName);
+    const option = createSelectOption(detectorOption.extensionName, detectorOption.displayName);
     detectorSelection.appendChild(option);
-    if (selectedDetector == detectorOption.pluginName) {
+    if (selectedDetector == detectorOption.extensionName) {
       option.selected = true;
     }
   }
@@ -51,7 +51,7 @@ function bindToUI(settings) {
 
 detectorSelection.addEventListener('change', () => {
   const selected = detectorSelection.options[detectorSelection.selectedIndex];
-  const name = selected.dataset.pluginName;
+  const name = selected.dataset.extensionName;
   ipcRenderer.send('AppSettings.Extension.Select', { type: 'detector', name: name });
 });
 

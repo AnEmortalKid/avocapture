@@ -7,7 +7,6 @@ import { ConsoleUploader } from './uploader/consoleUploderExtension';
 import { ReplayDetailsEvents } from './entry/replayDetailsEvents';
 import { ReplaySaver } from './saver/replaySaver';
 import { AppSettings } from './settings/appSettings';
-import { PluginSettingsStore } from './settings/pluginSettings';
 import LoadedExtension from './extensions/loader/loadedExtension';
 import ExtensionManager from './extensions/extensionManager';
 import ExtensionSettingsApp from './extensions/extensionSettingsApp';
@@ -63,9 +62,6 @@ function hotkeyAsExtension() {
 const builtIns = path.resolve(__dirname, "builtin");
 extensionManager.loadExtensions(builtIns)
 extensionManager.tempPut(hotkeyAsExtension())
-
-// TODO get app settings, pick last picked extension
-// TODO load to UI
 
 function notifyUploader(data) {
   uploader.upload(data);

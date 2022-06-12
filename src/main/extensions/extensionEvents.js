@@ -1,9 +1,9 @@
 export const ExtensionEvents = {
-  PLUGIN_SETTINGS: {
-    APPLY: "PluginSettings.Apply",
-    CANCEL: "PluginSettings.Cancel",
-    INITIALIZE: "PluginSettings.Initialize",
-    MODIFY: "PluginSettings.Modify"
+  EXTENSION_SETTINGS: {
+    APPLY: "ExtensionSettings.Apply",
+    CANCEL: "ExtensionSettings.Cancel",
+    INITIALIZE: "ExtensionSettings.Initialize",
+    MODIFY: "ExtensionSettings.Modify"
   },
   ACTIONS: {
     SELECT_DIRECTORY: "select-directory"
