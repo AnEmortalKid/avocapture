@@ -65,7 +65,7 @@ function installBuiltins() {
 
   for (var file of files) {
     if (file.isDirectory()) {
-      extensionManager.install("builtin", path.join(builtIns, file.name))
+      extensionManager.install(path.join(builtIns, file.name))
     }
   }
 }

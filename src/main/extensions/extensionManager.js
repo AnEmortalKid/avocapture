@@ -29,10 +29,10 @@ export default class ExtensionManager {
    * must be called once app data is available
    * @param {} filePath 
    */
-  install(subDir, extensionPath) {
+  install(extensionPath) {
     const destinationRoot = app.getPath("userData");
     const extensionDir = path.basename(extensionPath);
-    const installDestination = path.join(destinationRoot, subDir, extensionDir);
+    const installDestination = path.join(destinationRoot, "extensions", extensionDir);
     copyDirectory(extensionPath, installDestination);
     installer.install(installDestination);
     copyAssets(installDestination);
@@ -41,11 +41,8 @@ export default class ExtensionManager {
   loadInstalled() {
     // check both locations
     const destinationRoot = app.getPath("userData");
-    const builtinPath = path.join(destinationRoot, "builtin");
-    this.loadExtensions(builtinPath);
-
-    // const additionalPath = path.join(destinationRoot, "extensions");
-    //  this.loadExtensions(additionalPath);
+    const extensionsPath = path.join(destinationRoot, "extensions");
+    this.loadExtensions(extensionsPath);
   }
 
   loadExtensions(filePath) {
