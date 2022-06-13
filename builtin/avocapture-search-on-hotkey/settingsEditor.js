@@ -6,6 +6,8 @@ const selectedHotkey = "hotkey.selected";
 const replayFolder = "hotkey.replayLocation";
 const hotkeyDelay = "hotkey.delayMS";
 
+const extensionName = "avocapture-search-on-hotkey";
+
 var nextHotkey = {
   vKey: '', browserName: ''
 }
@@ -67,14 +69,14 @@ function bindButtons() {
 function submitData() {
   const data = bindFromForm();
   // TODO disable/don't apply if invalid
-  ipcRenderer.send("ExtensionSettings.Apply", { extensionName: 'search-on-hotkey', settings: data });
+  ipcRenderer.send("ExtensionSettings.Apply", { extensionName: extensionName, settings: data });
 }
 
 function cancelForm() {
   ipcRenderer.send("ExtensionSettings.Cancel");
 }
 
-ipcRenderer.on("ExtensionSettings.Initialize.search-on-hotkey", (event, data) => {
+ipcRenderer.on("ExtensionSettings.Initialize." + extensionName, (event, data) => {
   console.log("Received ExtensionSettings.Initialize");
   console.log(JSON.stringify(data));
   bindToForm(data);

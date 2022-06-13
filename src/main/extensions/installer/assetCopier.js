@@ -1,7 +1,6 @@
 import { copyDirectory } from "./dirCopy";
 
 const path = require("path")
-
 const assetPaths = ["css", "font-awesome-4.7.0"];
 
 export default function copyAssets(installedExtensionPath) {

@@ -1,8 +1,9 @@
 
-// TODO better flow for install
 const execSync = require('child_process').execSync;
 
-// TODO consider placing plugins in %APPDATA%/avocapture for external
+/**
+ * Component responsible for npm installing an extension's dependencies
+ */
 export default class NpmInstaller {
 
   install(pluginPath) {
@@ -13,4 +14,4 @@ export default class NpmInstaller {
         console.log(stderr);
       })
   }
-} 5
+}

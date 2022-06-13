@@ -12,7 +12,7 @@
   "author": "",
   "license": "MIT",
   "avocapture": {
-    "name": "search-on-hotkey",
+    "name": "avocapture-search-on-hotkey",
     "type": "detector",
     "display": "Search on Hotkey",
     "settings": {

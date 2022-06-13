@@ -12,7 +12,7 @@
   "author": "",
   "license": "MIT",
   "avocapture": {
-    "name": "console-echo",
+    "name": "avocapture-console-echo",
     "type": "detector",
     "display": "Console Echo",
     "settings": {

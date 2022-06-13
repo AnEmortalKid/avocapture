@@ -130,13 +130,13 @@ app.whenReady().then(() => {
   replayDetectionListener.setPrefix(appSettings.prefix);
 
   const selectedByType = appSettings.extensions?.selected;
-  if (selectedByType.detector) {
+  if (selectedByType?.detector) {
     extensionManager.activate(selectedByType.detector);
     const detector = extensionManager.getExtension(selectedByType.detector);
     detector.instance.register(replayDetectionListener);
   }
 
-  if (selectedByType.uploader) {
+  if (selectedByType?.uploader) {
     extensionManager.activate(selectedByType.uploader);
   }
 
@@ -152,7 +152,6 @@ ipcMain.on(ReplayDetailsEvents.DIALOG.APPLY, (event, data) => {
 
   replayDialog.destroy();
   notifyUploader(data);
-  console.log('send event');
   replaySaver.setTitle(data);
   mainWindow.webContents.send("ReplayDetails.Add", replaySaver.getReplayData(data.replayUuid));
 });
