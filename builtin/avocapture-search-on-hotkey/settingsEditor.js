@@ -13,7 +13,7 @@ var nextHotkey = {
 }
 
 document.getElementById("hotkey.replayLocation.button").addEventListener('click', () => {
-  ipcRenderer.send('select-directory', { replyMsg: "hotkey-dector.selected.directory" })
+  ipcRenderer.send('AppActions.SelectDirectory', { replyMsg: "hotkey-dector.selected.directory" })
 });
 
 function bindToForm(data) {
@@ -83,8 +83,7 @@ ipcRenderer.on("ExtensionSettings.Initialize." + extensionName, (event, data) =>
   bindButtons();
 });
 
-// TODO better name for this 
-ipcRenderer.on('select-directory-response', (event, data) => {
+ipcRenderer.on('AppActions.SelectDirectory.Response', (event, data) => {
   if (data) {
     document.getElementById(replayFolder).value = data;
   }

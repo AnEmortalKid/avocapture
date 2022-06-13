@@ -17,7 +17,7 @@ export class ExtensionSettingsStore {
   }
 
   setDefaults(extensionName, defaults) {
-    store.delete(toKeyPath(settingsSubKey, extensionName));
+    store.delete(toKeyPath(settingsSubKey, extensionName, 'defaults'));
     store.set(toKeyPath(settingsSubKey, extensionName, 'defaults'), defaults ? defaults : {});
   }
 }

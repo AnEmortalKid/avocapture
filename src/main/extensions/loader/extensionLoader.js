@@ -6,8 +6,6 @@ import { createRequire } from "module";
 import LoadedExtension from './loadedExtension';
 const require = createRequire(import.meta.url);
 
-
-
 function getMethods(obj) {
   let properties = new Set()
   let currentObj = obj

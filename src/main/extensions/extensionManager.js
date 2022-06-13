@@ -1,14 +1,11 @@
 import { app } from "electron";
 import ExtensionLoader from "./loader/extensionLoader";
 import { ExtensionSettingsStore } from "../settings/extensionSettings";
-import { copyDirectory } from "./installer/dirCopy";
-import NpmInstaller from "./installer/npmInstaller";
-import copyAssets from "./installer/assetCopier";
+import installExtension from "./installer/extensionInstaller";
 const path = require("path")
 
 const extensionLoader = new ExtensionLoader();
 const extensionSettingsStore = new ExtensionSettingsStore();
-const installer = new NpmInstaller();
 
 function log(method, msg) {
   console.log(`[ExtensionManager.${method}]`, msg);
@@ -30,12 +27,7 @@ export default class ExtensionManager {
    * @param {} filePath 
    */
   install(extensionPath) {
-    const destinationRoot = app.getPath("userData");
-    const extensionDir = path.basename(extensionPath);
-    const installDestination = path.join(destinationRoot, "extensions", extensionDir);
-    copyDirectory(extensionPath, installDestination);
-    installer.install(installDestination);
-    copyAssets(installDestination);
+    installExtension(extensionPath);
   }
 
   loadInstalled() {

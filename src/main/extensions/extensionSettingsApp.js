@@ -1,7 +1,7 @@
 import { ExtensionEvents } from "./extensionEvents";
 import { ExtensionSettingsDialog } from "./extensionSettingsDialog";
 import path from "path";
-import { ipcMain, dialog } from "electron";
+import { ipcMain } from "electron";
 import logOn from "../logger/eventLogger";
 
 /**
@@ -73,20 +73,10 @@ export default class ExtensionSettingsApp {
     }
   }
 
-  async handleSelectDirectory(event, arg) {
-    const result = await dialog.showOpenDialog(this.mainWindow, {
-      properties: ['openDirectory']
-    });
-
-    event.sender.send('select-directory-response', result.filePaths);
-    this.extensionSettingsDialog.focus();
-  }
-
   registerEvents() {
     ipcMain.on(ExtensionEvents.EXTENSION_SETTINGS.APPLY, this.handleExtensionApply.bind(this));
     ipcMain.on(ExtensionEvents.EXTENSION_SETTINGS.CANCEL, this.handleExtensionCancel.bind(this));
     ipcMain.on(ExtensionEvents.EXTENSION_SETTINGS.INITIALIZE, this.handleExtensionEdit.bind(this));
-    ipcMain.on(ExtensionEvents.ACTIONS.SELECT_DIRECTORY, this.handleSelectDirectory.bind(this));
   }
 
 }

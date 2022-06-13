@@ -38,6 +38,5 @@ plugin/
 
 ## extensions
 
-- Rename `search-on-hotkey` to `avocapture-search-on-hotkey`
-- Move `builtins` to `extensions`, drop all extensions there, no subpathing
-- Restrict starting name with `avocapture-` for extensions
+- Clean up extension installation
+- Move stray functions to single file

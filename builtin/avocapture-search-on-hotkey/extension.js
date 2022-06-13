@@ -5,16 +5,20 @@ const { GlobalKeyboardListener } = require('node-global-key-listener');
 const windowsOptions = { serverPath: path.join(__dirname, "./node_modules/node-global-key-listener/bin/WinKeyServer.exe") }
 const globalKeyboardListener = new GlobalKeyboardListener({
   windows: {
-    onError: (errorCode) => console.error("[gkl] ERROR: " + errorCode),
-    onInfo: (info) => console.info("[gkl] INFO: " + info),
+    onError: (errorCode) => console.error("[avocapture.search-on-hotkey] [gkl] ERROR: " + errorCode),
+    onInfo: (info) => console.info("[avocapture.search-on-hotkey] [gkl] INFO: " + info),
     ...windowsOptions
   },
   mac: {
-    onError: (errorCode) => console.error("[gkl] ERROR: " + errorCode),
+    onError: (errorCode) => console.error("[avocapture.search-on-hotkey] [gkl] ERROR: " + errorCode),
   }
 }
 );
 
+
+function log(msg) {
+  console.log('[avocapture.search-on-hotkey] ', msg)
+}
 
 function getLastCreated(a, b) {
   if (a.created < b.created) {
@@ -50,6 +54,7 @@ function findLastReplay(replayDirectory) {
 class HotkeyReplayDetector {
 
   initialize(hotkeySettings) {
+    log(`initialize ${JSON.stringify(hotkeySettings)}`);
     this.settings = hotkeySettings;
     this.keyListener = this.createKeyListener(hotkeySettings);
     return;
@@ -61,6 +66,7 @@ class HotkeyReplayDetector {
   }
 
   notifyModifyApply(newSettings) {
+    log(`modify ${JSON.stringify(newSettings)}`);
     this.settings = newSettings;
     this.keyListener = this.createKeyListener(newSettings).bind(this);
     globalKeyboardListener.addListener(this.keyListener);
@@ -77,7 +83,7 @@ class HotkeyReplayDetector {
   }
 
   register(detectListener) {
-    console.log('registering listeners');
+    log('register');
     this.detectListener = detectListener;
 
     // rebind this now that the detectListener is passed to us

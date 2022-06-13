@@ -79,8 +79,7 @@ ipcRenderer.on("ExtensionSettings.Initialize.hotkey-detector", (event, data) => 
   bindButtons();
 });
 
-// TODO better name for this 
-ipcRenderer.on('select-directory-response', (event, data) => {
+ipcRenderer.on('AppActions.SelectDirectory.Response', (event, data) => {
   if (data) {
     document.getElementById(replayFolder).value = data;
   }

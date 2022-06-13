@@ -190,3 +190,12 @@ ipcMain.on(AppEvents.SETTINGS.SELECT_EXTENSION, (event, data) => {
     }
   }
 });
+
+ipcMain.on(AppEvents.ACTIONS.SELECT_DIRECTORY, async (event, data) => {
+  const result = await dialog.showOpenDialog(mainWindow, {
+    properties: ['openDirectory']
+  });
+
+  event.sender.send(AppEvents.ACTIONS.SELECT_DIRECTORY_RESPONSE, result.filePaths);
+  event.sender.focus();
+});
