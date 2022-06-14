@@ -40,7 +40,7 @@ module.exports = {
         {
           from: path.resolve(__dirname, "src", "main", "views"),
           to: path.resolve(__dirname, ".webpack/main", "views"),
-        },
+        }
       ],
     }),
     new CopyPlugin({

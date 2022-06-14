@@ -41,4 +41,7 @@ module.exports = {
       name: "@electron-forge/maker-rpm",
     },
   ],
+  packagerConfig: {
+    icon: "branding/logo"
+  }
 }
