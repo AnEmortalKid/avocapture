@@ -49,16 +49,13 @@ export default class ExtensionSettingsApp {
     const extensionName = data.extensionName;
     const extension = this.extensionManager.getExtension(extensionName);
     const savedExtensionSettings = this.extensionManager.getExtensionSettings(extensionName);
-    const extensionDefinedSettings = extension.configuration.settings;
+    const extensionViewSettings = extension.configuration?.settings?.view;
 
-    // TODO consolidate these, formalize
-    if (extensionDefinedSettings.view) {
+    if (extensionViewSettings) {
       const dialogViewSettings = {
-        viewPath: path.join(extension.extensionPath, extensionDefinedSettings.view.entry),
-        dimensions: {
-          width: extensionDefinedSettings.view.width,
-          height: extensionDefinedSettings.view.height
-        }
+        viewPath: path.join(extension.extensionPath, extensionViewSettings.entry),
+        width: extensionViewSettings.width,
+        height: extensionViewSettings.height
       }
 
       this.extensionSettingsDialog = new ExtensionSettingsDialog({

@@ -1,7 +1,6 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron')
 
 import { ReplayDetectionListener } from './detector/replayDetectionListener';
-import { HotkeyReplayDetector } from './detector/hotkeyReplayDetector';
 import { ReplayDetailsDialog } from "./entry/replayDetailsDialog"
 import { ConsoleUploader } from './uploader/consoleUploderExtension';
 import { ReplayDetailsEvents } from './entry/replayDetailsEvents';
@@ -26,8 +25,6 @@ const appSettingsStore = new AppSettings();
 const replayDialog = new ReplayDetailsDialog();
 const replaySaver = new ReplaySaver();
 const replayDetectionListener = new ReplayDetectionListener(replayDialog, replaySaver);
-
-const hotkeyReplayDetector = new HotkeyReplayDetector();
 
 const uploader = new ConsoleUploader();
 

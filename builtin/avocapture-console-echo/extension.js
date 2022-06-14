@@ -1,8 +1,4 @@
 class TestDetector {
-  // TODO need to figure out how to make an extensible module here
-  name() {
-    return "ConsoleEcho";
-  }
 
   register(listener) {
     console.log('[console-echo] register', listener);

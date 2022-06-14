@@ -1,6 +1,7 @@
 
 import { v4 as uuidv4 } from 'uuid';
 
+// TODO think about only making this a callback holder & hiding the prefix/etc
 export class ReplayDetectionListener {
 
   constructor(replayDialog, replaySaver) {
@@ -14,8 +15,8 @@ export class ReplayDetectionListener {
   }
 
   /**
-   * 
-   * @param {object} replayData
+   * Notifies this listener that a replay was detected
+   * @param {object} a replay data containing a fileName and filePath for the replay
    */
   detected(replayData) {
     const replayUuid = uuidv4();

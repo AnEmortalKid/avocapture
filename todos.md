@@ -35,3 +35,8 @@ plugin/
 
 ## extensions
 
+
+- remove need for avocapture.name and use name from package json
+- check required props
+
+- look into ability to `require` things that use `import/export`

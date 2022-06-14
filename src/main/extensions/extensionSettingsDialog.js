@@ -12,8 +12,8 @@ export class ExtensionSettingsDialog {
     const { name, settings, displaySettings } = extensionData;
 
     const settingsWindow = new BrowserWindow({
-      width: displaySettings.dimensions.width ?? 400,
-      height: displaySettings.dimensions.height ?? 400,
+      width: displaySettings.width ?? 400,
+      height: displaySettings.height ?? 400,
       frame: true,
       modal: false,
       titleBarOverlay: true,

@@ -47,6 +47,8 @@ function loadExtension(extensionPath) {
   // asume the extension has been installed
   let pjson = require(path.join(extensionPath, "package.json"));
 
+  // TODO check required info
+
   console.log(pjson);
   console.log(JSON.stringify(pjson.avocapture));
 

@@ -4,11 +4,6 @@
  */
 export class BaseExtension {
 
-  name() {
-    // todo maybe don't need if things export?
-    throw new Error("Unimplemented");
-  }
-
   /**
    * Initializes the state of the extension based on the given settings.
    * 

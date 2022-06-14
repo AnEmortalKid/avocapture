@@ -34,8 +34,6 @@ function bindToForm(data) {
     e.preventDefault();
   });
 
-
-
   const delayInput = document.getElementById(hotkeyDelay);
   delayInput.value = data.hotkeyDelayMS
 
