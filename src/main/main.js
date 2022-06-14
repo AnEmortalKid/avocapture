@@ -125,7 +125,6 @@ app.whenReady().then(() => {
 
   installBuiltins();
   extensionManager.loadInstalled();
-  extensionManager.tempPut(hotkeyAsExtension());
 
   replayDetectionListener.setPrefix(appSettings.prefix);
 

@@ -26,7 +26,7 @@ export class ExtensionSettingsDialog {
     })
     settingsWindow.setBackgroundColor("#d7dbe3");
     settingsWindow.setFullScreenable(false);
-    // settingsWindow.removeMenu();
+    settingsWindow.removeMenu();
 
     settingsWindow.loadURL(displaySettings.viewPath);
 

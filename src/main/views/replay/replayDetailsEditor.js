@@ -1,5 +1,9 @@
 const { ipcRenderer } = require("electron");
 
+function logOn(name, data) {
+  console.log(`Received [${name}]`, data ? data : "");
+}
+
 const replayId = "replay.uuid";
 const replayPrefix = "replay.prefix";
 const replayTitle = "replay.title";
@@ -46,8 +50,8 @@ function cancelForm() {
 }
 
 ipcRenderer.on("ReplayDetails.Dialog.Initialize", (event, data) => {
-  console.log("Received Entry.Initialize");
-  console.log(JSON.stringify(data));
+  logOn('ReplayDetails.Dialog.Initialize', data);
+
   bindToForm(data);
   bindButtons();
 });

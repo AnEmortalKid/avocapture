@@ -1,11 +1,8 @@
 import { app } from "electron";
-import { copyDirectory } from "./dirCopy";
-import NpmInstaller from "./npmInstaller";
-import copyAssets from "./assetCopier";
-const path = require("path");
 
+const execSync = require('child_process').execSync;
 const fs = require("fs");
-const npmInstaller = new NpmInstaller();
+const path = require("path");
 
 function semVerCompare(oldVer, newVer) {
   const oldChunks = oldVer.split('.').map(i => parseInt(i));
@@ -20,6 +17,36 @@ function semVerCompare(oldVer, newVer) {
 
   // everything is equal
   return 0;
+}
+
+function copyDirectory(source, destination) {
+  fs.mkdirSync(destination, { recursive: true });
+  fs.readdirSync(source, { withFileTypes: true }).forEach((entry) => {
+    let sourcePath = path.join(source, entry.name);
+    let destinationPath = path.join(destination, entry.name);
+
+    entry.isDirectory()
+      ? copyDirectory(sourcePath, destinationPath)
+      : fs.copyFileSync(sourcePath, destinationPath);
+  });
+}
+
+function copyAssets(installedExtensionPath) {
+  const assetPaths = ["css", "font-awesome-4.7.0"]
+  for (var assetPath of assetPaths) {
+    const assetDir = path.resolve(__dirname, assetPath);
+    const destinationPath = path.resolve(installedExtensionPath, "assets", assetPath);
+    copyDirectory(assetDir, destinationPath);
+  }
+}
+
+function nmpInstall(pluginPath) {
+  execSync('npm install', { cwd: pluginPath },
+    function (error, stdout, stderr) {
+      console.log(error);
+      console.log(stdout);
+      console.log(stderr);
+    })
 }
 
 
@@ -42,6 +69,6 @@ export default function installExtension(extensionPath) {
   }
 
   copyDirectory(extensionPath, installDestination);
-  npmInstaller.install(installDestination);
+  nmpInstall(installDestination);
   copyAssets(installDestination);
 }

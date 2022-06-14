@@ -33,10 +33,5 @@ plugin/
   module.js
 ```
 
-   - add a `none` option for selection
-- npm install extension modules
-
 ## extensions
 
-- Clean up extension installation
-- Move stray functions to single file

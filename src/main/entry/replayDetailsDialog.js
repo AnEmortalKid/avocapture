@@ -5,7 +5,6 @@ import { ReplayDetailsEvents } from "./replayDetailsEvents";
 export class ReplayDetailsDialog {
 
   create(contextData) {
-    // todo better state handling
     const entryWindow = new BrowserWindow({
       width: 800,
       height: 180,

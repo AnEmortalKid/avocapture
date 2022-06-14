@@ -23,15 +23,15 @@ export default class ExtensionManager {
   }
 
   /**
-   * must be called once app data is available
-   * @param {} filePath 
+   * Must be called once "app" is ready
+   * @param {filePath} extensionPath file path for the location of the extension
    */
   install(extensionPath) {
+    log('install', extensionPath);
     installExtension(extensionPath);
   }
 
   loadInstalled() {
-    // check both locations
     const destinationRoot = app.getPath("userData");
     const extensionsPath = path.join(destinationRoot, "extensions");
     this.loadExtensions(extensionsPath);
@@ -57,22 +57,6 @@ export default class ExtensionManager {
       if (extension.type() === "uploader") {
         this.uploaderNames.push(extensionData)
       }
-    }
-  }
-
-  // TODO temporary
-  tempPut(loadedExtension) {
-    this.extensions[loadedExtension.name()] = loadedExtension
-    extensionSettingsStore.setDefaults(loadedExtension.name(), loadedExtension.configuration.settings.defaults);
-    const extensionData = {
-      extensionName: loadedExtension.name(),
-      displayName: loadedExtension.display()
-    }
-    if (loadedExtension.type() === "detector") {
-      this.detectorNames.push(extensionData)
-    }
-    if (loadedExtension.type() === "uploader") {
-      this.uploaderNames.push(extensionData)
     }
   }
 
