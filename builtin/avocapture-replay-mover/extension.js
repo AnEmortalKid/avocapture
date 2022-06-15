@@ -44,3 +44,5 @@ class ReplayMover {
     throw new Error("Unimplemented");
   }
 }
+
+module.exports = ReplayMover

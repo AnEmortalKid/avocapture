@@ -35,11 +35,11 @@ plugin/
 
 ## extensions
 
-
-- remove need for avocapture.name and use name from package json
-- check required props
-
 - look into ability to `require` things that use `import/export`
+- Try an actual uploader / create `avocapture-replay-mover` as an uploader
 
--  Try an actual uploader / create `avocapture-replay-mover` as an uploader
 
+## Extension Manager App
+
+- Install extensions/Uninstall extensions
+- Show dithered extensions

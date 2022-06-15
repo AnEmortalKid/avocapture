@@ -75,34 +75,79 @@ An `uploader` uploads the replay to a desired destination. The uploader will be 
 * `fileName`: the name of the replay file, with extension.
 * `filePath`: the full path for the replay file
 
+### Exporting
+
+The extension module should by default export a class:
+
+```java
+class MyExtension {
+initialize(settings);
+teardown();
+notifyModifying();
+notifyModifyApply(newSettings);
+notifyModifyCancel();
+upload(replayData)
+}
+module.exports = MyExtension
+```
+
 ### Configuration
 
 An extension must define additional metadata in its `package.json` for Avocapture to load it. 
 
 The configuration is defined in an `avocapture` object and includes the following properties:
 
-* `name`: Name of your extension. Should be unique across all other extensions. Should not start with `avocapture`.
+* `name`: Name of your extension. 
+  * Should be unique across all other extensions. 
+  * Should not start with `avocapture`.
+  * *Required*
 * `type`: The extension type one of (`detector`,`uploader`)
-* `display`: A user friendly name for the extension. This item is visible in the ui. 
+  * *Required*
+* `display`: A user friendly name for the extension. This item is visible in the ui.
+  * *Required* 
+* `settings`: An object that defines both UI and extension settings. 
+  * *Required*
+
+Additional properties *required* from the `package.json`:
+
+* `main`: defines where the extension is exported from
+* `version`: defines the version of the extension, used when determining if an extension needs installed/updated.
+
+#### Settings
+
+* `defaults`: defines any default values needed for the extension to work out of the box
+* `view`: defines any UI related settings
+  * `entry`: a relative path to an HTML page where the extension's settings can be modified.
+  * `width`: the preferred width for the extension editor
+  * `height`: the preferred height for the extension editor
 
 
+_Sample fully defined avocapture object_
 ```json
 "avocapture": {
-    "name": "Name of your Extension",
+    "name": "My first extension",
     "type": "detector",
-    "display": "Search on Hotkey",
+    "display": "Detects with magic",
     "settings": {
       "defaults": {
-        "vKey": 111,
-        "browserName": "NumpadDivide",
-        "replayDirectory": "~/Videos",
-        "hotkeyDelayMS": 500
+        "useMagic": true,
+        "magicType": "secret"
       },
       "view": {
         "entry": "index.html",
-        "width": 500,
-        "height": 500
+        "width": 200,
+        "height": 200
       }
     }
   }
 ```
+
+## View
+
+TODO add view tips here
+
+The `builtins` directory has some sample extensions that can be referenced.
+
+## Developer Tips
+
+* Avocapture will check the version of the extension from the `package.json`. If your changes aren't being picked up, either bump the version or delete the `%APPDATA%/avocapture/extensions` directory for your extension.

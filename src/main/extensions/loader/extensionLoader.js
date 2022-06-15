@@ -43,14 +43,37 @@ function checkExtension(extension, name, type) {
 
 }
 
+function checkProperties(avocapture) {
+  const requiredProps = ["name", "display", "type"];
+
+  const missingProps = [];
+  for (const requiredProp of requiredProps) {
+    if (!avocapture[requiredProp]) {
+      missingProps.push(requiredProp);
+    }
+  }
+
+  if (missingProps.length > 0) {
+    throw new Error("Avocapture object is missing [" + missingProps + "]");
+  }
+}
+
 function loadExtension(extensionPath) {
+  // TODO what if it doesn't exist
   // asume the extension has been installed
+  const packagePath = path.join(extensionPath, "package.json");
+  if (!fs.existsSync(packagePath)) {
+    return null;
+  }
+
   let pjson = require(path.join(extensionPath, "package.json"));
+  console.log(JSON.stringify(pjson));
 
-  // TODO check required info
+  if (!pjson.avocapture) {
+    return null;
+  }
 
-  console.log(pjson);
-  console.log(JSON.stringify(pjson.avocapture));
+  checkProperties(pjson.avocapture);
 
   var ExtensionClass = require(path.join(extensionPath, pjson.main));
   var extensionInstance = new ExtensionClass();
@@ -67,9 +90,10 @@ export default class ExtensionLoader {
     var extensions = []
     for (var file of files) {
       if (file.isDirectory()) {
-        extensions.push(
-          loadExtension(path.join(directory, file.name))
-        )
+        const loadedExtension = loadExtension(path.join(directory, file.name));
+        if (loadedExtension) {
+          extensions.push(loadedExtension);
+        }
       }
     }
 
