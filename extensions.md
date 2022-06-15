@@ -68,3 +68,41 @@ register(listener) {
 }
 ```
 
+#### Uploader
+
+An `uploader` uploads the replay to a desired destination. The uploader will be called with an object containing:
+
+* `fileName`: the name of the replay file, with extension.
+* `filePath`: the full path for the replay file
+
+### Configuration
+
+An extension must define additional metadata in its `package.json` for Avocapture to load it. 
+
+The configuration is defined in an `avocapture` object and includes the following properties:
+
+* `name`: Name of your extension. Should be unique across all other extensions. Should not start with `avocapture`.
+* `type`: The extension type one of (`detector`,`uploader`)
+* `display`: A user friendly name for the extension. This item is visible in the ui. 
+
+
+```json
+"avocapture": {
+    "name": "Name of your Extension",
+    "type": "detector",
+    "display": "Search on Hotkey",
+    "settings": {
+      "defaults": {
+        "vKey": 111,
+        "browserName": "NumpadDivide",
+        "replayDirectory": "~/Videos",
+        "hotkeyDelayMS": 500
+      },
+      "view": {
+        "entry": "index.html",
+        "width": 500,
+        "height": 500
+      }
+    }
+  }
+```
