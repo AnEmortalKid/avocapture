@@ -67,7 +67,7 @@ function bindButtons() {
 function submitData() {
   const data = bindFromForm();
   // TODO disable/don't apply if invalid
-  ipcRenderer.send("ExtensionSettings.Apply", { extensionName: extensionName, settings: data });
+  ipcRenderer.send("ExtensionSettings.Apply", { settings: data });
 }
 
 function cancelForm() {

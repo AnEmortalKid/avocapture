@@ -22,8 +22,8 @@ export default class ExtensionSettingsApp {
 
   handleExtensionApply(event, data) {
     logOn(ExtensionEvents.EXTENSION_SETTINGS.APPLY, data);
+    this.extensionManager.applyEdit(this.editingContext, data.settings);
     this.editingContext = null;
-    this.extensionManager.applyEdit(data.extensionName, data.settings);
     this.extensionSettingsDialog.destroy();
   }
 

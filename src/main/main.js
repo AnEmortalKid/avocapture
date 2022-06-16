@@ -31,31 +31,6 @@ const uploader = new ConsoleUploader();
 const extensionManager = new ExtensionManager();
 const extensionsApp = new ExtensionSettingsApp(extensionManager);
 
-function hotkeyAsExtension() {
-  const avocaptureConfig = {
-    name: "hotkey-detector",
-    type: "detector",
-    display: "Hotkey",
-    settings: {
-      defaults: {
-        vKey: 111,
-        browserName: "NumpadDivide",
-        replayDirectory: path.join(userHomeDir, 'Videos'),
-        hotkeyDelayMS: 500
-      },
-      view: {
-        entry: "index.html",
-        width: 500,
-        height: 500
-      }
-    }
-  }
-
-  return new LoadedExtension(hotkeyReplayDetector, avocaptureConfig,
-    path.resolve(__dirname, "views", "hotkey")
-  );
-}
-
 function installBuiltins() {
   const builtIns = path.resolve(__dirname, "builtin");
   const files = fs.readdirSync(builtIns, { withFileTypes: true });
@@ -97,7 +72,7 @@ const createWindow = () => {
 
 app.on('window-all-closed', () => {
   console.log('tearing down');
-  hotkeyReplayDetector.teardown();
+  // TODO teardown active extensions
   if (process.platform !== 'darwin') app.quit()
 })
 

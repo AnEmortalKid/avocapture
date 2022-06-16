@@ -19,14 +19,18 @@ export class ExtensionSettingsDialog {
       titleBarOverlay: true,
       resizable: true,
       parent: parent,
+      // TODO figure this out
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: false,
+        sandbox: false
       },
     })
     settingsWindow.setBackgroundColor("#d7dbe3");
     settingsWindow.setFullScreenable(false);
-    settingsWindow.removeMenu();
+    if (process?.env?.NODE_ENV == 'production') {
+      settingsWindow.removeMenu();
+    }
 
     settingsWindow.loadURL(displaySettings.viewPath);
 

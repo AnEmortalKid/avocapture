@@ -144,10 +144,88 @@ _Sample fully defined avocapture object_
 
 ## View
 
-TODO add view tips here
+The `view` property is optional and defines a user interface where the extension's settings can be modified.
 
-The `builtins` directory has some sample extensions that can be referenced.
+### Entry
+
+The *required* `entry` property defines a relative path to an `html` file which defines a `form`.
+
+### Event System
+
+The `avocapture` application communicates with a side process which hosts your UI. It uses `ipc` to send and receive messages between the main application and your extension's page.
+
+When initializing your UI, the `ExtensionSettings.Initialize.your-extension-name` message will be sent with an object containing all the defined settings (or defaults if you defined defaults and no settings exist).
+
+When the extensions settings are finalized and should be saved, your UI should send the `ExtensionSettings.Apply` event with an object containing the new settings under a `settings` key:
+```json
+{
+  "settings": {
+    "yourProp": "yourvalue"
+  }
+}
+```
+
+If you provide an additional mechanism for closing the UI, without saving the settings, it should send the `ExtensionSettings.Cancel` event.
+
+### Styling
+
+A couple of `css` sheets will be copied relative to your extension's installation directory under an `assets` directory, which you can then link. You may also provide these with your extension if desired.
+
+They will be found at the following locations:
+
+```
+<link rel="stylesheet" href="./assets/css/w3.css" />
+<link rel="stylesheet" href="./assets/css/theme.css" />
+<link rel="stylesheet" href="./assets/font-awesome-4.7.0/css/font-awesome.min.css">
+```
+
+This is the same styling the rest of the application uses.
+
+### Layout
+
+The provided extensions follow a `header, form, footer` layout, which you can copy to keep the styling consistent:
+
+```html
+<header class="w3-container w3-theme-l4 w3-card">
+  <h4 class="w3-center">Hotkey Settings</h4>
+</header>
+
+<div id="form-container" class="w3-theme-l4">
+  <form class="w3-container" onsubmit="submitData()">
+
+    <div class="w3-container w3-section">
+      <div class="w3-row w3-third">
+        <label>Hotkey</label>
+      </div>
+      <div class="w3-row">
+        <input id="hotkey.selected" class="w3-input w3-border" type="text" placeholder="Prefix">
+      </div>
+    </div>
+
+    <input type="submit" hidden />
+  </form>
+</div>
+
+<footer class="w3-container w3-padding w3-theme-l4">
+  <div class="w3-bar w3-center">
+    <button class="w3-button w3-round w3-theme-action" id="entry-apply-btn">Apply</button>
+    <button class="w3-button w3-round w3-theme-action" id="entry-cancel-btn">Close</button>
+  </div>
+</footer>
+```
+
+### Renderer
+
+Your extension's UI runs in a `Browser` window and is effectively a [renderer](https://www.electronjs.org/docs/latest/glossary#renderer-process) in electron. 
+
+For now, you are able to use the `ipcRenderer` module from your UI's javascript context:
+```
+const { ipcRenderer } = require("electron");
+```
+
+:warning: This will change in the future
 
 ## Developer Tips
 
+* The `builtins` directory has some sample extensions that can be referenced.
 * Avocapture will check the version of the extension from the `package.json`. If your changes aren't being picked up, either bump the version or delete the `%APPDATA%/avocapture/extensions` directory for your extension.
