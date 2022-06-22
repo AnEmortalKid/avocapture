@@ -44,7 +44,7 @@ function checkExtension(extension, name, type) {
 }
 
 function checkProperties(avocapture) {
-  const requiredProps = ["name", "display", "type"];
+  const requiredProps = ["name", "display", "type", "settings"];
 
   const missingProps = [];
   for (const requiredProp of requiredProps) {
@@ -59,7 +59,6 @@ function checkProperties(avocapture) {
 }
 
 function loadExtension(extensionPath) {
-  // TODO what if it doesn't exist
   // asume the extension has been installed
   const packagePath = path.join(extensionPath, "package.json");
   if (!fs.existsSync(packagePath)) {

@@ -1,4 +1,5 @@
 import { app } from "electron";
+import { isAvocaptureDebug } from "../../util/processInfo";
 
 const execSync = require('child_process').execSync;
 const fs = require("fs");
@@ -51,13 +52,12 @@ function nmpInstall(pluginPath) {
 
 
 export default function installExtension(extensionPath) {
-
   const destinationRoot = app.getPath("userData");
   const extensionDir = path.basename(extensionPath);
-  // TODO support load from extensionPath for DEV debug
   const installDestination = path.join(destinationRoot, "extensions", extensionDir);
 
-  if (fs.existsSync(installDestination)) {
+  // disable comparison in debug mode
+  if (!isAvocaptureDebug() && fs.existsSync(installDestination)) {
     const oldPackage = JSON.parse(fs.readFileSync(path.join(installDestination, 'package.json')))
     const newPackage = JSON.parse(fs.readFileSync(path.join(extensionPath, 'package.json')))
 

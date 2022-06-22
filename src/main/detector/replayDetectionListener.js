@@ -1,7 +1,6 @@
 
 import { v4 as uuidv4 } from 'uuid';
 
-// TODO think about only making this a callback holder & hiding the prefix/etc
 export class ReplayDetectionListener {
 
   constructor(replayDialog, replaySaver) {

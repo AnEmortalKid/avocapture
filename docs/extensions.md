@@ -228,4 +228,7 @@ const { ipcRenderer } = require("electron");
 ## Developer Tips
 
 * The `builtins` directory has some sample extensions that can be referenced.
-* Avocapture will check the version of the extension from the `package.json`. If your changes aren't being picked up, either bump the version or delete the `%APPDATA%/avocapture/extensions` directory for your extension.
+* Avocapture will check the version of the extension from the `package.json`. If your changes aren't being picked up:
+  * Run the app with an `AVOCAPTURE_DEBUG` environment variable set to `true` to skip version checking.
+  * either bump the version 
+  * delete the `%APPDATA%/avocapture/extensions` directory for your extension.

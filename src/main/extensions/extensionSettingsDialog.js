@@ -1,5 +1,5 @@
 import { BrowserWindow } from "electron"
-import *  as path from "path"
+import { isProduction } from "../util/processInfo";
 
 // TODO extend browser window??
 export class ExtensionSettingsDialog {
@@ -19,7 +19,7 @@ export class ExtensionSettingsDialog {
       titleBarOverlay: true,
       resizable: true,
       parent: parent,
-      // TODO figure this out
+      // TODO figure this out with sandboxing
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: false,
@@ -28,7 +28,7 @@ export class ExtensionSettingsDialog {
     })
     settingsWindow.setBackgroundColor("#d7dbe3");
     settingsWindow.setFullScreenable(false);
-    if (process?.env?.NODE_ENV == 'production') {
+    if (isProduction()) {
       settingsWindow.removeMenu();
     }
 
