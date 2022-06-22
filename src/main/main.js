@@ -6,7 +6,6 @@ import { ConsoleUploader } from './uploader/consoleUploderExtension';
 import { ReplayDetailsEvents } from './entry/replayDetailsEvents';
 import { ReplaySaver } from './saver/replaySaver';
 import { AppSettings } from './settings/appSettings';
-import LoadedExtension from './extensions/loader/loadedExtension';
 import ExtensionManager from './extensions/extensionManager';
 import ExtensionSettingsApp from './extensions/extensionSettingsApp';
 import logOn from './logger/eventLogger';

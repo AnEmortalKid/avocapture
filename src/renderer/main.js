@@ -2,21 +2,27 @@ console.log(
   '👋 This message is being logged by "renderer.js", included via webpack'
 );
 
-
 const ipcRenderer = window.require('electron').ipcRenderer;
 const prefixInput = document.getElementById("app.prefix");
 const detectorSelection = document.getElementById("detector.name");
+const detectorSettings = document.getElementById("detector.settings");
 const uploaderSelection = document.getElementById("uploader.name");
+const uploaderSettings = document.getElementById("uploader.settings");
 
 function logOn(name, data) {
   console.log(`Received [${name}]`, data);
 }
 
-document.getElementById("detector.settings").onclick = () => {
-  const selected = detectorSelection.options[detectorSelection.selectedIndex];
-  const name = selected.dataset.extensionName;
-  ipcRenderer.send("ExtensionSettings.Initialize", { extensionName: name });
+function addInitializeSettingsClickListener(button, select) {
+  button.onclick = () => {
+    const selected = select.options[select.selectedIndex];
+    const name = selected.dataset.extensionName;
+    ipcRenderer.send("ExtensionSettings.Initialize", { extensionName: name });
+  };
 }
+
+addInitializeSettingsClickListener(detectorSettings, detectorSelection);
+addInitializeSettingsClickListener(uploaderSettings, uploaderSelection);
 
 function createSelectOption(extensionName, displayName) {
   /* <option value="hotkey" data-extension-name="hotkey-detector">Second</option> */
@@ -38,6 +44,17 @@ function addDetectors(settings) {
   }
 }
 
+function addUploaders(settings) {
+  const selectedUploader = settings.extensions?.selected?.uploader;
+  for (var uploaderOption of settings.uploaders) {
+    const option = createSelectOption(uploaderOption.extensionName, uploaderOption.displayName);
+    uploaderSelection.appendChild(option);
+    if (selectedUploader == uploaderOption.extensionName) {
+      option.selected = true;
+    }
+  }
+}
+
 function bindToUI(settings) {
   prefixInput.value = settings.prefix;
 
@@ -46,14 +63,19 @@ function bindToUI(settings) {
   });
 
   addDetectors(settings);
-
+  addUploaders(settings);
 }
 
-detectorSelection.addEventListener('change', () => {
-  const selected = detectorSelection.options[detectorSelection.selectedIndex];
-  const name = selected.dataset.extensionName;
-  ipcRenderer.send('AppSettings.Extension.Select', { type: 'detector', name: name });
-});
+function addChangeListener(type, selection) {
+  selection.addEventListener('change', () => {
+    const selected = selection.options[selection.selectedIndex];
+    const name = selected.dataset.extensionName;
+    ipcRenderer.send('AppSettings.Extension.Select', { type: type, name: name });
+  });
+}
+
+addChangeListener('detector', detectorSelection);
+addChangeListener('uploader', uploaderSelection);
 
 ipcRenderer.on("ReplayDetails.Add", (event, data) => {
   logOn("ReplayDetails.Add", data);
