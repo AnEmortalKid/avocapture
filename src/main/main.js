@@ -25,8 +25,6 @@ const replayDialog = new ReplayDetailsDialog();
 const replaySaver = new ReplaySaver();
 const replayDetectionListener = new ReplayDetectionListener(replayDialog, replaySaver);
 
-const uploader = new ConsoleUploader();
-
 const extensionManager = new ExtensionManager();
 const extensionsApp = new ExtensionSettingsApp(extensionManager);
 
@@ -121,9 +119,16 @@ ipcMain.on(ReplayDetailsEvents.DIALOG.APPLY, (event, data) => {
   logOn(ReplayDetailsEvents.DIALOG.APPLY, data);
 
   replayDialog.destroy();
-  notifyUploader(data);
   replaySaver.setTitle(data);
-  mainWindow.webContents.send("ReplayDetails.Add", replaySaver.getReplayData(data.replayUuid));
+  const replayData = replaySaver.getReplayData(data.replayUuid);
+
+  // get uploader extension
+  const selectedUploader = appSettingsStore.get('extensions.selected.uploader');
+  if (selectedUploader) {
+    extensionManager.getExtension(selectedUploader).instance.upload(replayData);
+  }
+
+  mainWindow.webContents.send("ReplayDetails.Add", replayData);
 });
 
 ipcMain.on(AppEvents.SETTINGS.APPLY, (event, data) => {

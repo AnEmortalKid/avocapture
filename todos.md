@@ -36,7 +36,6 @@ plugin/
 ## extensions
 
 - look into ability to `require` things that use `import/export`
-- Try an actual uploader / create `avocapture-replay-mover` as an uploader
 
 ## UI
 

@@ -54,6 +54,7 @@ export default function installExtension(extensionPath) {
 
   const destinationRoot = app.getPath("userData");
   const extensionDir = path.basename(extensionPath);
+  // TODO support load from extensionPath for DEV debug
   const installDestination = path.join(destinationRoot, "extensions", extensionDir);
 
   if (fs.existsSync(installDestination)) {

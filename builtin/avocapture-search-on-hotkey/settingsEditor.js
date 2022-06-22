@@ -13,7 +13,7 @@ var nextHotkey = {
 }
 
 document.getElementById("hotkey.replayLocation.button").addEventListener('click', () => {
-  ipcRenderer.send('AppActions.SelectDirectory', { replyMsg: "hotkey-dector.selected.directory" })
+  ipcRenderer.send('AppActions.SelectDirectory')
 });
 
 function bindToForm(data) {
