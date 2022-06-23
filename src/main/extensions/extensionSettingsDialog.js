@@ -11,6 +11,7 @@ export class ExtensionSettingsDialog {
   constructor(extensionData, parent, cancelCallback) {
     const { name, settings, displaySettings } = extensionData;
 
+    // TODO change mode with modal and frame
     const settingsWindow = new BrowserWindow({
       width: displaySettings.width ?? 400,
       height: displaySettings.height ?? 400,

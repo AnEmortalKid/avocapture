@@ -5,7 +5,9 @@ export const ExtensionEvents = {
     INITIALIZE: "ExtensionSettings.Initialize",
     MODIFY: "ExtensionSettings.Modify"
   },
-  ACTIONS: {
-    SELECT_DIRECTORY: "select-directory"
+  EXTENSION_MANAGEMENT: {
+    INITIALIZE: "ExtensionManagement.Initialize",
+    UNINSTALL: "ExtensionManagement.Unintstall",
+    INSTALL: "ExtensionManagement.Intstall"
   }
 }

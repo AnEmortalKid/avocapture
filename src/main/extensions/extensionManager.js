@@ -2,14 +2,13 @@ import { app } from "electron";
 import ExtensionLoader from "./loader/extensionLoader";
 import { ExtensionSettingsStore } from "../settings/extensionSettings";
 import installExtension from "./installer/extensionInstaller";
+import Logger from "../logger/logger";
 const path = require("path")
 
 const extensionLoader = new ExtensionLoader();
 const extensionSettingsStore = new ExtensionSettingsStore();
 
-function log(method, msg) {
-  console.log(`[ExtensionManager.${method}]`, msg);
-}
+const logger = new Logger('ExtensionManager');
 
 /**
  * Manages the lifecycle of extensions
@@ -17,7 +16,6 @@ function log(method, msg) {
 export default class ExtensionManager {
   constructor() {
     this.extensions = {}
-    this.extensionsByType = {}
     this.detectorNames = [];
     this.uploaderNames = [];
   }
@@ -27,7 +25,7 @@ export default class ExtensionManager {
    * @param {filePath} extensionPath file path for the location of the extension
    */
   install(extensionPath) {
-    log('install', extensionPath);
+    logger.logMethod('install', extensionPath);
     installExtension(extensionPath);
   }
 
@@ -38,8 +36,7 @@ export default class ExtensionManager {
   }
 
   loadExtensions(filePath) {
-
-    log('loadExtensions', filePath);
+    logger.logMethod('loadExtensions', filePath);
     const loaded = extensionLoader.loadExtensions(filePath);
     for (var extension of loaded) {
       this.extensions[extension.name()] = extension
@@ -71,6 +68,10 @@ export default class ExtensionManager {
     }
   }
 
+  getExtensions() {
+    return Object.keys(this.extensions);
+  }
+
   getExtension(extensionName) {
     return this.extensions[extensionName]
   }
@@ -80,34 +81,34 @@ export default class ExtensionManager {
   }
 
   activate(extensionName) {
-    log('activate', extensionName);
+    logger.logMethod('activate', extensionName);
     const settings = extensionSettingsStore.get(extensionName);
     const instance = this.extensions[extensionName].instance
     instance.initialize(settings);
   }
 
   deactivate(extensionName) {
-    log('deactivate', extensionName);
+    logger.logMethod('deactivate', extensionName);
     const instance = this.extensions[extensionName].instance
     instance.teardown()
   }
 
   edit(extensionName) {
-    log('edit', extensionName);
+    logger.logMethod('edit', extensionName);
     const instance = this.extensions[extensionName].instance
     instance.notifyModifying()
     this.editingContext = extensionName
   }
 
   applyEdit(extensionName, newSettings) {
-    log('applyEdit', extensionName);
+    logger.logMethod('applyEdit', extensionName);
     const instance = this.extensions[extensionName].instance
     extensionSettingsStore.save(extensionName, newSettings);
     instance.notifyModifyApply(newSettings);
   }
 
   cancelEdit(extensionName) {
-    log('cancelEdit', extensionName);
+    logger.logMethod('cancelEdit', extensionName);
     const instance = this.extensions[extensionName].instance
     instance.notifyModifyCancel();
   }

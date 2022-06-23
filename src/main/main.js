@@ -2,7 +2,6 @@ const { app, BrowserWindow, ipcMain, dialog, Menu, MenuItem } = require('electro
 
 import { ReplayDetectionListener } from './detector/replayDetectionListener';
 import { ReplayDetailsDialog } from "./entry/replayDetailsDialog"
-import { ConsoleUploader } from './uploader/consoleUploderExtension';
 import { ReplayDetailsEvents } from './entry/replayDetailsEvents';
 import { ReplaySaver } from './saver/replaySaver';
 import { AppSettings } from './settings/appSettings';
@@ -10,6 +9,7 @@ import ExtensionManager from './extensions/extensionManager';
 import ExtensionSettingsApp from './extensions/extensionSettingsApp';
 import logOn from './logger/eventLogger';
 import { AppEvents } from './events/appEvents';
+import ExtensionManagementApp from './extensions/management/extensionManagementApp';
 
 
 const isMac = process.platform === 'darwin'
@@ -29,6 +29,7 @@ const replayDetectionListener = new ReplayDetectionListener(replayDialog, replay
 
 const extensionManager = new ExtensionManager();
 const extensionsApp = new ExtensionSettingsApp(extensionManager);
+const extensionManagementApp = new ExtensionManagementApp(extensionManager);
 
 function installBuiltins() {
   const builtIns = path.resolve(__dirname, "builtin");
@@ -81,8 +82,8 @@ const createWindow = () => {
 
   const item = new MenuItem({
     label: "Extensions",
-    click: (mi, bw, e) => {
-      console.log("GROMCH");
+    click: (MenuItem, browserWindow, event) => {
+      extensionManagementApp.manage(browserWindow);
     }
   });
 
