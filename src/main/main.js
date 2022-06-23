@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron')
+const { app, BrowserWindow, ipcMain, dialog, Menu, MenuItem } = require('electron')
 
 import { ReplayDetectionListener } from './detector/replayDetectionListener';
 import { ReplayDetailsDialog } from "./entry/replayDetailsDialog"
@@ -11,6 +11,8 @@ import ExtensionSettingsApp from './extensions/extensionSettingsApp';
 import logOn from './logger/eventLogger';
 import { AppEvents } from './events/appEvents';
 
+
+const isMac = process.platform === 'darwin'
 
 const path = require('path')
 const fs = require('fs');
@@ -63,6 +65,30 @@ const createWindow = () => {
   mainWindow.setIcon(
     path.resolve(__dirname, "images", "logo_256.png")
   );
+
+  // TODO revisit app menu
+  // Mayhaps layout
+  // File -> Exit
+  // Extensions -> Manage | Settings (to change active ones)
+  const appMenu = new Menu();
+
+  const fileItems = new MenuItem({
+    label: 'File',
+    submenu: [
+      isMac ? { role: 'close' } : { role: 'quit' }
+    ]
+  });
+
+  const item = new MenuItem({
+    label: "Extensions",
+    click: (mi, bw, e) => {
+      console.log("GROMCH");
+    }
+  });
+
+  appMenu.append(fileItems);
+  appMenu.append(item);
+  Menu.setApplicationMenu(appMenu);
 
   extensionsApp.setMainWindow(mainWindow);
 }
