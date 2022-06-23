@@ -225,6 +225,12 @@ const { ipcRenderer } = require("electron");
 
 :warning: This will change in the future
 
+### Storage
+
+* This application uses [electron-store](https://github.com/sindresorhus/electron-store) with some customization.
+* Your extension's settings will be stored under `%APPDATA%/avocapture/settings/your-extension-name.json`. 
+
+
 ## Developer Tips
 
 * The `builtins` directory has some sample extensions that can be referenced.

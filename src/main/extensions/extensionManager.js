@@ -43,8 +43,9 @@ export default class ExtensionManager {
     const loaded = extensionLoader.loadExtensions(filePath);
     for (var extension of loaded) {
       this.extensions[extension.name()] = extension
-      // TODO what if we have to migrate
-      // TODO separate extension stores by name https://github.com/sindresorhus/electron-store#name
+
+      // TODO pass in migrations object
+      extensionSettingsStore.initialize(extension.name());
       extensionSettingsStore.setDefaults(extension.name(), extension.configuration.settings?.defaults);
 
       const extensionData = {

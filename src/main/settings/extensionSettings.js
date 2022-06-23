@@ -1,23 +1,36 @@
-import toKeyPath from './settingsKeyUtil';
-
 const Store = require('electron-store');
-const store = new Store();
-const settingsSubKey = 'extensions';
 
 export class ExtensionSettingsStore {
 
+  constructor() {
+    this.storesByExtensionName = new Map();
+  }
+
+  _getStore(extensionName) {
+    return this.storesByExtensionName.get(extensionName);
+  }
+
+  initialize(extensionName) {
+    // TODO support migrations
+    const storeOpts = { name: extensionName, cwd: 'settings' };
+    const extStore = new Store(storeOpts);
+    this.storesByExtensionName.set(extensionName, extStore);
+  }
+
   get(extensionName) {
-    const defaults = store.get(toKeyPath(settingsSubKey, extensionName, 'defaults'));
-    return store.get(toKeyPath(settingsSubKey, extensionName, 'settings'), defaults ? defaults : {});
+    const store = this._getStore(extensionName);
+    const defaults = store.get('defaults');
+    return store.get('settings'), defaults ? defaults : {};
   }
 
   save(extensionName, newSettings) {
-    const keyPath = toKeyPath(settingsSubKey, extensionName, 'settings')
-    store.set(keyPath, newSettings);
+    const store = this._getStore(extensionName);
+    store.set('settings', newSettings);
   }
 
   setDefaults(extensionName, defaults) {
-    store.delete(toKeyPath(settingsSubKey, extensionName, 'defaults'));
-    store.set(toKeyPath(settingsSubKey, extensionName, 'defaults'), defaults ? defaults : {});
+    const store = this._getStore(extensionName);
+    store.delete('defaults');
+    store.set('defaults', defaults ? defaults : {});
   }
 }

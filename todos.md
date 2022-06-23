@@ -50,8 +50,3 @@ plugin/
 ## HotkeyDetector
 
 - OBS seems to not save the replay buffer until after the timeout expires? maybe we need to do a rename -> then apply rename to the detected file?
-
-
-## Extension Settings
-
-- Split stores by name, both for extensions and app
