@@ -4,9 +4,9 @@ function logOn(name, data) {
   console.log(`Received [${name}]`, data ? data : "");
 }
 
-const replayId = "replay.uuid";
-const replayPrefix = "replay.prefix";
-const replayTitle = "replay.title";
+const replayIdInput = document.getElementById('replay.uuid');
+const replayPrefixInput = document.getElementById('replay.prefix');
+const replayTitleInput = document.getElementById('replay.title');
 
 function cleaner(str) {
   return str.replaceAll("\\", "")
@@ -17,19 +17,20 @@ function cleaner(str) {
 function bindToForm(data) {
   const { prefix, replayUuid } = data;
 
-  document.getElementById(replayId).value = replayUuid;
-  document.getElementById(replayPrefix).value = prefix;
-  document.getElementById(replayTitle).focus();
+  replayIdInput.value = replayUuid;
+  replayPrefixInput.value = prefix;
+  replayTitleInput.value = ""
+  replayTitleInput.focus();
 }
 
 function bindFromForm() {
-  const cleanTitle = cleaner(document.getElementById(replayTitle).value)
-  const cleanPrefix = cleaner(document.getElementById(replayPrefix).value)
+  const cleanTitle = cleaner(replayTitleInput.value)
+  const cleanPrefix = cleaner(replayPrefixInput.value)
 
   return {
     prefix: cleanPrefix,
     title: cleanTitle,
-    replayUuid: document.getElementById(replayId).value
+    replayUuid: replayIdInput.value
   }
 }
 

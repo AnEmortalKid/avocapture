@@ -59,7 +59,7 @@ export default class ExtensionManager {
     }
   }
 
-  getExtensions(type) {
+  getExtensionsOfType(type) {
     if (type === "detector") {
       return this.detectorNames
     }

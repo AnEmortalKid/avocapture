@@ -2,7 +2,9 @@ import { ExtensionEvents } from "./extensionEvents";
 import { ExtensionSettingsDialog } from "./extensionSettingsDialog";
 import path from "path";
 import { ipcMain } from "electron";
-import logOn from "../logger/eventLogger";
+import Logger from "../logger/logger";
+
+const logger = new Logger("ExtensionSettingsApp");
 
 /**
  * Responsible for managing the interaction between a user and an extension's settings
@@ -21,21 +23,21 @@ export default class ExtensionSettingsApp {
   }
 
   handleExtensionApply(event, data) {
-    logOn(ExtensionEvents.EXTENSION_SETTINGS.APPLY, data);
+    logger.logEvent(ExtensionEvents.EXTENSION_SETTINGS.APPLY, data);
     this.extensionManager.applyEdit(this.editingContext, data.settings);
     this.editingContext = null;
     this.extensionSettingsDialog.destroy();
   }
 
   handleExtensionCancel(event, data) {
-    logOn(ExtensionEvents.EXTENSION_SETTINGS.CANCEL);
+    logger.logEvent(ExtensionEvents.EXTENSION_SETTINGS.CANCEL);
     this.extensionManager.cancelEdit(this.editingContext);
     this.editingContext = null;
     this.extensionSettingsDialog.destroy();
   }
 
   extensionDialogClose() {
-    logOn('ExtensionSettingsDialog.CloseFrame');
+    logger.logMethod('extensionDialogClose');
     // nothing has acted on it, cancel the state
     if (this.editingContext) {
       this.extensionManager.cancelEdit(this.editingContext);
@@ -44,7 +46,7 @@ export default class ExtensionSettingsApp {
   }
 
   handleExtensionEdit(event, data) {
-    logOn(ExtensionEvents.EXTENSION_SETTINGS.INITIALIZE, data);
+    logger.logEvent(ExtensionEvents.EXTENSION_SETTINGS.EDIT, data);
 
     const extensionName = data.extensionName;
     const extension = this.extensionManager.getExtension(extensionName);
@@ -73,7 +75,7 @@ export default class ExtensionSettingsApp {
   registerEvents() {
     ipcMain.on(ExtensionEvents.EXTENSION_SETTINGS.APPLY, this.handleExtensionApply.bind(this));
     ipcMain.on(ExtensionEvents.EXTENSION_SETTINGS.CANCEL, this.handleExtensionCancel.bind(this));
-    ipcMain.on(ExtensionEvents.EXTENSION_SETTINGS.INITIALIZE, this.handleExtensionEdit.bind(this));
+    ipcMain.on(ExtensionEvents.EXTENSION_SETTINGS.EDIT, this.handleExtensionEdit.bind(this));
   }
 
 }

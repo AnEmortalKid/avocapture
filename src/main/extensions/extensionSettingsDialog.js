@@ -1,5 +1,6 @@
 import { BrowserWindow } from "electron"
 import { isProduction } from "../util/processInfo";
+import { ExtensionEvents } from "./extensionEvents";
 
 // TODO extend browser window??
 export class ExtensionSettingsDialog {
@@ -27,6 +28,8 @@ export class ExtensionSettingsDialog {
         sandbox: false
       },
     })
+    // TODO can we load a preload with an 'api'?
+
     settingsWindow.setBackgroundColor("#d7dbe3");
     settingsWindow.setFullScreenable(false);
     if (isProduction()) {
@@ -36,7 +39,7 @@ export class ExtensionSettingsDialog {
     settingsWindow.loadURL(displaySettings.viewPath);
 
     settingsWindow.once("ready-to-show", () => {
-      settingsWindow.webContents.send("ExtensionSettings.Initialize." + name, settings);
+      settingsWindow.webContents.send(ExtensionEvents.EXTENSION_SETTINGS.INITIALIZE_PREFIX + name, settings);
       settingsWindow.show();
     });
 

@@ -17,7 +17,7 @@ function addInitializeSettingsClickListener(button, select) {
   button.onclick = () => {
     const selected = select.options[select.selectedIndex];
     const name = selected.dataset.extensionName;
-    ipcRenderer.send("ExtensionSettings.Initialize", { extensionName: name });
+    ipcRenderer.send("ExtensionSettings.Edit", { extensionName: name });
   };
 }
 

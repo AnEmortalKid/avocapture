@@ -15,6 +15,7 @@
 - Install extensions/Uninstall extensions
 - Show dithered extensions
 
-## HotkeyDetector
 
-- OBS seems to not save the replay buffer until after the timeout expires? maybe we need to do a rename -> then apply rename to the detected file?
+## Replay Entry
+
+- UI lags sometimes, consider not re-creating window and instead re-initializing state

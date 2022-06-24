@@ -10,16 +10,13 @@ import ExtensionSettingsApp from './extensions/extensionSettingsApp';
 import logOn from './logger/eventLogger';
 import { AppEvents } from './events/appEvents';
 import ExtensionManagementApp from './extensions/management/extensionManagementApp';
+import { isProduction } from './util/processInfo';
 
 
 const isMac = process.platform === 'darwin'
 
 const path = require('path')
 const fs = require('fs');
-
-const os = require("os");
-const userHomeDir = os.homedir();
-
 
 const appSettingsStore = new AppSettings();
 
@@ -40,10 +37,6 @@ function installBuiltins() {
       extensionManager.install(path.join(builtIns, file.name))
     }
   }
-}
-
-function notifyUploader(data) {
-  uploader.upload(data);
 }
 
 let mainWindow;
@@ -87,8 +80,18 @@ const createWindow = () => {
     }
   });
 
+  const view = new MenuItem({
+    label: 'View',
+    submenu: [
+      { role: 'toggleDevTools' }
+    ]
+  });
+
   appMenu.append(fileItems);
   appMenu.append(item);
+  if (!isProduction()) {
+    appMenu.append(view);
+  }
   Menu.setApplicationMenu(appMenu);
 
   extensionsApp.setMainWindow(mainWindow);
@@ -97,21 +100,26 @@ const createWindow = () => {
 app.on('window-all-closed', () => {
   console.log('tearing down');
   // TODO teardown active extensions
-  if (process.platform !== 'darwin') app.quit()
+  if (process.platform !== 'darwin') {
+    replayDialog.destroy();
+    app.quit()
+  }
 })
 
 app.whenReady().then(() => {
   createWindow()
 
   app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow()
+    }
   })
 
   const appSettings = appSettingsStore.getAll();
   const currSettings = {
     ...appSettings,
-    detectors: extensionManager.getExtensions("detector"),
-    uploaders: extensionManager.getExtensions("uploader")
+    detectors: extensionManager.getExtensionsOfType("detector"),
+    uploaders: extensionManager.getExtensionsOfType("uploader")
   }
 
   mainWindow.webContents.on('did-finish-load', () => {
@@ -139,13 +147,13 @@ app.whenReady().then(() => {
 
 ipcMain.on(ReplayDetailsEvents.DIALOG.CANCEL, (event, data) => {
   logOn(ReplayDetailsEvents.DIALOG.CANCEL, data);
-  replayDialog.destroy();
+  replayDialog.hide();
 });
 
 ipcMain.on(ReplayDetailsEvents.DIALOG.APPLY, (event, data) => {
   logOn(ReplayDetailsEvents.DIALOG.APPLY, data);
 
-  replayDialog.destroy();
+  replayDialog.hide();
   replaySaver.setTitle(data);
   const replayData = replaySaver.getReplayData(data.replayUuid);
 
@@ -155,7 +163,7 @@ ipcMain.on(ReplayDetailsEvents.DIALOG.APPLY, (event, data) => {
     extensionManager.getExtension(selectedUploader).instance.upload(replayData);
   }
 
-  mainWindow.webContents.send("ReplayDetails.Add", replayData);
+  mainWindow.webContents.send(ReplayDetailsEvents.APP.ADD, replayData);
 });
 
 ipcMain.on(AppEvents.SETTINGS.APPLY, (event, data) => {

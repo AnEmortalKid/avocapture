@@ -1,10 +1,9 @@
+import Logger from '../logger/logger';
+
 const fs = require('fs');
 const path = require('path');
 
-
-function log(msg) {
-  console.log('[ReplaySaver] ', msg);
-}
+const logger = new Logger("ReplaySaver");
 
 /**
  * Gorified map that keeps track of the replay files + names to rename
@@ -16,7 +15,7 @@ export class ReplaySaver {
   }
 
   storeReplay(replayData) {
-    log(`Storing replay ${replayData}`)
+    logger.log(`Storing replay ${JSON.stringify(replayData)}`)
     this.replayMap.set(replayData.replayUuid, replayData);
   }
 
@@ -24,17 +23,18 @@ export class ReplaySaver {
     const entry = this.replayMap.get(titleData.replayUuid);
     var finalTitle = titleData.prefix + " " + titleData.title;
     finalTitle = finalTitle.trim();
-    log(`Setting replay title to ${finalTitle}`)
+    logger.log(`Setting replay title to ${finalTitle}`)
     entry.title = finalTitle;
 
     const extension = path.extname(entry.filePath);
     const newFilePath = path.join(path.dirname(entry.filePath), entry.title + extension)
-    log(`Moving ${entry.filePath} to ${newFilePath}`)
+    logger.log(`Moving ${entry.filePath} to ${newFilePath}`)
     fs.renameSync(
       entry.filePath,
       newFilePath
     );
     entry.filePath = newFilePath;
+    entry.fileName = entry.title + extension;
   }
 
   getReplayData(replayUuid) {

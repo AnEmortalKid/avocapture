@@ -20,7 +20,7 @@ export class ExtensionSettingsStore {
   get(extensionName) {
     const store = this._getStore(extensionName);
     const defaults = store.get('defaults');
-    return store.get('settings'), defaults ? defaults : {};
+    return store.get('settings', defaults ? defaults : {});
   }
 
   save(extensionName, newSettings) {

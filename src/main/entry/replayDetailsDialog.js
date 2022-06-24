@@ -4,13 +4,14 @@ import { ReplayDetailsEvents } from "./replayDetailsEvents";
 
 export class ReplayDetailsDialog {
 
-  create(contextData) {
+  _create(settings) {
     const entryWindow = new BrowserWindow({
       width: 800,
       height: 180,
       frame: false,
       titleBarOverlay: true,
       resizable: false,
+      show: false,
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: false,
@@ -20,29 +21,48 @@ export class ReplayDetailsDialog {
     entryWindow.setAlwaysOnTop(true, "screen-saver");
     entryWindow.setVisibleOnAllWorkspaces(true);
     entryWindow.setFullScreenable(false);
-    entryWindow.setTitle("Entry");
 
     entryWindow.loadURL(
       path.resolve(__dirname, "views", "replay", "index.html")
     );
 
     entryWindow.once("ready-to-show", () => {
-      entryWindow.webContents.on("before-input-event", (event, input) => {
-        if (input.key == "Escape") {
-          entryWindow.destroy();
-        }
-      });
-
-      entryWindow.webContents.send(ReplayDetailsEvents.DIALOG.INITIALIZE, contextData);
+      entryWindow.webContents.on("before-input-event", this.handleBeforeInputEvent.bind(this));
+      entryWindow.webContents.send(ReplayDetailsEvents.DIALOG.INITIALIZE, settings);
       entryWindow.moveTop();
       entryWindow.show();
       entryWindow.focus();
     });
 
-    this.entryWindow = entryWindow;
+    return entryWindow;
+  }
+
+  handleBeforeInputEvent(event, input) {
+    if (input.key == "Escape") {
+      this.entryWindow.hide();
+    }
+  }
+
+  show(settings) {
+    if (!this.entryWindow) {
+      this.entryWindow = this._create(settings);
+    }
+    else {
+      this.entryWindow.webContents.send(ReplayDetailsEvents.DIALOG.INITIALIZE, settings);
+      this.entryWindow.show();
+    }
+  }
+
+  hide() {
+    if (this.entryWindow) {
+      this.entryWindow.hide();
+    }
   }
 
   destroy() {
-    this.entryWindow.close();
+    if (this.entryWindow) {
+      this.entryWindow.close();
+      this.entryWindow = null;
+    }
   }
 }

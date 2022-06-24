@@ -97,7 +97,7 @@ class HotkeyReplayDetector {
         setTimeout(() => {
           const last = findLastReplay(this.settings.replayDirectory);
           this.detectListener.detected({ fileName: last.name, filePath: last.path });
-        }, settings.timeoutMS);
+        }, settings.hotkeyDelayMS);
       }
     };
   }

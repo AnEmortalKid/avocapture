@@ -1,10 +1,13 @@
 
 import { v4 as uuidv4 } from 'uuid';
+import Logger from '../logger/logger';
+
+const logger = new Logger('ReplayDetectionListener');
 
 export class ReplayDetectionListener {
 
   constructor(replayDialog, replaySaver) {
-    console.log('initializing');
+    logger.log('Initializing');
     this.replayDialog = replayDialog;
     this.replaySaver = replaySaver;
   }
@@ -26,7 +29,7 @@ export class ReplayDetectionListener {
     })
 
     // create modal, get user input
-    this.replayDialog.create({
+    this.replayDialog.show({
       prefix: this.prefix,
       replayUuid: replayUuid
     });

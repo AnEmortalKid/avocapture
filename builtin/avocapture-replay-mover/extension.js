@@ -48,7 +48,7 @@ class ReplayMover {
 
   upload(replayData) {
     log(`Received data ${JSON.stringify(replayData)}`)
-    if (this.destination && !this.destination.isEmpty()) {
+    if (this.destination && this.destination.length > 0) {
       const destinationPath = path.join(this.destination, replayData.fileName);
       log(`Computed destination ${destinationPath}`)
       fs.renameSync(replayData.filePath, destinationPath);
