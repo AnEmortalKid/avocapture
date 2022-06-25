@@ -61,6 +61,10 @@ export default function installExtension(extensionPath) {
     const oldPackage = JSON.parse(fs.readFileSync(path.join(installDestination, 'package.json')))
     const newPackage = JSON.parse(fs.readFileSync(path.join(extensionPath, 'package.json')))
 
+    if (!newPackage.version) {
+      throw new Error("Cannot install extension without declaring a 'version'");
+    }
+
     const versionComparison = semVerCompare(oldPackage.version, newPackage.version);
     // TODO support downgrades?
     // currently installed is higher or same

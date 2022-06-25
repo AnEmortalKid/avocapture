@@ -33,7 +33,6 @@ export class ExtensionSettingsDialog {
         preload: preloadPath
       },
     })
-    // TODO can we load a preload with an 'api'?
 
     settingsWindow.setBackgroundColor("#d7dbe3");
     settingsWindow.setFullScreenable(false);

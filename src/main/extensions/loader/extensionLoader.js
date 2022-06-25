@@ -1,10 +1,11 @@
 import path from 'path';
 import * as fs from "fs"
-import app from 'electron';
 
 import { createRequire } from "module";
 import LoadedExtension from './loadedExtension';
 const require = createRequire(import.meta.url);
+
+// TODO logger
 
 function getMethods(obj) {
   let properties = new Set()
@@ -43,8 +44,8 @@ function checkExtension(extension, name, type) {
 
 }
 
-function checkProperties(avocapture) {
-  const requiredProps = ["name", "display", "type", "settings"];
+function checkAvocaptureProperties(avocapture) {
+  const requiredProps = ["display", "type", "settings"];
 
   const missingProps = [];
   for (const requiredProp of requiredProps) {
@@ -58,6 +59,33 @@ function checkProperties(avocapture) {
   }
 }
 
+function checkPackageJsonProperties(packageJson) {
+  const requiredProps = ["name", "main", "version"];
+
+  const missingProps = [];
+  for (const requiredProp of requiredProps) {
+    if (!packageJson[requiredProp]) {
+      missingProps.push(requiredProp);
+    }
+  }
+
+  if (missingProps.length > 0) {
+    throw new Error("package.json object is missing [" + missingProps + "]");
+  }
+}
+
+// TODO export
+function checkLoadable(packageJson) {
+  checkPackageJsonProperties(packageJson);
+
+  if (!packageJson.avocapture) {
+    throw new Error("avocapture object not defined in package.json");
+  }
+
+  checkAvocaptureProperties(packageJson.avocapture);
+}
+
+// TODO export
 function loadExtension(extensionPath) {
   // asume the extension has been installed
   const packagePath = path.join(extensionPath, "package.json");
@@ -66,19 +94,20 @@ function loadExtension(extensionPath) {
   }
 
   let pjson = require(path.join(extensionPath, "package.json"));
-  console.log(JSON.stringify(pjson));
+  // console.log(JSON.stringify(pjson));
+  checkLoadable(packageJson);
 
-  if (!pjson.avocapture) {
-    return null;
+  const configuration = {
+    name: pjson.name,
+    description: pjson.description,
+    ...pjson.avocapture,
   }
-
-  checkProperties(pjson.avocapture);
 
   var ExtensionClass = require(path.join(extensionPath, pjson.main));
   var extensionInstance = new ExtensionClass();
-  checkExtension(extensionInstance, pjson.avocapture.name, pjson.avocapture.type);
+  checkExtension(extensionInstance, configuration.name, configuration.type);
 
-  return new LoadedExtension(extensionInstance, pjson.avocapture, extensionPath);
+  return new LoadedExtension(extensionInstance, configuration, extensionPath);
 }
 
 export default class ExtensionLoader {

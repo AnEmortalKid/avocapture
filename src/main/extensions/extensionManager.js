@@ -35,6 +35,8 @@ export default class ExtensionManager {
     this.loadExtensions(extensionsPath);
   }
 
+  // TODO load single
+
   loadExtensions(filePath) {
     logger.logMethod('loadExtensions', filePath);
     const loaded = extensionLoader.loadExtensions(filePath);

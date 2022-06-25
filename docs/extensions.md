@@ -95,23 +95,22 @@ module.exports = MyExtension
 
 An extension must define additional metadata in its `package.json` for Avocapture to load it. 
 
-The configuration is defined in an `avocapture` object and includes the following properties:
+Properties *required* from the `package.json`:
 
 * `name`: Name of your extension. 
   * Should be unique across all other extensions. 
   * Should not start with `avocapture`.
-  * *Required*
+* `main`: defines where the extension is exported from
+* `version`: defines the version of the extension, used when determining if an extension needs installed/updated.
+
+Defined in an `avocapture` object and includes the following properties:
+
 * `type`: The extension type one of (`detector`,`uploader`)
   * *Required*
 * `display`: A user friendly name for the extension. This item is visible in the ui.
   * *Required* 
 * `settings`: An object that defines both UI and extension settings. 
   * *Required*
-
-Additional properties *required* from the `package.json`:
-
-* `main`: defines where the extension is exported from
-* `version`: defines the version of the extension, used when determining if an extension needs installed/updated.
 
 #### Settings
 
