@@ -49,7 +49,9 @@ export class ReplayDetailsDialog {
     }
     else {
       this.entryWindow.webContents.send(ReplayDetailsEvents.DIALOG.INITIALIZE, settings);
+      this.entryWindow.moveTop();
       this.entryWindow.show();
+      this.entryWindow.focus();
     }
   }
 

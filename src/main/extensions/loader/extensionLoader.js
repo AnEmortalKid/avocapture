@@ -95,7 +95,7 @@ function loadExtension(extensionPath) {
 
   let pjson = require(path.join(extensionPath, "package.json"));
   // console.log(JSON.stringify(pjson));
-  checkLoadable(packageJson);
+  checkLoadable(pjson);
 
   const configuration = {
     name: pjson.name,

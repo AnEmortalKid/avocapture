@@ -10,7 +10,6 @@ const replayTitleInput = document.getElementById('replay.title');
 
 function cleaner(str) {
   return str.replaceAll("\\", "")
-    .replaceAll(".", "")
     .replaceAll("/", "");
 }
 
