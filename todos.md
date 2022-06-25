@@ -14,8 +14,3 @@
 - Update Menu
 - Install extensions/Uninstall extensions
 - Show dithered extensions
-
-
-## Replay Entry
-
-- UI lags sometimes, consider not re-creating window and instead re-initializing state

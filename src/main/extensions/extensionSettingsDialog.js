@@ -2,6 +2,8 @@ import { BrowserWindow } from "electron"
 import { isProduction } from "../util/processInfo";
 import { ExtensionEvents } from "./extensionEvents";
 
+const path = require('path');
+
 // TODO extend browser window??
 export class ExtensionSettingsDialog {
 
@@ -11,6 +13,8 @@ export class ExtensionSettingsDialog {
   */
   constructor(extensionData, parent, cancelCallback) {
     const { name, settings, displaySettings } = extensionData;
+
+    const preloadPath = path.resolve(__dirname, "extensions", "commonPreload.js")
 
     // TODO change mode with modal and frame
     const settingsWindow = new BrowserWindow({
@@ -25,7 +29,8 @@ export class ExtensionSettingsDialog {
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: false,
-        sandbox: false
+        sandbox: false,
+        preload: preloadPath
       },
     })
     // TODO can we load a preload with an 'api'?
