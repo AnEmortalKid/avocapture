@@ -13,9 +13,9 @@ export const ExtensionEvents = {
      */
     EDIT: "ExtensionSettings.Edit",
     /**
-     * Prefix used when sending initialize events to a specific extension
+     * Sends initialize events to a specific extension
      */
-    INITIALIZE_PREFIX: "ExtensionSettings.Initialize.",
+    INITIALIZE: "ExtensionSettings.Initialize",
   },
   EXTENSION_MANAGEMENT: {
     INITIALIZE: "ExtensionManagement.Initialize",

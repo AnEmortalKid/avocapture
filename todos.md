@@ -2,7 +2,9 @@
 
 ### UI
 
-- Figure out sandbox for extensions and apis
+- Update other extensions to use API
+
+
 - Polish Extensions UI
 
 ## Extension Manager App

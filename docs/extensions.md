@@ -152,20 +152,49 @@ The *required* `entry` property defines a relative path to an `html` file which 
 
 ### Event System
 
-The `avocapture` application communicates with a side process which hosts your UI. It uses `ipc` to send and receive messages between the main application and your extension's page.
+The `avocapture` application communicates with a side process which hosts your UI. When your extension's UI is loaded,
+the following API will be available under an `avocapture` object on the window:
 
-When initializing your UI, the `ExtensionSettings.Initialize.your-extension-name` message will be sent with an object containing all the defined settings (or defaults if you defined defaults and no settings exist).
+```js
+window.avocapture = {
 
-When the extensions settings are finalized and should be saved, your UI should send the `ExtensionSettings.Apply` event with an object containing the new settings under a `settings` key:
-```json
-{
-  "settings": {
-    "yourProp": "yourvalue"
+  /**
+   * Used for interacting with the settings for your extension
+   */
+  extensions: {
+    /**
+     * Applies the given settings to the extension
+     */
+    applySettings(settings);
+
+    /**
+    * The extension's settings dialog should be closed
+    */ 
+    cancelSettings();
+
+    /**
+     * Callback that should receive the extension's current settings
+     */
+    onInitialize(initCallback);
+  },
+  
+  /**
+   * Actions provided to the UI that are launched from the main application
+   */ 
+  actions: {
+    /*
+     * Displays a dialog where a user can select a directory, calling the given callback with the result of the selection if * a directory was selected
+     */
+    selectDirectory(responseCallback);
   }
 }
 ```
 
-If you provide an additional mechanism for closing the UI, without saving the settings, it should send the `ExtensionSettings.Cancel` event.
+When initializing your UI, the `extensions.onInitialize` callback will be sent with an object containing all the defined settings (or defaults if you defined defaults and no settings exist).
+
+When the extensions settings are finalized and should be saved, your UI should use the `extensions.applySettings` function with the new settings.
+
+If you provide an additional mechanism for closing the UI, without saving the settings, it should use the `extensions.cancelSettings` function.
 
 ### Styling
 
@@ -217,13 +246,6 @@ The provided extensions follow a `header, form, footer` layout, which you can co
 ### Renderer
 
 Your extension's UI runs in a `Browser` window and is effectively a [renderer](https://www.electronjs.org/docs/latest/glossary#renderer-process) in electron. 
-
-For now, you are able to use the `ipcRenderer` module from your UI's javascript context:
-```
-const { ipcRenderer } = require("electron");
-```
-
-:warning: This will change in the future
 
 ### Storage
 

@@ -1,16 +1,15 @@
-const { ipcRenderer } = require("electron");
-
 const selectDirButton = document.getElementById('mover.replayLocation.button');
 const replayFolderInput = document.getElementById('mover.replayLocation');
 
 function submitData() {
   const data = bindFromForm();
   // TODO disable/don't apply if invalid
-  ipcRenderer.send("ExtensionSettings.Apply", { settings: data });
+  // ipcRenderer.send("ExtensionSettings.Apply", { settings: data });
+  window.avocapture.extensions.applySettings(data);
 }
 
 function cancelForm() {
-  ipcRenderer.send("ExtensionSettings.Cancel");
+  window.avocapture.extensions.cancelSettings();
 }
 
 function bindToForm(data) {
@@ -35,17 +34,15 @@ function bindButtons() {
 }
 
 selectDirButton.onclick = () => {
-  ipcRenderer.send('AppActions.SelectDirectory')
+  window.avocapture.actions.selectDirectory((data) => {
+    replayFolderInput.value = data;
+  });
 };
 
-ipcRenderer.on('AppActions.SelectDirectory.Response', (event, data) => {
-  if (data) {
-    replayFolderInput.value = data;
-  }
-});
+bindButtons();
 
-ipcRenderer.on('ExtensionSettings.Initialize.avocapture-replay-mover', (event, data) => {
+window.avocapture.extensions.onInitialize((data) => {
   console.log(`Received ExtensionSettings.Initialize: ${JSON.stringify(data)}`);
   bindToForm(data);
-  bindButtons();
 });
+

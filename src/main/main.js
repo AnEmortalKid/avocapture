@@ -237,11 +237,11 @@ ipcMain.on(AppEvents.SETTINGS.SELECT_EXTENSION, (event, data) => {
 });
 
 ipcMain.on(AppEvents.ACTIONS.SELECT_DIRECTORY, async (event, data) => {
-  // TODO send data.context + filepaths
   const result = await dialog.showOpenDialog(mainWindow, {
     properties: ['openDirectory']
   });
 
-  event.sender.send(AppEvents.ACTIONS.SELECT_DIRECTORY_RESPONSE, result.filePaths);
+  const selectedDir = result.filePaths.length > 0 ? result.filePaths[0] : null;
+  event.sender.send(AppEvents.ACTIONS.SELECT_DIRECTORY_RESPONSE, selectedDir);
   event.sender.focus();
 });

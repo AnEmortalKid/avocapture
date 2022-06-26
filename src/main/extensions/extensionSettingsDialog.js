@@ -16,7 +16,6 @@ export class ExtensionSettingsDialog {
 
     const preloadPath = path.resolve(__dirname, "extensions", "commonPreload.js")
 
-    // TODO change mode with modal and frame
     const production = isProduction();
 
     const settingsWindow = new BrowserWindow({
@@ -27,11 +26,10 @@ export class ExtensionSettingsDialog {
       titleBarOverlay: !production,
       resizable: true,
       parent: parent,
-      // TODO figure this out with sandboxing
       webPreferences: {
-        nodeIntegration: true,
-        contextIsolation: false,
-        sandbox: false,
+        nodeIntegration: false,
+        contextIsolation: true,
+        sandbox: true,
         preload: preloadPath
       },
     })
@@ -45,7 +43,7 @@ export class ExtensionSettingsDialog {
     settingsWindow.loadURL(displaySettings.viewPath);
 
     settingsWindow.once("ready-to-show", () => {
-      settingsWindow.webContents.send(ExtensionEvents.EXTENSION_SETTINGS.INITIALIZE_PREFIX + name, settings);
+      settingsWindow.webContents.send(ExtensionEvents.EXTENSION_SETTINGS.INITIALIZE, settings);
       settingsWindow.show();
     });
 
