@@ -4,12 +4,11 @@ const replayFolderInput = document.getElementById('mover.replayLocation');
 function submitData() {
   const data = bindFromForm();
   // TODO disable/don't apply if invalid
-  // ipcRenderer.send("ExtensionSettings.Apply", { settings: data });
-  window.avocapture.extensions.applySettings(data);
+  avocapture.extensions.applySettings(data);
 }
 
 function cancelForm() {
-  window.avocapture.extensions.cancelSettings();
+  avocapture.extensions.cancelSettings();
 }
 
 function bindToForm(data) {
@@ -34,14 +33,14 @@ function bindButtons() {
 }
 
 selectDirButton.onclick = () => {
-  window.avocapture.actions.selectDirectory((data) => {
+  avocapture.actions.selectDirectory((data) => {
     replayFolderInput.value = data;
   });
 };
 
 bindButtons();
 
-window.avocapture.extensions.onInitialize((data) => {
+avocapture.extensions.onInitialize((data) => {
   console.log(`Received ExtensionSettings.Initialize: ${JSON.stringify(data)}`);
   bindToForm(data);
 });

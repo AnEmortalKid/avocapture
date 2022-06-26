@@ -1,7 +1,3 @@
-const { ipcRenderer } = require("electron");
-
-console.log('Loaded settingsEditor');
-
 const selectedHotkey = "hotkey.selected";
 const replayFolder = "hotkey.replayLocation";
 const hotkeyDelay = "hotkey.delayMS";
@@ -13,11 +9,13 @@ var nextHotkey = {
 }
 
 document.getElementById("hotkey.replayLocation.button").addEventListener('click', () => {
-  ipcRenderer.send('AppActions.SelectDirectory')
+  avocapture.actions.selectDirectory((dir) => {
+    document.getElementById(replayFolder).value = dir;
+  });
 });
 
 function bindToForm(data) {
-  console.log('BindingToForm ', data);
+  console.log('bindingToForm');
   const input = document.getElementById(selectedHotkey);
   if (data) {
     const { vKey, browserName } = data;
@@ -44,9 +42,7 @@ function bindToForm(data) {
 function bindFromForm() {
   // TODO stash in the input?
   const input = document.getElementById(selectedHotkey);
-
   const delayInput = document.getElementById(hotkeyDelay);
-
   const replayDirInput = document.getElementById(replayFolder);
   return {
     vKey: nextHotkey.vKey,
@@ -67,22 +63,15 @@ function bindButtons() {
 function submitData() {
   const data = bindFromForm();
   // TODO disable/don't apply if invalid
-  ipcRenderer.send("ExtensionSettings.Apply", { settings: data });
+  avocapture.extensions.applySettings(data);
 }
 
 function cancelForm() {
-  ipcRenderer.send("ExtensionSettings.Cancel");
+  avocapture.extensions.cancelSettings();
 }
 
-ipcRenderer.on("ExtensionSettings.Initialize." + extensionName, (event, data) => {
-  console.log("Received ExtensionSettings.Initialize");
-  console.log(JSON.stringify(data));
+bindButtons();
+avocapture.extensions.onInitialize((data) => {
+  console.log(`initializing with ${JSON.stringify(data)}`);
   bindToForm(data);
-  bindButtons();
-});
-
-ipcRenderer.on('AppActions.SelectDirectory.Response', (event, data) => {
-  if (data) {
-    document.getElementById(replayFolder).value = data;
-  }
 });
