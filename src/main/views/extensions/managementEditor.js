@@ -1,24 +1,84 @@
 const { ipcRenderer } = require('electron');
 
-console.log('Manager loaded');
+/* 
+  <li class="w3-container w3-disabled">
+    <button class="w3-button w3-round w3-theme-action w3-right">Uninstall <i class="fa fa-trash"></i></button>
+    <div>
+      <span class="w3-large">Test Extension</span><br>
+    </div>
+    <div>
+      <p>Short paragraph.</p>
+    </div>
+  </li>
+*/
+function createListItem(extensionInfo) {
+
+  const li = document.createElement("li");
+  li.classList.add('w3-container');
+  if (extensionInfo.isBuiltIn) {
+    li.classList.add('w3-disabled');
+  }
+
+  const uninstallBtn = document.createElement('button');
+  uninstallBtn.classList.add('w3-button', 'w3-round', 'w3-theme-action', 'w3-right');
+  uninstallBtn.onclick = () => {
+    ipcRenderer.send('ExtensionManagement.Uninstall', extensionInfo.name);
+  }
+
+  const uninstallIcon = document.createElement('i');
+  uninstallIcon.classList.add('fa', 'fa-trash');
+  uninstallBtn.appendChild(uninstallIcon);
+  li.appendChild(uninstallBtn);
+
+  const nameDiv = document.createElement('div');
+  const nameSpan = document.createElement('span');
+  nameSpan.classList.add('w3-large');
+  nameSpan.textContent = extensionInfo.display;
+  nameDiv.appendChild(nameSpan);
+  li.appendChild(nameDiv);
+
+
+  const descriptionDiv = document.createElement('div');
+  const descriptionP = document.createElement('p');
+  descriptionP.textContent = extensionInfo.description;
+  descriptionDiv.appendChild(descriptionP);
+  li.appendChild(descriptionDiv);
+
+  return li;
+}
+
+function removeAllChildNodes(parent) {
+  while (parent.firstChild) {
+    parent.removeChild(parent.firstChild);
+  }
+}
+
+function bindFromData(data) {
+  const listHolder = document.getElementById("list-item-container");
+  removeAllChildNodes(listHolder);
+
+  // TODO sort alpha?
+  for (var extensionInfo of data) {
+    const li = createListItem(extensionInfo);
+    listHolder.append(li);
+  }
+}
+
+document.getElementById('install-extension-btn').onclick = () => {
+  ipcRenderer.send("AppActions.SelectDirectory");
+}
+
+document.getElementById('close-btn').onclick = () => {
+  ipcRenderer.send('ExtensionManagement.Close');
+}
+
+ipcRenderer.on('AppActions.SelectDirectory.Response', (event, data) => {
+  if (data && data.length > 0) {
+    ipcRenderer.send('ExtensionManagement.Install', data);
+  }
+}
+);
 
 ipcRenderer.on('ExtensionManagement.Initialize', (event, data) => {
-  console.log(data);
+  bindFromData(data);
 });
-
-
-/* 
-<li class="w3-bar w3-disabled">
-  <button class="w3-button w3-round w3-theme-action w3-right">Uninstall <i class="fa fa-trash"></i></button>
-  <div class="w3-bar-item">
-    <span class="w3-large">Search on Hotkey</span><br>
-  </div>
-  <div class="w3-bar-item">
-    <p>An extension for avocapture that searches the filesystem when a hotkey is pressed.</p>
-  </div>
-</li> 
-*/
-function createListItem(extensionName) {
-
-
-}

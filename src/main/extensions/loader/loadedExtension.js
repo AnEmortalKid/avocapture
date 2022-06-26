@@ -16,6 +16,20 @@ export default class LoadedExtension {
     this.extensionPath = extensionPath
   }
 
+  /**
+   * @returns determines whether an extension is built in
+   */
+  isBuiltIn() {
+    return this.builtIn;
+  }
+
+  /**
+   * marks extension as built in
+   */
+  markBuiltIn() {
+    this.builtIn = true;
+  }
+
   name() {
     return this.configuration.name
   }
@@ -27,6 +41,13 @@ export default class LoadedExtension {
   display() {
     if (this.configuration.display) {
       return this.configuration.display
+    }
+    return this.name();
+  }
+
+  description() {
+    if (this.configuration.description) {
+      return this.configuration.description
     }
     return this.name();
   }

@@ -1,7 +1,7 @@
 {
-  "name": "console-echo",
+  "name": "test-console-echo-uploader",
   "version": "0.1.2",
-  "description": "A test extension that just logs events",
+  "description": "A test extension that just echos replays",
   "main": "extension.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,9 +12,8 @@
   "author": "",
   "license": "MIT",
   "avocapture": {
-    "name": "avocapture-console-echo",
-    "type": "detector",
-    "display": "Console Echo",
+    "type": "uploader",
+    "display": "Test Console Echo Uploader",
     "settings": {
       "view": {
         "entry": "index.html",

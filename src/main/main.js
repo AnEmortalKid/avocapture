@@ -11,9 +11,12 @@ import logOn from './logger/eventLogger';
 import { AppEvents } from './events/appEvents';
 import ExtensionManagementApp from './extensions/management/extensionManagementApp';
 import { isProduction } from './util/processInfo';
+import Logger from './logger/logger';
 
 
 const isMac = process.platform === 'darwin'
+
+const logger = new Logger('MainApp');
 
 const path = require('path')
 const fs = require('fs');
@@ -37,6 +40,30 @@ function installBuiltins() {
       extensionManager.install(path.join(builtIns, file.name))
     }
   }
+}
+
+function extensionChangeListener(eventData) {
+  logger.logMethod('extensionChangeListener', eventData);
+
+
+  let appSettings = appSettingsStore.getAll();
+  if (eventData.event === "uninstall") {
+    const selectedByType = appSettings.extensions?.selected;
+
+    if (selectedByType[eventData.type] === eventData.name) {
+      appSettingsStore.clear('extensions.selected.' + eventData.type);
+      // update
+      appSettings = appSettingsStore.getAll();
+    }
+  }
+
+  // reload data
+  const currSettings = {
+    ...appSettings,
+    detectors: extensionManager.getExtensionsOfType("detector"),
+    uploaders: extensionManager.getExtensionsOfType("uploader")
+  }
+  mainWindow.webContents.send('AppSettings.Initialize', currSettings);
 }
 
 let mainWindow;
@@ -106,6 +133,7 @@ app.on('window-all-closed', () => {
   }
 })
 
+
 app.whenReady().then(() => {
   createWindow()
 
@@ -121,7 +149,6 @@ app.whenReady().then(() => {
     detectors: extensionManager.getExtensionsOfType("detector"),
     uploaders: extensionManager.getExtensionsOfType("uploader")
   }
-
   mainWindow.webContents.on('did-finish-load', () => {
     mainWindow.webContents.send('AppSettings.Initialize', currSettings);
   });
@@ -129,6 +156,14 @@ app.whenReady().then(() => {
 
   installBuiltins();
   extensionManager.loadInstalled();
+  // start to get notified about any changes
+  extensionManager.registerChangeListener(extensionChangeListener);
+
+  // mark the built ins
+  const builtIns = ["avocapture-replay-mover", "avocapture-search-on-hotkey"];
+  for (const builtIn of builtIns) {
+    extensionManager.getExtension(builtIn).markBuiltIn();
+  }
 
   replayDetectionListener.setPrefix(appSettings.prefix);
 
@@ -202,6 +237,7 @@ ipcMain.on(AppEvents.SETTINGS.SELECT_EXTENSION, (event, data) => {
 });
 
 ipcMain.on(AppEvents.ACTIONS.SELECT_DIRECTORY, async (event, data) => {
+  // TODO send data.context + filepaths
   const result = await dialog.showOpenDialog(mainWindow, {
     properties: ['openDirectory']
   });

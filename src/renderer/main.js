@@ -33,7 +33,23 @@ function createSelectOption(extensionName, displayName) {
   return opt;
 }
 
+function createNoneOption() {
+  const opt = document.createElement('option');
+  opt.selected = true;
+  opt.text = "None";
+  return opt;
+}
+
+function removeAllChildNodes(parent) {
+  while (parent.firstChild) {
+    parent.removeChild(parent.firstChild);
+  }
+}
+
 function addDetectors(settings) {
+  removeAllChildNodes(detectorSelection);
+  detectorSelection.appendChild(createNoneOption());
+
   const selectedDetector = settings.extensions?.selected?.detector;
   for (var detectorOption of settings.detectors) {
     const option = createSelectOption(detectorOption.extensionName, detectorOption.displayName);
@@ -45,6 +61,9 @@ function addDetectors(settings) {
 }
 
 function addUploaders(settings) {
+  removeAllChildNodes(uploaderSelection);
+  uploaderSelection.appendChild(createNoneOption());
+
   const selectedUploader = settings.extensions?.selected?.uploader;
   for (var uploaderOption of settings.uploaders) {
     const option = createSelectOption(uploaderOption.extensionName, uploaderOption.displayName);
@@ -58,10 +77,6 @@ function addUploaders(settings) {
 function bindToUI(settings) {
   prefixInput.value = settings.prefix;
 
-  prefixInput.addEventListener('change', (event) => {
-    ipcRenderer.send('AppSettings.Apply.Prefix', event.target.value);
-  });
-
   addDetectors(settings);
   addUploaders(settings);
 }
@@ -74,6 +89,9 @@ function addChangeListener(type, selection) {
   });
 }
 
+prefixInput.addEventListener('change', (event) => {
+  ipcRenderer.send('AppSettings.Apply.Prefix', event.target.value);
+});
 addChangeListener('detector', detectorSelection);
 addChangeListener('uploader', uploaderSelection);
 

@@ -6,14 +6,12 @@
 <head>
   <meta charset="UTF-8">
   <title>Manage Extensions</title>
-  <!-- <link rel="stylesheet" href="../../css/w3.css" />
-  <link rel="stylesheet" href="../../css/theme.css" /> -->
-  <link rel="stylesheet" href="../../../assets/css/w3.css" />
-  <link rel="stylesheet" href="../../../assets/css/theme.css" />
-  <link rel="stylesheet" href="../../../assets/font-awesome-4.7.0/css/font-awesome.css" />
+  <link rel="stylesheet" href="../../css/w3.css" />
+  <link rel="stylesheet" href="../../css/theme.css" />
+  <link rel="stylesheet" href="../../font-awesome-4.7.0/css/font-awesome.css" />
 </head>
 
-<header class="w3-container w3-theme-l4 w3-card">
+<header class="w3-container w3-theme-l1 w3-card">
   <h4 class="w3-center">Manage Extensions</h4>
 </header>
 
@@ -24,44 +22,14 @@
 
 
 <div id="list-container" class="w3-theme-l4">
-  <ul class="w3-ul w3-card-4">
-    <li class="w3-bar">
-      <span class="w3-bar-item w3-large w3-right w3-theme-action">
-        <i class="fa fa-trash" aria-hidden="true"></i>
-      </span>
-      <div class="w3-bar-item">
-        <span class="w3-large">Search on Hotkey</span><br>
-        <p>An extension for avocapture that searches the filesystem when a hotkey is pressed</p>
-      </div>
-    </li>
-
-    <li class="w3-bar">
-      <span class="w3-bar-item w3-large w3-right w3-theme-d1">
-        <i class="fa fa-trash" aria-hidden="true"></i>
-      </span>
-      <div class="w3-bar-item">
-        <span class="w3-large">Search on Hotkey</span><br>
-        <p>An extension for avocapture that searches the filesystem when a hotkey is pressed</p>
-      </div>
-    </li>
-
-    <li class="w3-bar w3-disabled">
-      <button class="w3-button w3-round w3-theme-action w3-right">Uninstall <i class="fa fa-trash"></i></button>
-      <div class="w3-bar-item">
-        <span class="w3-large">Search on Hotkey</span><br>
-      </div>
-      <div class="w3-bar-item">
-        <p>An extension for avocapture that searches the filesystem when a hotkey is pressed.</p>
-      </div>
-    </li>
-
+  <ul class="w3-ul w3-border" id="list-item-container">
+    <!-- dynamic -->
   </ul>
 </div>
 
-<footer class="w3-container w3-padding w3-theme-l4">
+<footer class="w3-container w3-padding w3-theme-l1">
   <div class="w3-bar w3-center">
-    <button class="w3-button w3-round w3-theme-action" id="entry-apply-btn">Apply</button>
-    <button class="w3-button w3-round w3-theme-action" id="entry-cancel-btn">Close</button>
+    <button class="w3-button w3-round w3-theme-action" id="close-btn">Close</button>
   </div>
 </footer>
 

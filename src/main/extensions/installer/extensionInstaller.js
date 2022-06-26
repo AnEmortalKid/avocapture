@@ -51,29 +51,37 @@ function nmpInstall(pluginPath) {
 }
 
 
+/**
+ * 
+ * @param {*} extensionPath 
+ * @returns the name of the installed extension if needed
+ */
 export default function installExtension(extensionPath) {
   const destinationRoot = app.getPath("userData");
-  const extensionDir = path.basename(extensionPath);
+  const newPackage = JSON.parse(fs.readFileSync(path.join(extensionPath, 'package.json')));
+
+  const extensionDir = newPackage.name;
   const installDestination = path.join(destinationRoot, "extensions", extensionDir);
+
+  if (!newPackage.version) {
+    throw new Error("Cannot install extension without declaring a 'version'");
+  }
 
   // disable comparison in debug mode
   if (!isAvocaptureDebug() && fs.existsSync(installDestination)) {
     const oldPackage = JSON.parse(fs.readFileSync(path.join(installDestination, 'package.json')))
-    const newPackage = JSON.parse(fs.readFileSync(path.join(extensionPath, 'package.json')))
-
-    if (!newPackage.version) {
-      throw new Error("Cannot install extension without declaring a 'version'");
-    }
 
     const versionComparison = semVerCompare(oldPackage.version, newPackage.version);
     // TODO support downgrades?
     // currently installed is higher or same
     if (versionComparison >= 0) {
-      return;
+      return extensionDir;
     }
   }
 
   copyDirectory(extensionPath, installDestination);
   nmpInstall(installDestination);
   copyAssets(installDestination);
+
+  return extensionDir;
 }

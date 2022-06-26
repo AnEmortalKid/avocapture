@@ -17,6 +17,11 @@ export class ExtensionSettingsStore {
     this.storesByExtensionName.set(extensionName, extStore);
   }
 
+  clear(extensionName) {
+    const store = this._getStore(extensionName);
+    store.clear();
+  }
+
   get(extensionName) {
     const store = this._getStore(extensionName);
     const defaults = store.get('defaults');

@@ -8,7 +8,6 @@ const store = new Store(
     clearInvalidConfig: true
   }
 );
-const settingsSubKey = "app";
 
 const appDefaults = {
   prefix: "Prefix"
@@ -16,28 +15,31 @@ const appDefaults = {
 
 export class AppSettings {
 
-  saveAll(appSettings) {
-    store.set(settingsSubKey, appSettings);
-  }
-
   save(subKey, value) {
-    const keyPath = toKeyPath(settingsSubKey, subKey);
     if (value) {
-      store.set(keyPath, value);
+      store.set(subKey, value);
     }
     else {
-      store.delete(keyPath);
+      store.delete(subKey);
     }
+  }
+
+  clear(subKey) {
+    store.delete(subKey);
   }
 
   get(subKey) {
-    const keyPath = toKeyPath(settingsSubKey, subKey);
-    const data = store.get(keyPath);
+    const data = store.get(subKey);
     return data;
   }
 
   getAll() {
-    return store.get(settingsSubKey, appDefaults);
+    const all = store.store;
+    // nothing set , return default
+    if (Object.keys(all).length === 0) {
+      return appDefaults;
+    }
+    return all;
   }
 
 }

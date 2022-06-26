@@ -16,6 +16,21 @@ export default class ExtensionManagementApp {
     this.registerEvents();
   }
 
+  _getExtensionData() {
+    const extensionNames = this.extensionManager.getExtensionNames();
+    const extensionData = extensionNames.map(name => {
+      const extension = this.extensionManager.getExtension(name);
+
+      return {
+        name: name,
+        display: extension.display(),
+        description: extension.description(),
+        isBuiltIn: extension.isBuiltIn(),
+      }
+    });
+    return extensionData;
+  }
+
   manage(mainWindow) {
     const manageWindow = new BrowserWindow({
       width: 400,
@@ -43,23 +58,41 @@ export default class ExtensionManagementApp {
       manageWindow.webContents.openDevTools();
     }
 
-    const extensions = this.extensionManager.getExtensions();
     manageWindow.once("ready-to-show", () => {
-      manageWindow.webContents.send("ExtensionManagement.Initialize", extensions);
+      manageWindow.webContents.send(ExtensionEvents.EXTENSION_MANAGEMENT.INITIALIZE, this._getExtensionData());
       manageWindow.show();
     });
+
+    this.manageWindow = manageWindow;
   }
 
   handleExtensionInstall(event, data) {
     logger.logEvent(ExtensionEvents.EXTENSION_MANAGEMENT.INSTALL, data);
+
+    // data is an array of filePaths
+    const extensionPath = data[0];
+    const extName = this.extensionManager.install(extensionPath);
+    this.extensionManager.loadExternal(extName);
+
+    // rebind the new extensions
+    this.manageWindow.webContents.send(ExtensionEvents.EXTENSION_MANAGEMENT.INITIALIZE, this._getExtensionData());
   }
 
-  handleExtensionUninstall(event, data) {
-    logger.logEvent(ExtensionEvents.EXTENSION_MANAGEMENT.UNINSTALL, data);
+  handleExtensionUninstall(event, extensionName) {
+    logger.logEvent(ExtensionEvents.EXTENSION_MANAGEMENT.UNINSTALL, extensionName);
+
+    this.extensionManager.uninstall(extensionName);
+    // rebind the new extensions
+    this.manageWindow.webContents.send(ExtensionEvents.EXTENSION_MANAGEMENT.INITIALIZE, this._getExtensionData());
+  }
+
+  handleClose(event, data) {
+    this.manageWindow.close();
   }
 
   registerEvents() {
     ipcMain.on(ExtensionEvents.EXTENSION_MANAGEMENT.INSTALL, this.handleExtensionInstall.bind(this));
     ipcMain.on(ExtensionEvents.EXTENSION_MANAGEMENT.UNINSTALL, this.handleExtensionUninstall.bind(this));
+    ipcMain.on(ExtensionEvents.EXTENSION_MANAGEMENT.CLOSE, this.handleClose.bind(this));
   }
 }

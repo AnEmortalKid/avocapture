@@ -1,7 +1,7 @@
-class TestDetector {
+class EchoUploader {
 
-  register(listener) {
-    console.log('[console-echo] register', listener);
+  upload(replayData) {
+    console.log('[test-console-echo-uploader] upload ', JSON.stringify(replayData));
   }
 
   /**
@@ -10,21 +10,21 @@ class TestDetector {
    * @param {*} settings the settings specific to this extension
    */
   initialize(settings) {
-    console.log('[console-echo] initialize ', settings);
+    console.log('[test-console-echo-uploader] initialize ', settings);
   }
 
   /**
    * Destroys any state the extension requires
    */
   teardown() {
-    console.log("[console-echo] teardown");
+    console.log("[test-console-echo-uploader] teardown");
   }
 
   /**
    * The extension's settings are in the process of being modified
    */
   notifyModifying() {
-    console.log("[console-echo] notifyModifying");
+    console.log("[test-console-echo-uploader] notifyModifying");
   }
 
   /**
@@ -33,15 +33,15 @@ class TestDetector {
    * @param {*} newSettings the new settings
    */
   notifyModifyApply(newSettings) {
-    console.log("[console-echo] notifyModifyApply", newSettings);
+    console.log("[test-console-echo-uploader] notifyModifyApply", newSettings);
   }
 
   /**
    * The extension's settings were not changed.
    */
   notifyModifyCancel() {
-    console.log("[console-echo] notifyModifyCancel");
+    console.log("[test-console-echo-uploader] notifyModifyCancel");
   }
 }
 
-module.exports = TestDetector
+module.exports = EchoUploader

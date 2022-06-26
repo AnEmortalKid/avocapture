@@ -3,9 +3,11 @@ import * as fs from "fs"
 
 import { createRequire } from "module";
 import LoadedExtension from './loadedExtension';
+import Logger from '../../logger/logger';
 const require = createRequire(import.meta.url);
 
 // TODO logger
+const logger = new Logger('ExtensionLoader');
 
 function getMethods(obj) {
   let properties = new Set()
@@ -17,7 +19,7 @@ function getMethods(obj) {
 }
 
 function checkExtension(extension, name, type) {
-  console.log('Checking extension [', name, ']')
+  logger.logMethod('checkExtension', '[' + name + ',' + type + ']');
   // check bases first
   const checkMethods = ["initialize",
     "teardown",
@@ -74,7 +76,6 @@ function checkPackageJsonProperties(packageJson) {
   }
 }
 
-// TODO export
 function checkLoadable(packageJson) {
   checkPackageJsonProperties(packageJson);
 
@@ -112,13 +113,37 @@ function loadExtension(extensionPath) {
 
 export default class ExtensionLoader {
 
+  loadExtension(extensionPath) {
+    // asume the extension has been installed
+    const packagePath = path.join(extensionPath, "package.json");
+    if (!fs.existsSync(packagePath)) {
+      return null;
+    }
+
+    let pjson = require(path.join(extensionPath, "package.json"));
+    // console.log(JSON.stringify(pjson));
+    checkLoadable(pjson);
+
+    const configuration = {
+      name: pjson.name,
+      description: pjson.description,
+      ...pjson.avocapture,
+    }
+
+    var ExtensionClass = require(path.join(extensionPath, pjson.main));
+    var extensionInstance = new ExtensionClass();
+    checkExtension(extensionInstance, configuration.name, configuration.type);
+
+    return new LoadedExtension(extensionInstance, configuration, extensionPath);
+  }
+
   loadExtensions(directory) {
     const files = fs.readdirSync(directory, { withFileTypes: true });
 
     var extensions = []
     for (var file of files) {
       if (file.isDirectory()) {
-        const loadedExtension = loadExtension(path.join(directory, file.name));
+        const loadedExtension = this.loadExtension(path.join(directory, file.name));
         if (loadedExtension) {
           extensions.push(loadedExtension);
         }

@@ -19,7 +19,8 @@ export const ExtensionEvents = {
   },
   EXTENSION_MANAGEMENT: {
     INITIALIZE: "ExtensionManagement.Initialize",
-    UNINSTALL: "ExtensionManagement.Unintstall",
-    INSTALL: "ExtensionManagement.Intstall"
+    UNINSTALL: "ExtensionManagement.Uninstall",
+    INSTALL: "ExtensionManagement.Install",
+    CLOSE: "ExtensionManagement.Close"
   }
 }
