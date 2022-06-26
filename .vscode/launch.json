@@ -34,7 +34,7 @@
         "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron-forge-vscode-win.cmd"
       },
       "env": {
-        "NODE_ENV": "production"
+        "DEBUG_PROD": "true"
       },
       "cwd": "${workspaceFolder}"
     },

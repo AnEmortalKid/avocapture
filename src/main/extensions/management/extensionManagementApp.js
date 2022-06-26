@@ -32,12 +32,15 @@ export default class ExtensionManagementApp {
   }
 
   manage(mainWindow) {
+
+    const production = isProduction();
+
     const manageWindow = new BrowserWindow({
       width: 400,
       height: 400,
-      frame: !isProduction(),
-      modal: isProduction(),
-      titleBarOverlay: !isProduction(),
+      frame: true,
+      modal: production,
+      titleBarOverlay: !production,
       resizable: true,
       parent: mainWindow,
       webPreferences: {
@@ -48,16 +51,11 @@ export default class ExtensionManagementApp {
     })
     manageWindow.setBackgroundColor("#d7dbe3");
     manageWindow.setFullScreenable(false);
-    if (isProduction()) {
+    if (production) {
       manageWindow.removeMenu();
     }
 
     manageWindow.loadURL(path.resolve(__dirname, "views", "extensions", "management.html"));
-
-    if (!isProduction()) {
-      manageWindow.webContents.openDevTools();
-    }
-
     manageWindow.once("ready-to-show", () => {
       manageWindow.webContents.send(ExtensionEvents.EXTENSION_MANAGEMENT.INITIALIZE, this._getExtensionData());
       manageWindow.show();

@@ -17,12 +17,14 @@ export class ExtensionSettingsDialog {
     const preloadPath = path.resolve(__dirname, "extensions", "commonPreload.js")
 
     // TODO change mode with modal and frame
+    const production = isProduction();
+
     const settingsWindow = new BrowserWindow({
       width: displaySettings.width ?? 400,
       height: displaySettings.height ?? 400,
       frame: true,
-      modal: false,
-      titleBarOverlay: true,
+      modal: production,
+      titleBarOverlay: !production,
       resizable: true,
       parent: parent,
       // TODO figure this out with sandboxing
@@ -36,7 +38,7 @@ export class ExtensionSettingsDialog {
 
     settingsWindow.setBackgroundColor("#d7dbe3");
     settingsWindow.setFullScreenable(false);
-    if (isProduction()) {
+    if (production) {
       settingsWindow.removeMenu();
     }
 
