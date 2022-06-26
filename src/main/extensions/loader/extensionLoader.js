@@ -6,7 +6,6 @@ import LoadedExtension from './loadedExtension';
 import Logger from '../../logger/logger';
 const require = createRequire(import.meta.url);
 
-// TODO logger
 const logger = new Logger('ExtensionLoader');
 
 function getMethods(obj) {
@@ -86,31 +85,6 @@ function checkLoadable(packageJson) {
   checkAvocaptureProperties(packageJson.avocapture);
 }
 
-// TODO export
-function loadExtension(extensionPath) {
-  // asume the extension has been installed
-  const packagePath = path.join(extensionPath, "package.json");
-  if (!fs.existsSync(packagePath)) {
-    return null;
-  }
-
-  let pjson = require(path.join(extensionPath, "package.json"));
-  // console.log(JSON.stringify(pjson));
-  checkLoadable(pjson);
-
-  const configuration = {
-    name: pjson.name,
-    description: pjson.description,
-    ...pjson.avocapture,
-  }
-
-  var ExtensionClass = require(path.join(extensionPath, pjson.main));
-  var extensionInstance = new ExtensionClass();
-  checkExtension(extensionInstance, configuration.name, configuration.type);
-
-  return new LoadedExtension(extensionInstance, configuration, extensionPath);
-}
-
 export default class ExtensionLoader {
 
   loadExtension(extensionPath) {
@@ -121,7 +95,7 @@ export default class ExtensionLoader {
     }
 
     let pjson = require(path.join(extensionPath, "package.json"));
-    // console.log(JSON.stringify(pjson));
+    logger.log(`Checking package.json ${JSON.stringify(pjson)}`);
     checkLoadable(pjson);
 
     const configuration = {

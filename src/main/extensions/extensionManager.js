@@ -117,8 +117,6 @@ export default class ExtensionManager {
     this.notifyListener({ event: 'loadExternal', name: extensionName });
   }
 
-  // TODO unload extension
-
   getExtensionsOfType(type) {
     if (type === "detector") {
       return this.detectorNames
