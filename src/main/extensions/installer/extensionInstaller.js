@@ -79,6 +79,7 @@ export default function installExtension(extensionPath) {
     }
   }
 
+  // in the future, if we need to change themes, we have to re-install assets
   copyDirectory(extensionPath, installDestination);
   nmpInstall(installDestination);
   copyAssets(installDestination);
