@@ -100,12 +100,19 @@ const createWindow = () => {
     ]
   });
 
+  const extensionsMenu = new Menu();
   const item = new MenuItem({
-    label: "Extensions",
+    label: "Manage",
     click: (MenuItem, browserWindow, event) => {
       extensionManagementApp.manage(browserWindow);
     }
   });
+  extensionsMenu.append(item);
+  const extensionsMenuItem = new MenuItem({
+    label: 'Extensions',
+    submenu: extensionsMenu
+  }
+  );
 
   const view = new MenuItem({
     label: 'View',
@@ -115,7 +122,7 @@ const createWindow = () => {
   });
 
   appMenu.append(fileItems);
-  appMenu.append(item);
+  appMenu.append(extensionsMenuItem);
   if (!isProduction()) {
     appMenu.append(view);
   }

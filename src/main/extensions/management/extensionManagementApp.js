@@ -36,8 +36,8 @@ export default class ExtensionManagementApp {
     const production = isProduction();
 
     const manageWindow = new BrowserWindow({
-      width: 400,
-      height: 400,
+      width: 450,
+      height: 450,
       frame: true,
       modal: production,
       titleBarOverlay: !production,

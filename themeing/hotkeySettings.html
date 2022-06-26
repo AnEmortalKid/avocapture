@@ -9,43 +9,41 @@
   <link rel="stylesheet" href="../src/assets/font-awesome-4.7.0/css/font-awesome.css" />
 </head>
 
-<header class="w3-container w3-theme-l4 w3-card">
+<header class="w3-container w3-theme-l1 w3-card">
   <h4 class="w3-center">Hotkey Settings</h4>
 </header>
 
 <div id="form-container" class="w3-theme-l4">
   <form class="w3-container" onsubmit="submitData()">
 
-    <div class="w3-container w3-section">
+    <div class="w3-section">
       <div class="w3-row w3-third">
         <label>Hotkey</label>
       </div>
       <div class="w3-row">
-        <input id="hotkey.selected" class="w3-input w3-border" type="text" placeholder="Prefix">
+        <input id="hotkey.selected" class="w3-input w3-border" style="width:75%" type="text" placeholder="Press Hotkey">
       </div>
     </div>
 
-    <div class="w3-container w3-section">
+    <div class="w3-section">
       <div class="w3-row w3-third">
         <label>Delay Milliseconds</label>
       </div>
       <div class="w3-row">
-        <input id="hotkey.delayMS" class="w3-input w3-border" type="text" placeholder="Delay">
+        <input id="hotkey.delayMS" class="w3-input w3-border" style="width:75%" type="number" placeholder="Delay">
       </div>
     </div>
 
-    <div class="w3-container w3-section">
+    <div class="w3-section">
       <div class="w3-row w3-third">
         <label>Replay Directory</label>
       </div>
 
-      <div class="w3-row">
-        <div class="w3-col" style="width:90%">
-          <input id="hotkey.replayLocation" class="w3-input w3-border w3-bar-item" type="text" placeholder="Directory">
-        </div>
-        <div class="w3-col w3-right" style="width:5%">
-          <i id="hotkey.replayLocation.button" class="w3-xxlarge fa fa-folder-open" id="detector.settings"></i>
-        </div>
+      <div class="w3-bar">
+        <input id="hotkey.replayLocation" class="w3-bar-item w3-input w3-border" style="width:75%" type="text"
+          placeholder="Directory">
+        <button id="hotkey.replayLocation.button" class="w3-bar-item w3-button w3-col w3-round w3-theme-action w3-right"
+          style="width:20%">Select <i class="fa fa-folder-open"></i></button>
       </div>
     </div>
 
@@ -53,7 +51,7 @@
   </form>
 </div>
 
-<footer class="w3-container w3-padding w3-theme-l4">
+<footer class="w3-container w3-padding w3-theme-l1">
   <div class="w3-bar w3-center">
     <button class="w3-button w3-round w3-theme-action" id="entry-apply-btn">Apply</button>
     <button class="w3-button w3-round w3-theme-action" id="entry-cancel-btn">Close</button>
