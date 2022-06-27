@@ -81,17 +81,11 @@ const createWindow = () => {
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
-  // mainWindow.removeMenu();
   mainWindow.setIcon(
     path.resolve(__dirname, "images", "logo_256.png")
   );
 
-  // TODO revisit app menu
-  // Mayhaps layout
-  // File -> Exit
-  // Extensions -> Manage | Settings (to change active ones)
   const appMenu = new Menu();
-
   const fileItems = new MenuItem({
     label: 'File',
     submenu: [
@@ -131,7 +125,7 @@ const createWindow = () => {
 }
 
 app.on('window-all-closed', () => {
-  console.log('tearing down');
+  logger.info('tearing down');
   // TODO teardown active extensions
   if (process.platform !== 'darwin') {
     replayDialog.destroy();
