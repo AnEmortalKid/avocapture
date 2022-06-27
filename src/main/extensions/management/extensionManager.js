@@ -1,8 +1,8 @@
 import { app } from "electron";
-import ExtensionLoader from "./loader/extensionLoader";
-import { ExtensionSettingsStore } from "../settings/extensionSettings";
-import installExtension from "./installer/extensionInstaller";
-import Logger from "../logger/logger";
+import ExtensionLoader from "../loader/extensionLoader";
+import { ExtensionSettingsStore } from "../../settings/extensionSettings";
+import installExtension from "../installer/extensionInstaller";
+import Logger from "../../logger/logger";
 const fs = require('fs');
 const path = require("path")
 
@@ -152,6 +152,13 @@ export default class ExtensionManager {
     const instance = this.extensions[extensionName].instance
     instance.teardown()
     this.active = this.active.filter(e => e !== extensionName);
+  }
+
+  shutdown() {
+    for (const ae of this.active) {
+      logger.log('Deactivating ' + ae);
+      this.deactivate(ae);
+    }
   }
 
   edit(extensionName) {

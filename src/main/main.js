@@ -5,8 +5,8 @@ import { ReplayDetailsDialog } from "./entry/replayDetailsDialog"
 import { ReplayDetailsEvents } from './entry/replayDetailsEvents';
 import { ReplaySaver } from './saver/replaySaver';
 import { AppSettings } from './settings/appSettings';
-import ExtensionManager from './extensions/extensionManager';
-import ExtensionSettingsApp from './extensions/extensionSettingsApp';
+import ExtensionManager from './extensions/management/extensionManager';
+import ExtensionSettingsApp from './extensions/settings/extensionSettingsApp';
 import { AppEvents } from './events/appEvents';
 import ExtensionManagementApp from './extensions/management/extensionManagementApp';
 import { isProduction } from './util/processInfo';
@@ -125,10 +125,11 @@ const createWindow = () => {
 }
 
 app.on('window-all-closed', () => {
-  logger.info('tearing down');
+  this.logger.info('tearing down');
   // TODO teardown active extensions
   if (process.platform !== 'darwin') {
     replayDialog.destroy();
+    extensionManager.shutdown();
     app.quit()
   }
 })

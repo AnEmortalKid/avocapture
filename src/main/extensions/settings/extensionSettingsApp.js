@@ -1,8 +1,8 @@
-import { ExtensionEvents } from "./extensionEvents";
+import { ExtensionEvents } from "../extensionEvents";
 import { ExtensionSettingsDialog } from "./extensionSettingsDialog";
 import path from "path";
 import { ipcMain } from "electron";
-import Logger from "../logger/logger";
+import Logger from "../../logger/logger";
 
 const logger = new Logger("ExtensionSettingsApp");
 

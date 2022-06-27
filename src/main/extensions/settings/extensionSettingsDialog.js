@@ -1,6 +1,6 @@
 import { BrowserWindow } from "electron"
-import { isProduction } from "../util/processInfo";
-import { ExtensionEvents } from "./extensionEvents";
+import { isProduction } from "../../util/processInfo";
+import { ExtensionEvents } from "../extensionEvents";
 
 const path = require('path');
 
