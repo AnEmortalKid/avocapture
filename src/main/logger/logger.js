@@ -1,6 +1,8 @@
 
 const log = require('electron-log');
 
+// TODO clean up old log file on startup
+
 export default class Logger {
   /**
    * Creates a new logger scoped to the given owner
