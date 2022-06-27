@@ -7,7 +7,6 @@ import { ReplaySaver } from './saver/replaySaver';
 import { AppSettings } from './settings/appSettings';
 import ExtensionManager from './extensions/extensionManager';
 import ExtensionSettingsApp from './extensions/extensionSettingsApp';
-import logOn from './logger/eventLogger';
 import { AppEvents } from './events/appEvents';
 import ExtensionManagementApp from './extensions/management/extensionManagementApp';
 import { isProduction } from './util/processInfo';
@@ -188,12 +187,12 @@ app.whenReady().then(() => {
 })
 
 ipcMain.on(ReplayDetailsEvents.DIALOG.CANCEL, (event, data) => {
-  logOn(ReplayDetailsEvents.DIALOG.CANCEL, data);
+  logger.logEvent(ReplayDetailsEvents.DIALOG.CANCEL, data);
   replayDialog.hide();
 });
 
 ipcMain.on(ReplayDetailsEvents.DIALOG.APPLY, (event, data) => {
-  logOn(ReplayDetailsEvents.DIALOG.APPLY, data);
+  logger.logEvent(ReplayDetailsEvents.DIALOG.APPLY, data);
 
   replayDialog.hide();
   replaySaver.setTitle(data);
@@ -209,20 +208,20 @@ ipcMain.on(ReplayDetailsEvents.DIALOG.APPLY, (event, data) => {
 });
 
 ipcMain.on(AppEvents.SETTINGS.APPLY, (event, data) => {
-  logOn(AppEvents.SETTINGS.APPLY, data);
+  logger.logEvent(AppEvents.SETTINGS.APPLY, data);
   appSettingsStore.save(data);
 
   replayDetectionListener.setPrefix(data.prefix);
 });
 
 ipcMain.on(AppEvents.SETTINGS.APPLY_PREFIX, (event, prefix) => {
-  logOn(AppEvents.SETTINGS.APPLY_PREFIX, prefix);
+  logger.logEvent(AppEvents.SETTINGS.APPLY_PREFIX, prefix);
   appSettingsStore.save('prefix', prefix);
   replayDetectionListener.setPrefix(prefix);
 });
 
 ipcMain.on(AppEvents.SETTINGS.SELECT_EXTENSION, (event, data) => {
-  logOn(AppEvents.SETTINGS.SELECT_EXTENSION, data);
+  logger.logEvent(AppEvents.SETTINGS.SELECT_EXTENSION, data);
 
   //  { type , name }
   const old = appSettingsStore.get('extensions.selected.' + data.type);

@@ -1,19 +1,30 @@
 
+const log = require('electron-log');
+
 export default class Logger {
+  /**
+   * Creates a new logger scoped to the given owner
+   * @param {string} owner of the logger
+   * @returns a new logger
+   */
+  static create(owner) {
+    return new Logger(owner);
+  }
+
   constructor(owner) {
-    this.owner = owner;
+    this.ownerLog = log.scope(owner);
   }
 
   logEvent(eventName, data) {
-    console.log(`[${this.owner}@${eventName}]`, data ? data : "");
+    this.ownerLog.info(`[@${eventName}] ${data ? data : ""}`);
   }
 
   logMethod(method, data) {
-    console.log(`[${this.owner}.${method}]`, data ? data : "");
+    this.ownerLog.info(`[${method}] ${data ? data : ""}`);
   }
 
   log(msg) {
-    console.log(`[${this.owner}]`, msg);
+    this.ownerLog.info(msg);
   }
 
 }

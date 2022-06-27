@@ -11,6 +11,37 @@ Avocapture provides the ability to load/unload new extensions for a set of defin
 
 An extension is an exported class that defines all the lifecycle functions and the functions required for each entrypoint type.
 
+The extension class can define a constructor that takes an `options` object, if desired. The options object will contain the following:
+
+```js
+options = {
+ /**
+  * A common login mechanism that will route logs to the same destination as the main application
+  */
+  logger: {
+    /**
+     * Log an error message
+     */
+    error (...params);
+
+    /**
+     * Log a warning message
+     */
+    warn (...params);
+
+    /**
+     * Log an informational message
+     */
+    info (...params);
+
+    /**
+     * Log a debug message
+     */
+    debug (...params);
+  }
+}
+```
+
 ### Lifecycle Functions
 
 All extensions must have these functions defined:

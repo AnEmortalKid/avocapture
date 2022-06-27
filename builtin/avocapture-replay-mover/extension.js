@@ -1,11 +1,12 @@
 const fs = require('fs')
 const path = require('path')
 
-function log(msg) {
-  console.log('[avocapture.replay-mover] ', msg)
-}
-
 class ReplayMover {
+
+  constructor(opts) {
+    const { logger } = opts
+    this.logger = logger;
+  }
 
   /**
    * Initializes the state of the extension based on the given settings.
@@ -13,6 +14,7 @@ class ReplayMover {
    * @param {*} settings the settings specific to this extension
    */
   initialize(settings) {
+    this.logger.info(`initializing with ${JSON.stringify(settings)}`);
     this.destination = settings.destination;
   }
 
@@ -47,14 +49,14 @@ class ReplayMover {
   }
 
   upload(replayData) {
-    log(`Received data ${JSON.stringify(replayData)}`)
+    this.logger.info(`Received data ${JSON.stringify(replayData)}`);
     if (this.destination && this.destination.length > 0) {
       const destinationPath = path.join(this.destination, replayData.fileName);
-      log(`Computed destination ${destinationPath}`)
+      this.logger.info(`Computed destination ${destinationPath}`)
       fs.renameSync(replayData.filePath, destinationPath);
     }
     else {
-      log('No destination to upload to!')
+      this.logger.info('No destination to upload to!')
     }
   }
 }

@@ -4,6 +4,7 @@ import * as fs from "fs"
 import { createRequire } from "module";
 import LoadedExtension from './loadedExtension';
 import Logger from '../../logger/logger';
+import ExtensionLogger from '../../logger/extensionLogger';
 const require = createRequire(import.meta.url);
 
 const logger = new Logger('ExtensionLoader');
@@ -105,7 +106,9 @@ export default class ExtensionLoader {
     }
 
     var ExtensionClass = require(path.join(extensionPath, pjson.main));
-    var extensionInstance = new ExtensionClass();
+    var extensionInstance = new ExtensionClass({
+      logger: new ExtensionLogger(configuration.name)
+    });
     checkExtension(extensionInstance, configuration.name, configuration.type);
 
     return new LoadedExtension(extensionInstance, configuration, extensionPath);
