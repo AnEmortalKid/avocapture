@@ -1,5 +1,5 @@
-const selectDirButton = document.getElementById('mover.replayLocation.button');
-const replayFolderInput = document.getElementById('mover.replayLocation');
+const selectDirButton = document.getElementById("mover.replayLocation.button");
+const replayFolderInput = document.getElementById("mover.replayLocation");
 
 function submitData() {
   const data = bindFromForm();
@@ -12,7 +12,7 @@ function cancelForm() {
 }
 
 function bindToForm(data) {
-  console.log('BindingToForm ', data);
+  console.log("BindingToForm ", data);
   if (data) {
     replayFolderInput.value = data.destination;
   }
@@ -20,8 +20,8 @@ function bindToForm(data) {
 
 function bindFromForm() {
   return {
-    destination: replayFolderInput.value
-  }
+    destination: replayFolderInput.value,
+  };
 }
 
 function bindButtons() {
@@ -44,4 +44,3 @@ avocapture.extensions.onInitialize((data) => {
   console.log(`Received ExtensionSettings.Initialize: ${JSON.stringify(data)}`);
   bindToForm(data);
 });
-

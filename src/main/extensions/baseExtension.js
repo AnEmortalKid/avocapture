@@ -1,12 +1,10 @@
-
 /**
  * Defines the lifecycle of every extension
  */
 export class BaseExtension {
-
   /**
    * Initializes the state of the extension based on the given settings.
-   * 
+   *
    * @param {*} settings the settings specific to this extension
    */
   initialize(settings) {
@@ -29,7 +27,7 @@ export class BaseExtension {
 
   /**
    * The extension has new settings
-   * 
+   *
    * @param {*} newSettings the new settings
    */
   notifyModifyApply(newSettings) {
@@ -42,5 +40,4 @@ export class BaseExtension {
   notifyModifyCancel() {
     throw new Error("Unimplemented");
   }
-
 }

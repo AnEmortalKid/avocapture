@@ -1,0 +1,10 @@
+# Ignore artifacts:
+node_modules
+.webpack
+out
+
+docs/
+.vscode/
+README.md
+themeing/
+builtin/

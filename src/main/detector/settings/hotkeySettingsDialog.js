@@ -1,8 +1,7 @@
-import { BrowserWindow } from "electron"
-import *  as path from "path"
+import { BrowserWindow } from "electron";
+import * as path from "path";
 
 export class HotkeySettingsDialog {
-
   create(contextData) {
     const entryWindow = new BrowserWindow({
       width: 200,
@@ -14,7 +13,7 @@ export class HotkeySettingsDialog {
         nodeIntegration: true,
         contextIsolation: false,
       },
-    })
+    });
     entryWindow.setBackgroundColor("#d7dbe3");
     entryWindow.setFullScreenable(false);
     entryWindow.setTitle("Hotkey Settings");
@@ -24,7 +23,10 @@ export class HotkeySettingsDialog {
     );
 
     entryWindow.once("ready-to-show", () => {
-      entryWindow.webContents.send("HotkeySettings.Dialog.Initialize", contextData);
+      entryWindow.webContents.send(
+        "HotkeySettings.Dialog.Initialize",
+        contextData
+      );
       entryWindow.show();
     });
 

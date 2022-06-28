@@ -1,16 +1,18 @@
 class EchoUploader {
-
   upload(replayData) {
-    console.log('[test-console-echo-uploader] upload ', JSON.stringify(replayData));
+    console.log(
+      "[test-console-echo-uploader] upload ",
+      JSON.stringify(replayData)
+    );
   }
 
   /**
    * Initializes the state of the extension based on the given settings.
-   * 
+   *
    * @param {*} settings the settings specific to this extension
    */
   initialize(settings) {
-    console.log('[test-console-echo-uploader] initialize ', settings);
+    console.log("[test-console-echo-uploader] initialize ", settings);
   }
 
   /**
@@ -29,7 +31,7 @@ class EchoUploader {
 
   /**
    * The extension has new settings
-   * 
+   *
    * @param {*} newSettings the new settings
    */
   notifyModifyApply(newSettings) {
@@ -44,4 +46,4 @@ class EchoUploader {
   }
 }
 
-module.exports = EchoUploader
+module.exports = EchoUploader;

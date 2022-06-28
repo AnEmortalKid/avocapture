@@ -4,8 +4,8 @@ Avocapture provides the ability to load/unload new extensions for a set of defin
 
 ## Entrypoints
 
-* `detector`: responsible for determining when a replay file is ready and sending the file path to a listener
-* `uploader`: responsible for handling a renamed replay file and uploading it somewhere
+- `detector`: responsible for determining when a replay file is ready and sending the file path to a listener
+- `uploader`: responsible for handling a renamed replay file and uploading it somewhere
 
 ## Creating an Extension
 
@@ -49,7 +49,7 @@ All extensions must have these functions defined:
 ```js
 /**
  * Initializes the state of the extension based on the given settings.
- * 
+ *
  * @param {*} settings the settings specific to this extension
  */
 initialize(settings);
@@ -60,15 +60,15 @@ initialize(settings);
 teardown();
 
 /**
- * The extension's settings are in the process of being modified. 
- * 
+ * The extension's settings are in the process of being modified.
+ *
  * An extension can use this function to pause any side processes (example: a listener for ShadowPlay) while the settings are being modified.
  */
 notifyModifying();
 
 /**
  * The extension has new settings
- * 
+ *
  * @param {*} newSettings the new settings specific to this extension
  */
 notifyModifyApply(newSettings);
@@ -85,14 +85,14 @@ notifyModifyCancel();
 
 A `detector` notifies the application that a replay was created/found through the `ReplayDetectionListener`. The detector's responsibility is to call the `detected` method on the listener with an object containing:
 
-* `fileName`: the name of the replay file, with extension.
-* `filePath`: the full path for the replay file
+- `fileName`: the name of the replay file, with extension.
+- `filePath`: the full path for the replay file
 
-A `detector` receives the listener via the register method. 
+A `detector` receives the listener via the register method.
 
 ```js
 /**
- * Registers a listener with this detector. 
+ * Registers a listener with this detector.
  */
 register(listener) {
   throw new Error("Unimplemented");
@@ -103,8 +103,8 @@ register(listener) {
 
 An `uploader` uploads the replay to a desired destination. The uploader will be called with an object containing:
 
-* `fileName`: the name of the replay file, with extension.
-* `filePath`: the full path for the replay file
+- `fileName`: the name of the replay file, with extension.
+- `filePath`: the full path for the replay file
 
 ### Exporting
 
@@ -124,36 +124,36 @@ module.exports = MyExtension
 
 ### Configuration
 
-An extension must define additional metadata in its `package.json` for Avocapture to load it. 
+An extension must define additional metadata in its `package.json` for Avocapture to load it.
 
-Properties *required* from the `package.json`:
+Properties _required_ from the `package.json`:
 
-* `name`: Name of your extension. 
-  * Should be unique across all other extensions. 
-  * Should not start with `avocapture`.
-  * This name also defines the directory the extension is installed to.
-* `main`: defines where the extension is exported from
-* `version`: defines the version of the extension, used when determining if an extension needs installed/updated.
+- `name`: Name of your extension.
+  - Should be unique across all other extensions.
+  - Should not start with `avocapture`.
+  - This name also defines the directory the extension is installed to.
+- `main`: defines where the extension is exported from
+- `version`: defines the version of the extension, used when determining if an extension needs installed/updated.
 
 Defined in an `avocapture` object and includes the following properties:
 
-* `type`: The extension type one of (`detector`,`uploader`)
-  * *Required*
-* `display`: A user friendly name for the extension. This item is visible in the ui.
-  * *Required* 
-* `settings`: An object that defines both UI and extension settings. 
-  * *Required*
+- `type`: The extension type one of (`detector`,`uploader`)
+  - _Required_
+- `display`: A user friendly name for the extension. This item is visible in the ui.
+  - _Required_
+- `settings`: An object that defines both UI and extension settings.
+  - _Required_
 
 #### Settings
 
-* `defaults`: defines any default values needed for the extension to work out of the box
-* `view`: defines any UI related settings
-  * `entry`: a relative path to an HTML page where the extension's settings can be modified.
-  * `width`: the preferred width for the extension editor
-  * `height`: the preferred height for the extension editor
-
+- `defaults`: defines any default values needed for the extension to work out of the box
+- `view`: defines any UI related settings
+  - `entry`: a relative path to an HTML page where the extension's settings can be modified.
+  - `width`: the preferred width for the extension editor
+  - `height`: the preferred height for the extension editor
 
 _Sample fully defined avocapture object_
+
 ```json
 "avocapture": {
     "name": "My first extension",
@@ -179,7 +179,7 @@ The `view` property is optional and defines a user interface where the extension
 
 ### Entry
 
-The *required* `entry` property defines a relative path to an `html` file which defines a `form`.
+The _required_ `entry` property defines a relative path to an `html` file which defines a `form`.
 
 ### Event System
 
@@ -200,7 +200,7 @@ window.avocapture = {
 
     /**
     * The extension's settings dialog should be closed
-    */ 
+    */
     cancelSettings();
 
     /**
@@ -208,10 +208,10 @@ window.avocapture = {
      */
     onInitialize(initCallback);
   },
-  
+
   /**
    * Actions provided to the UI that are launched from the main application
-   */ 
+   */
   actions: {
     /*
      * Displays a dialog where a user can select a directory, calling the given callback with the result of the selection if * a directory was selected
@@ -252,13 +252,17 @@ The provided extensions follow a `header, form, footer` layout, which you can co
 
 <div id="form-container" class="w3-theme-l4">
   <form class="w3-container" onsubmit="submitData()">
-
     <div class="w3-container w3-section">
       <div class="w3-row w3-third">
         <label>Hotkey</label>
       </div>
       <div class="w3-row">
-        <input id="hotkey.selected" class="w3-input w3-border" type="text" placeholder="Prefix">
+        <input
+          id="hotkey.selected"
+          class="w3-input w3-border"
+          type="text"
+          placeholder="Prefix"
+        />
       </div>
     </div>
 
@@ -268,26 +272,29 @@ The provided extensions follow a `header, form, footer` layout, which you can co
 
 <footer class="w3-container w3-padding w3-theme-l4">
   <div class="w3-bar w3-center">
-    <button class="w3-button w3-round w3-theme-action" id="entry-apply-btn">Apply</button>
-    <button class="w3-button w3-round w3-theme-action" id="entry-cancel-btn">Close</button>
+    <button class="w3-button w3-round w3-theme-action" id="entry-apply-btn">
+      Apply
+    </button>
+    <button class="w3-button w3-round w3-theme-action" id="entry-cancel-btn">
+      Close
+    </button>
   </div>
 </footer>
 ```
 
 ### Renderer
 
-Your extension's UI runs in a `Browser` window and is effectively a [renderer](https://www.electronjs.org/docs/latest/glossary#renderer-process) in electron. 
+Your extension's UI runs in a `Browser` window and is effectively a [renderer](https://www.electronjs.org/docs/latest/glossary#renderer-process) in electron.
 
 ### Storage
 
-* This application uses [electron-store](https://github.com/sindresorhus/electron-store) with some customization.
-* Your extension's settings will be stored under `%APPDATA%/avocapture/settings/your-extension-name.json`. 
-
+- This application uses [electron-store](https://github.com/sindresorhus/electron-store) with some customization.
+- Your extension's settings will be stored under `%APPDATA%/avocapture/settings/your-extension-name.json`.
 
 ## Developer Tips
 
-* The `builtins` directory has some sample extensions that can be referenced.
-* Avocapture will check the version of the extension from the `package.json`. If your changes aren't being picked up:
-  * Run the app with an `AVOCAPTURE_DEBUG` environment variable set to `true` to skip version checking.
-  * either bump the version 
-  * delete the `%APPDATA%/avocapture/extensions` directory for your extension.
+- The `builtins` directory has some sample extensions that can be referenced.
+- Avocapture will check the version of the extension from the `package.json`. If your changes aren't being picked up:
+  - Run the app with an `AVOCAPTURE_DEBUG` environment variable set to `true` to skip version checking.
+  - either bump the version
+  - delete the `%APPDATA%/avocapture/extensions` directory for your extension.

@@ -1,20 +1,23 @@
-import { BrowserWindow } from "electron"
+import { BrowserWindow } from "electron";
 import { isProduction } from "../../util/processInfo";
 import { ExtensionEvents } from "../extensionEvents";
 
-const path = require('path');
+const path = require("path");
 
 // TODO extend browser window??
 export class ExtensionSettingsDialog {
-
   /**
-  * 
-  * @param { extensionName, settings} extensionData 
-  */
+   *
+   * @param { extensionName, settings} extensionData
+   */
   constructor(extensionData, parent, cancelCallback) {
     const { name, settings, displaySettings } = extensionData;
 
-    const preloadPath = path.resolve(__dirname, "extensions", "commonPreload.js")
+    const preloadPath = path.resolve(
+      __dirname,
+      "extensions",
+      "commonPreload.js"
+    );
 
     const production = isProduction();
 
@@ -30,9 +33,9 @@ export class ExtensionSettingsDialog {
         nodeIntegration: false,
         contextIsolation: true,
         sandbox: true,
-        preload: preloadPath
+        preload: preloadPath,
       },
-    })
+    });
 
     settingsWindow.setBackgroundColor("#d7dbe3");
     settingsWindow.setFullScreenable(false);
@@ -43,11 +46,14 @@ export class ExtensionSettingsDialog {
     settingsWindow.loadURL(displaySettings.viewPath);
 
     settingsWindow.once("ready-to-show", () => {
-      settingsWindow.webContents.send(ExtensionEvents.EXTENSION_SETTINGS.INITIALIZE, settings);
+      settingsWindow.webContents.send(
+        ExtensionEvents.EXTENSION_SETTINGS.INITIALIZE,
+        settings
+      );
       settingsWindow.show();
     });
 
-    settingsWindow.on('close', () => cancelCallback());
+    settingsWindow.on("close", () => cancelCallback());
 
     this.entryWindow = settingsWindow;
   }
@@ -59,5 +65,4 @@ export class ExtensionSettingsDialog {
   focus() {
     this.entryWindow.focus();
   }
-
 }

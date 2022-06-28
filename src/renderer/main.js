@@ -2,7 +2,7 @@ console.log(
   '👋 This message is being logged by "renderer.js", included via webpack'
 );
 
-const ipcRenderer = window.require('electron').ipcRenderer;
+const ipcRenderer = window.require("electron").ipcRenderer;
 const prefixInput = document.getElementById("app.prefix");
 const detectorSelection = document.getElementById("detector.name");
 const detectorSettings = document.getElementById("detector.settings");
@@ -29,7 +29,7 @@ addInitializeSettingsClickListener(uploaderSettings, uploaderSelection);
 
 function createSelectOption(extensionName, displayName) {
   /* <option value="hotkey" data-extension-name="hotkey-detector">Second</option> */
-  const opt = document.createElement('option');
+  const opt = document.createElement("option");
   opt.dataset.extensionName = extensionName;
   opt.value = displayName;
   opt.text = displayName;
@@ -37,7 +37,7 @@ function createSelectOption(extensionName, displayName) {
 }
 
 function createNoneOption() {
-  const opt = document.createElement('option');
+  const opt = document.createElement("option");
   opt.selected = true;
   opt.text = "None";
   return opt;
@@ -55,7 +55,10 @@ function addDetectors(settings) {
 
   const selectedDetector = settings.extensions?.selected?.detector;
   for (var detectorOption of settings.detectors) {
-    const option = createSelectOption(detectorOption.extensionName, detectorOption.displayName);
+    const option = createSelectOption(
+      detectorOption.extensionName,
+      detectorOption.displayName
+    );
     detectorSelection.appendChild(option);
     if (selectedDetector == detectorOption.extensionName) {
       option.selected = true;
@@ -69,7 +72,10 @@ function addUploaders(settings) {
 
   const selectedUploader = settings.extensions?.selected?.uploader;
   for (var uploaderOption of settings.uploaders) {
-    const option = createSelectOption(uploaderOption.extensionName, uploaderOption.displayName);
+    const option = createSelectOption(
+      uploaderOption.extensionName,
+      uploaderOption.displayName
+    );
     uploaderSelection.appendChild(option);
     if (selectedUploader == uploaderOption.extensionName) {
       option.selected = true;
@@ -85,28 +91,31 @@ function bindToUI(settings) {
 }
 
 function addChangeListener(type, selection) {
-  selection.addEventListener('change', () => {
+  selection.addEventListener("change", () => {
     const selected = selection.options[selection.selectedIndex];
     const name = selected.dataset.extensionName;
-    ipcRenderer.send('AppSettings.Extension.Select', { type: type, name: name });
+    ipcRenderer.send("AppSettings.Extension.Select", {
+      type: type,
+      name: name,
+    });
   });
 }
 
-prefixInput.addEventListener('change', (event) => {
-  ipcRenderer.send('AppSettings.Apply.Prefix', event.target.value);
+prefixInput.addEventListener("change", (event) => {
+  ipcRenderer.send("AppSettings.Apply.Prefix", event.target.value);
 });
-addChangeListener('detector', detectorSelection);
-addChangeListener('uploader', uploaderSelection);
+addChangeListener("detector", detectorSelection);
+addChangeListener("uploader", uploaderSelection);
 
 ipcRenderer.on("ReplayDetails.Add", (event, data) => {
   logOn("ReplayDetails.Add", data);
 
   const item = document.createElement("li");
-  item.textContent = data.title
+  item.textContent = data.title;
   document.getElementById("replays.list").appendChild(item);
 });
 
 ipcRenderer.on("AppSettings.Initialize", (event, data) => {
-  logOn('AppSettings.Initialize ', data)
+  logOn("AppSettings.Initialize ", data);
   bindToUI(data);
 });

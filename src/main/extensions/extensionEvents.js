@@ -21,6 +21,6 @@ export const ExtensionEvents = {
     INITIALIZE: "ExtensionManagement.Initialize",
     UNINSTALL: "ExtensionManagement.Uninstall",
     INSTALL: "ExtensionManagement.Install",
-    CLOSE: "ExtensionManagement.Close"
-  }
-}
+    CLOSE: "ExtensionManagement.Close",
+  },
+};

@@ -1,4 +1,4 @@
-const { ipcRenderer } = require('electron');
+const { ipcRenderer } = require("electron");
 
 /* 
   <li class="w3-container w3-disabled">
@@ -12,34 +12,37 @@ const { ipcRenderer } = require('electron');
   </li>
 */
 function createListItem(extensionInfo) {
-
   const li = document.createElement("li");
-  li.classList.add('w3-container');
+  li.classList.add("w3-container");
   if (extensionInfo.isBuiltIn) {
-    li.classList.add('w3-disabled');
+    li.classList.add("w3-disabled");
   }
 
-  const uninstallBtn = document.createElement('button');
-  uninstallBtn.classList.add('w3-button', 'w3-round', 'w3-theme-action', 'w3-right');
+  const uninstallBtn = document.createElement("button");
+  uninstallBtn.classList.add(
+    "w3-button",
+    "w3-round",
+    "w3-theme-action",
+    "w3-right"
+  );
   uninstallBtn.onclick = () => {
-    ipcRenderer.send('ExtensionManagement.Uninstall', extensionInfo.name);
-  }
+    ipcRenderer.send("ExtensionManagement.Uninstall", extensionInfo.name);
+  };
 
-  const uninstallIcon = document.createElement('i');
-  uninstallIcon.classList.add('fa', 'fa-trash');
+  const uninstallIcon = document.createElement("i");
+  uninstallIcon.classList.add("fa", "fa-trash");
   uninstallBtn.appendChild(uninstallIcon);
   li.appendChild(uninstallBtn);
 
-  const nameDiv = document.createElement('div');
-  const nameSpan = document.createElement('span');
-  nameSpan.classList.add('w3-large');
+  const nameDiv = document.createElement("div");
+  const nameSpan = document.createElement("span");
+  nameSpan.classList.add("w3-large");
   nameSpan.textContent = extensionInfo.display;
   nameDiv.appendChild(nameSpan);
   li.appendChild(nameDiv);
 
-
-  const descriptionDiv = document.createElement('div');
-  const descriptionP = document.createElement('p');
+  const descriptionDiv = document.createElement("div");
+  const descriptionP = document.createElement("p");
   descriptionP.textContent = extensionInfo.description;
   descriptionDiv.appendChild(descriptionP);
   li.appendChild(descriptionDiv);
@@ -64,21 +67,20 @@ function bindFromData(data) {
   }
 }
 
-document.getElementById('install-extension-btn').onclick = () => {
+document.getElementById("install-extension-btn").onclick = () => {
   ipcRenderer.send("AppActions.SelectDirectory");
-}
+};
 
-document.getElementById('close-btn').onclick = () => {
-  ipcRenderer.send('ExtensionManagement.Close');
-}
+document.getElementById("close-btn").onclick = () => {
+  ipcRenderer.send("ExtensionManagement.Close");
+};
 
-ipcRenderer.on('AppActions.SelectDirectory.Response', (event, data) => {
+ipcRenderer.on("AppActions.SelectDirectory.Response", (event, data) => {
   if (data && data.length > 0) {
-    ipcRenderer.send('ExtensionManagement.Install', data);
+    ipcRenderer.send("ExtensionManagement.Install", data);
   }
-}
-);
+});
 
-ipcRenderer.on('ExtensionManagement.Initialize', (event, data) => {
+ipcRenderer.on("ExtensionManagement.Initialize", (event, data) => {
   bindFromData(data);
 });

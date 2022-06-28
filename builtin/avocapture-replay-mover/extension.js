@@ -1,16 +1,15 @@
-const fs = require('fs')
-const path = require('path')
+const fs = require("fs");
+const path = require("path");
 
 class ReplayMover {
-
   constructor(opts) {
-    const { logger } = opts
+    const { logger } = opts;
     this.logger = logger;
   }
 
   /**
    * Initializes the state of the extension based on the given settings.
-   * 
+   *
    * @param {*} settings the settings specific to this extension
    */
   initialize(settings) {
@@ -34,7 +33,7 @@ class ReplayMover {
 
   /**
    * The extension has new settings
-   * 
+   *
    * @param {*} newSettings the new settings
    */
   notifyModifyApply(newSettings) {
@@ -52,13 +51,12 @@ class ReplayMover {
     this.logger.info(`Received data ${JSON.stringify(replayData)}`);
     if (this.destination && this.destination.length > 0) {
       const destinationPath = path.join(this.destination, replayData.fileName);
-      this.logger.info(`Computed destination ${destinationPath}`)
+      this.logger.info(`Computed destination ${destinationPath}`);
       fs.renameSync(replayData.filePath, destinationPath);
-    }
-    else {
-      this.logger.info('No destination to upload to!')
+    } else {
+      this.logger.info("No destination to upload to!");
     }
   }
 }
 
-module.exports = ReplayMover
+module.exports = ReplayMover;

@@ -1,11 +1,9 @@
-
 /**
  * Encapsulates data about an extension that has been loaded from the filesystem
  */
 export default class LoadedExtension {
-
   /**
-   * 
+   *
    * @param {object} instance an instance of the created extension class
    * @param {obj} configuration the object with properties read from the package.json
    * @param {filePath} extensionPath a file path to where the extension's sources are located
@@ -13,7 +11,7 @@ export default class LoadedExtension {
   constructor(instance, configuration, extensionPath) {
     this.instance = instance;
     this.configuration = configuration;
-    this.extensionPath = extensionPath
+    this.extensionPath = extensionPath;
   }
 
   /**
@@ -31,23 +29,23 @@ export default class LoadedExtension {
   }
 
   name() {
-    return this.configuration.name
+    return this.configuration.name;
   }
 
   type() {
-    return this.configuration.type
+    return this.configuration.type;
   }
 
   display() {
     if (this.configuration.display) {
-      return this.configuration.display
+      return this.configuration.display;
     }
     return this.name();
   }
 
   description() {
     if (this.configuration.description) {
-      return this.configuration.description
+      return this.configuration.description;
     }
     return this.name();
   }

@@ -1,23 +1,19 @@
-const Store = require('electron-store');
-const store = new Store(
-  {
-    name: 'avocapture',
-    cwd: 'settings',
-    clearInvalidConfig: true
-  }
-);
+const Store = require("electron-store");
+const store = new Store({
+  name: "avocapture",
+  cwd: "settings",
+  clearInvalidConfig: true,
+});
 
 const appDefaults = {
-  prefix: "Prefix"
+  prefix: "Prefix",
 };
 
 export class AppSettings {
-
   save(subKey, value) {
     if (value) {
       store.set(subKey, value);
-    }
-    else {
+    } else {
       store.delete(subKey);
     }
   }
@@ -39,5 +35,4 @@ export class AppSettings {
     }
     return all;
   }
-
 }

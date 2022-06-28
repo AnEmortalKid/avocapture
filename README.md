@@ -23,4 +23,4 @@ When a replay is detected, a dialog will show up to allow you to rename that rep
 
 ## Other
 
-* Additional [documentation](./docs/README.md)
+- Additional [documentation](./docs/README.md)

@@ -1,1 +1,1 @@
-console.log('Loaded editor!');
+console.log("Loaded editor!");

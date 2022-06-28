@@ -1,8 +1,6 @@
-const { contextBridge, ipcRenderer } = require('electron')
+const { contextBridge, ipcRenderer } = require("electron");
 
-console.log(
-  '👋 Common preload'
-);
+console.log("👋 Common preload");
 
 const extensions = {
   applySettings(settings) {
@@ -14,27 +12,27 @@ const extensions = {
   },
 
   onInitialize(initCallback) {
-    ipcRenderer.on('ExtensionSettings.Initialize', (event, data) => {
+    ipcRenderer.on("ExtensionSettings.Initialize", (event, data) => {
       initCallback(data);
     });
-  }
-}
+  },
+};
 
 const actions = {
   selectDirectory(responseCallback) {
-    ipcRenderer.once('AppActions.SelectDirectory.Response', (event, data) => {
+    ipcRenderer.once("AppActions.SelectDirectory.Response", (event, data) => {
       if (data) {
         responseCallback(data);
       }
     });
 
-    ipcRenderer.send('AppActions.SelectDirectory');
-  }
-}
+    ipcRenderer.send("AppActions.SelectDirectory");
+  },
+};
 
 const api = {
   extensions: extensions,
-  actions: actions
-}
+  actions: actions,
+};
 
-contextBridge.exposeInMainWorld('avocapture', api);
+contextBridge.exposeInMainWorld("avocapture", api);

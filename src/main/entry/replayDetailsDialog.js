@@ -1,9 +1,8 @@
-import { BrowserWindow } from "electron"
-import *  as path from "path"
+import { BrowserWindow } from "electron";
+import * as path from "path";
 import { ReplayDetailsEvents } from "./replayDetailsEvents";
 
 export class ReplayDetailsDialog {
-
   _create(settings) {
     const entryWindow = new BrowserWindow({
       width: 800,
@@ -16,7 +15,7 @@ export class ReplayDetailsDialog {
         nodeIntegration: true,
         contextIsolation: false,
       },
-    })
+    });
     entryWindow.setBackgroundColor("#d7dbe3");
     entryWindow.setAlwaysOnTop(true, "screen-saver");
     entryWindow.setVisibleOnAllWorkspaces(true);
@@ -27,8 +26,14 @@ export class ReplayDetailsDialog {
     );
 
     entryWindow.once("ready-to-show", () => {
-      entryWindow.webContents.on("before-input-event", this.handleBeforeInputEvent.bind(this));
-      entryWindow.webContents.send(ReplayDetailsEvents.DIALOG.INITIALIZE, settings);
+      entryWindow.webContents.on(
+        "before-input-event",
+        this.handleBeforeInputEvent.bind(this)
+      );
+      entryWindow.webContents.send(
+        ReplayDetailsEvents.DIALOG.INITIALIZE,
+        settings
+      );
       entryWindow.moveTop();
       entryWindow.show();
       entryWindow.focus();
@@ -46,9 +51,11 @@ export class ReplayDetailsDialog {
   show(settings) {
     if (!this.entryWindow) {
       this.entryWindow = this._create(settings);
-    }
-    else {
-      this.entryWindow.webContents.send(ReplayDetailsEvents.DIALOG.INITIALIZE, settings);
+    } else {
+      this.entryWindow.webContents.send(
+        ReplayDetailsEvents.DIALOG.INITIALIZE,
+        settings
+      );
       this.entryWindow.moveTop();
       this.entryWindow.show();
       this.entryWindow.focus();

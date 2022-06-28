@@ -37,7 +37,7 @@ export default class ExtensionSettingsApp {
   }
 
   extensionDialogClose() {
-    logger.logMethod('extensionDialogClose');
+    logger.logMethod("extensionDialogClose");
     // nothing has acted on it, cancel the state
     if (this.editingContext) {
       this.extensionManager.cancelEdit(this.editingContext);
@@ -50,22 +50,29 @@ export default class ExtensionSettingsApp {
 
     const extensionName = data.extensionName;
     const extension = this.extensionManager.getExtension(extensionName);
-    const savedExtensionSettings = this.extensionManager.getExtensionSettings(extensionName);
+    const savedExtensionSettings =
+      this.extensionManager.getExtensionSettings(extensionName);
     const extensionViewSettings = extension.configuration?.settings?.view;
 
     if (extensionViewSettings) {
       const dialogViewSettings = {
-        viewPath: path.join(extension.extensionPath, extensionViewSettings.entry),
+        viewPath: path.join(
+          extension.extensionPath,
+          extensionViewSettings.entry
+        ),
         width: extensionViewSettings.width,
-        height: extensionViewSettings.height
-      }
+        height: extensionViewSettings.height,
+      };
 
-      this.extensionSettingsDialog = new ExtensionSettingsDialog({
-        name: extensionName,
-        settings: savedExtensionSettings,
-        displaySettings: dialogViewSettings
-      }, this.mainWindow, this.extensionDialogClose.bind(this));
-
+      this.extensionSettingsDialog = new ExtensionSettingsDialog(
+        {
+          name: extensionName,
+          settings: savedExtensionSettings,
+          displaySettings: dialogViewSettings,
+        },
+        this.mainWindow,
+        this.extensionDialogClose.bind(this)
+      );
 
       this.editingContext = extensionName;
       this.extensionManager.edit(extensionName);
@@ -73,9 +80,17 @@ export default class ExtensionSettingsApp {
   }
 
   registerEvents() {
-    ipcMain.on(ExtensionEvents.EXTENSION_SETTINGS.APPLY, this.handleExtensionApply.bind(this));
-    ipcMain.on(ExtensionEvents.EXTENSION_SETTINGS.CANCEL, this.handleExtensionCancel.bind(this));
-    ipcMain.on(ExtensionEvents.EXTENSION_SETTINGS.EDIT, this.handleExtensionEdit.bind(this));
+    ipcMain.on(
+      ExtensionEvents.EXTENSION_SETTINGS.APPLY,
+      this.handleExtensionApply.bind(this)
+    );
+    ipcMain.on(
+      ExtensionEvents.EXTENSION_SETTINGS.CANCEL,
+      this.handleExtensionCancel.bind(this)
+    );
+    ipcMain.on(
+      ExtensionEvents.EXTENSION_SETTINGS.EDIT,
+      this.handleExtensionEdit.bind(this)
+    );
   }
-
 }
