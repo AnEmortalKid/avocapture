@@ -12,3 +12,8 @@ Captures planned features and their barriers to implementation.
 ### Overlay
 
 Attempt to setup an [overlay window](https://github.com/TheMightyPenguin/electron-overlay-window) so the target capturable can be in fullscreen mode.
+
+
+### Publish
+
+* Setup https://www.electronforge.io/config/publishers/github
