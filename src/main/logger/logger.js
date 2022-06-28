@@ -26,7 +26,7 @@ export default class Logger {
   }
 
   logEvent(eventName, data) {
-    this.ownerLog.info(`[@${eventName}] ${data ? data : ""}`);
+    this.ownerLog.info(`[@ ${eventName}] ${data ? data : ""}`);
   }
 
   logMethod(method, data) {

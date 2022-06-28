@@ -8,21 +8,22 @@ const windowsOptions = {
     "./node_modules/node-global-key-listener/bin/WinKeyServer.exe"
   ),
 };
-// TODO create once on extension creation
-// and use right logger levels
-const globalKeyboardListener = new GlobalKeyboardListener({
-  windows: {
-    onError: (errorCode) =>
-      console.error("[avocapture.search-on-hotkey] [gkl] ERROR: " + errorCode),
-    onInfo: (info) =>
-      console.info("[avocapture.search-on-hotkey] [gkl] INFO: " + info),
-    ...windowsOptions,
-  },
-  mac: {
-    onError: (errorCode) =>
-      console.error("[avocapture.search-on-hotkey] [gkl] ERROR: " + errorCode),
-  },
-});
+
+function createGlobalListener(logger) {
+  return new GlobalKeyboardListener({
+    windows: {
+      onError: (errorCode) =>
+        logger.error("[globalKeyListener] got error: " + errorCode),
+      onInfo: (info) =>
+        logger.info("[globalKeyListener] " + info),
+      ...windowsOptions,
+    },
+    mac: {
+      onError: (errorCode) =>
+        logger.error("[globalKeyListener] got error: " + errorCode),
+    },
+  });
+}
 
 function getLastCreated(a, b) {
   if (a.created < b.created) {
@@ -58,6 +59,11 @@ class HotkeyReplayDetector {
   constructor(opts) {
     const { logger } = opts;
     this.logger = logger;
+
+    if (!this.globalKeyboardListener) {
+      this.globalKeyboardListener = createGlobalListener(this.logger);
+    }
+
   }
 
   initialize(hotkeySettings) {
@@ -69,24 +75,24 @@ class HotkeyReplayDetector {
 
   notifyModifying() {
     // remove current listener to avoid collisions
-    globalKeyboardListener.removeListener(this.keyListener);
+    this.globalKeyboardListener.removeListener(this.keyListener);
   }
 
   notifyModifyApply(newSettings) {
     this.logger.info(`modify ${JSON.stringify(newSettings)}`);
     this.settings = newSettings;
     this.keyListener = this.createKeyListener(newSettings).bind(this);
-    globalKeyboardListener.addListener(this.keyListener);
+    this.globalKeyboardListener.addListener(this.keyListener);
   }
 
   notifyModifyCancel() {
     // re-add old listener
-    globalKeyboardListener.addListener(this.keyListener);
+    this.globalKeyboardListener.addListener(this.keyListener);
   }
 
   teardown() {
-    globalKeyboardListener.removeListener(this.keyListener);
-    globalKeyboardListener.kill();
+    this.globalKeyboardListener.removeListener(this.keyListener);
+    this.globalKeyboardListener.kill();
   }
 
   register(detectListener) {
@@ -95,7 +101,7 @@ class HotkeyReplayDetector {
 
     // rebind this now that the detectListener is passed to us
     this.keyListener = this.keyListener.bind(this);
-    globalKeyboardListener.addListener(this.keyListener);
+    this.globalKeyboardListener.addListener(this.keyListener);
   }
 
   createKeyListener(settings) {
