@@ -1,16 +1,15 @@
-
 import { app } from "electron";
 
-const path = require('path');
-const fs = require('fs');
+const path = require("path");
+const fs = require("fs");
 
 // cleanup old log on startup
-const logPath = path.join(app.getPath('userData'), 'logs/main.log');
+const logPath = path.join(app.getPath("userData"), "logs/main.log");
 if (fs.existsSync(logPath)) {
   fs.rmSync(logPath);
 }
 
-const log = require('electron-log');
+const log = require("electron-log");
 
 export default class Logger {
   /**
@@ -37,5 +36,4 @@ export default class Logger {
   log(msg) {
     this.ownerLog.info(msg);
   }
-
 }

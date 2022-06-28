@@ -1,39 +1,45 @@
-import path from 'path';
-import * as fs from "fs"
+import path from "path";
+import * as fs from "fs";
 
 import { createRequire } from "module";
-import LoadedExtension from './loadedExtension';
-import Logger from '../../logger/logger';
-import ExtensionLogger from '../../logger/extensionLogger';
+import LoadedExtension from "./loadedExtension";
+import Logger from "../../logger/logger";
+import ExtensionLogger from "../../logger/extensionLogger";
 const require = createRequire(import.meta.url);
 
-const logger = new Logger('ExtensionLoader');
+const logger = new Logger("ExtensionLoader");
 
 function getMethods(obj) {
-  let properties = new Set()
-  let currentObj = obj
+  let properties = new Set();
+  let currentObj = obj;
   do {
-    Object.getOwnPropertyNames(currentObj).map(item => properties.add(item))
-  } while ((currentObj = Object.getPrototypeOf(currentObj)))
-  return [...properties.keys()].filter(item => typeof obj[item] === 'function')
+    Object.getOwnPropertyNames(currentObj).map((item) => properties.add(item));
+  } while ((currentObj = Object.getPrototypeOf(currentObj)));
+  return [...properties.keys()].filter(
+    (item) => typeof obj[item] === "function"
+  );
 }
 
 function checkExtension(extension, name, type) {
-  logger.logMethod('checkExtension', '[' + name + ',' + type + ']');
+  logger.logMethod("checkExtension", "[" + name + "," + type + "]");
   // check bases first
-  const checkMethods = ["initialize",
+  const checkMethods = [
+    "initialize",
     "teardown",
-    "notifyModifying", "notifyModifyApply", "notifyModifyCancel"];
+    "notifyModifying",
+    "notifyModifyApply",
+    "notifyModifyCancel",
+  ];
 
   if (type === "detector") {
-    checkMethods.push("register")
+    checkMethods.push("register");
   }
   if (type === "uploader") {
-    checkMethods.push("upload")
+    checkMethods.push("upload");
   }
 
   const objectMethods = getMethods(extension);
-  const missing = []
+  const missing = [];
   for (var cm of checkMethods) {
     if (!objectMethods.includes(cm)) {
       missing.push(cm);
@@ -41,9 +47,10 @@ function checkExtension(extension, name, type) {
   }
 
   if (missing.length > 0) {
-    throw new Error("Extension " + name + " did not declare functions: [" + missing + "]")
+    throw new Error(
+      "Extension " + name + " did not declare functions: [" + missing + "]"
+    );
   }
-
 }
 
 function checkAvocaptureProperties(avocapture) {
@@ -87,7 +94,6 @@ function checkLoadable(packageJson) {
 }
 
 export default class ExtensionLoader {
-
   loadExtension(extensionPath) {
     // asume the extension has been installed
     const packagePath = path.join(extensionPath, "package.json");
@@ -103,11 +109,11 @@ export default class ExtensionLoader {
       name: pjson.name,
       description: pjson.description,
       ...pjson.avocapture,
-    }
+    };
 
     var ExtensionClass = require(path.join(extensionPath, pjson.main));
     var extensionInstance = new ExtensionClass({
-      logger: new ExtensionLogger(configuration.name)
+      logger: new ExtensionLogger(configuration.name),
     });
     checkExtension(extensionInstance, configuration.name, configuration.type);
 
@@ -117,17 +123,18 @@ export default class ExtensionLoader {
   loadExtensions(directory) {
     const files = fs.readdirSync(directory, { withFileTypes: true });
 
-    var extensions = []
+    var extensions = [];
     for (var file of files) {
       if (file.isDirectory()) {
-        const loadedExtension = this.loadExtension(path.join(directory, file.name));
+        const loadedExtension = this.loadExtension(
+          path.join(directory, file.name)
+        );
         if (loadedExtension) {
           extensions.push(loadedExtension);
         }
       }
     }
 
-    return extensions
+    return extensions;
   }
-
 }

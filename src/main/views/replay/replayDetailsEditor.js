@@ -4,13 +4,12 @@ function logOn(name, data) {
   console.log(`Received [${name}]`, data ? data : "");
 }
 
-const replayIdInput = document.getElementById('replay.uuid');
-const replayPrefixInput = document.getElementById('replay.prefix');
-const replayTitleInput = document.getElementById('replay.title');
+const replayIdInput = document.getElementById("replay.uuid");
+const replayPrefixInput = document.getElementById("replay.prefix");
+const replayTitleInput = document.getElementById("replay.title");
 
 function cleaner(str) {
-  return str.replaceAll("\\", "")
-    .replaceAll("/", "");
+  return str.replaceAll("\\", "").replaceAll("/", "");
 }
 
 function bindToForm(data) {
@@ -18,19 +17,19 @@ function bindToForm(data) {
 
   replayIdInput.value = replayUuid;
   replayPrefixInput.value = prefix;
-  replayTitleInput.value = ""
+  replayTitleInput.value = "";
   replayTitleInput.focus();
 }
 
 function bindFromForm() {
-  const cleanTitle = cleaner(replayTitleInput.value)
-  const cleanPrefix = cleaner(replayPrefixInput.value)
+  const cleanTitle = cleaner(replayTitleInput.value);
+  const cleanPrefix = cleaner(replayPrefixInput.value);
 
   return {
     prefix: cleanPrefix,
     title: cleanTitle,
-    replayUuid: replayIdInput.value
-  }
+    replayUuid: replayIdInput.value,
+  };
 }
 
 function bindButtons() {
@@ -50,7 +49,7 @@ function cancelForm() {
 }
 
 ipcRenderer.on("ReplayDetails.Dialog.Initialize", (event, data) => {
-  logOn('ReplayDetails.Dialog.Initialize', data);
+  logOn("ReplayDetails.Dialog.Initialize", data);
 
   bindToForm(data);
   bindButtons();

@@ -2,27 +2,32 @@
 // Only showing the relevant configuration for brevity
 module.exports = {
   plugins: [
-    ['@electron-forge/plugin-webpack', {
-      mainConfig: './webpack.main.config.js',
-      renderer: {
-        config: './webpack.renderer.config.js',
-        entryPoints: [{
-          name: 'main_window',
-          html: './src/renderer/index.html',
-          js: './src/renderer/main.js',
-          preload: {
-            "js": "./src/main/preload.js"
-          }
-        }]
-      }
-    }],
+    [
+      "@electron-forge/plugin-webpack",
+      {
+        mainConfig: "./webpack.main.config.js",
+        renderer: {
+          config: "./webpack.renderer.config.js",
+          entryPoints: [
+            {
+              name: "main_window",
+              html: "./src/renderer/index.html",
+              js: "./src/renderer/main.js",
+              preload: {
+                js: "./src/main/preload.js",
+              },
+            },
+          ],
+        },
+      },
+    ],
     [
       "@timfish/forge-externals-plugin",
       {
-        "externals": ["node-global-key-listener"],
-        "includeDeps": true
-      }
-    ]
+        externals: ["node-global-key-listener"],
+        includeDeps: true,
+      },
+    ],
   ],
   makers: [
     {
@@ -42,6 +47,6 @@ module.exports = {
     },
   ],
   packagerConfig: {
-    icon: "branding/logo"
-  }
-}
+    icon: "branding/logo",
+  },
+};

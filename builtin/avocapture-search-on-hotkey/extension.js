@@ -1,21 +1,28 @@
-const path = require('path')
-const fs = require('fs');
-const { GlobalKeyboardListener } = require('node-global-key-listener');
+const path = require("path");
+const fs = require("fs");
+const { GlobalKeyboardListener } = require("node-global-key-listener");
 
-const windowsOptions = { serverPath: path.join(__dirname, "./node_modules/node-global-key-listener/bin/WinKeyServer.exe") }
+const windowsOptions = {
+  serverPath: path.join(
+    __dirname,
+    "./node_modules/node-global-key-listener/bin/WinKeyServer.exe"
+  ),
+};
 // TODO create once on extension creation
 // and use right logger levels
 const globalKeyboardListener = new GlobalKeyboardListener({
   windows: {
-    onError: (errorCode) => console.error("[avocapture.search-on-hotkey] [gkl] ERROR: " + errorCode),
-    onInfo: (info) => console.info("[avocapture.search-on-hotkey] [gkl] INFO: " + info),
-    ...windowsOptions
+    onError: (errorCode) =>
+      console.error("[avocapture.search-on-hotkey] [gkl] ERROR: " + errorCode),
+    onInfo: (info) =>
+      console.info("[avocapture.search-on-hotkey] [gkl] INFO: " + info),
+    ...windowsOptions,
   },
   mac: {
-    onError: (errorCode) => console.error("[avocapture.search-on-hotkey] [gkl] ERROR: " + errorCode),
-  }
-}
-);
+    onError: (errorCode) =>
+      console.error("[avocapture.search-on-hotkey] [gkl] ERROR: " + errorCode),
+  },
+});
 
 function getLastCreated(a, b) {
   if (a.created < b.created) {
@@ -29,7 +36,7 @@ function findLastReplay(replayDirectory) {
 
   var latest;
   for (var file of files) {
-    var fullPath = path.join(replayDirectory, file)
+    var fullPath = path.join(replayDirectory, file);
     var stat = fs.lstatSync(fullPath, { bigint: true });
     if (stat.isDirectory()) {
       continue;
@@ -37,9 +44,8 @@ function findLastReplay(replayDirectory) {
 
     const curr = { path: fullPath, name: file, created: stat.ctimeMs };
     if (!latest) {
-      latest = curr
-    }
-    else {
+      latest = curr;
+    } else {
       // compare
       latest = getLastCreated(latest, curr);
     }
@@ -49,9 +55,8 @@ function findLastReplay(replayDirectory) {
 }
 
 class HotkeyReplayDetector {
-
   constructor(opts) {
-    const { logger } = opts
+    const { logger } = opts;
     this.logger = logger;
   }
 
@@ -85,7 +90,7 @@ class HotkeyReplayDetector {
   }
 
   register(detectListener) {
-    this.logger.info('register');
+    this.logger.info("register");
     this.detectListener = detectListener;
 
     // rebind this now that the detectListener is passed to us
@@ -98,11 +103,14 @@ class HotkeyReplayDetector {
       if (e.state == "DOWN" && e.vKey == settings.vKey) {
         setTimeout(() => {
           const last = findLastReplay(this.settings.replayDirectory);
-          this.detectListener.detected({ fileName: last.name, filePath: last.path });
+          this.detectListener.detected({
+            fileName: last.name,
+            filePath: last.path,
+          });
         }, settings.hotkeyDelayMS);
       }
     };
   }
 }
 
-module.exports = HotkeyReplayDetector
+module.exports = HotkeyReplayDetector;

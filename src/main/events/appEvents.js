@@ -6,6 +6,6 @@ export const AppEvents = {
   },
   ACTIONS: {
     SELECT_DIRECTORY: "AppActions.SelectDirectory",
-    SELECT_DIRECTORY_RESPONSE: "AppActions.SelectDirectory.Response"
-  }
-}
+    SELECT_DIRECTORY_RESPONSE: "AppActions.SelectDirectory.Response",
+  },
+};

@@ -1,4 +1,3 @@
-
 export const ReplayDetailsEvents = {
   DIALOG: {
     /**
@@ -15,6 +14,6 @@ export const ReplayDetailsEvents = {
     /**
      * Add the replay to the main app's list
      */
-    ADD: "ReplayDetails.Add"
-  }
-}
+    ADD: "ReplayDetails.Add",
+  },
+};

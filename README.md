@@ -8,4 +8,4 @@ An extensible application to rename replays as they are captured.
 
 ## Other
 
-* Additional [documentation](./docs/README.md)
+- Additional [documentation](./docs/README.md)

@@ -1,30 +1,39 @@
-const { app, BrowserWindow, ipcMain, dialog, Menu, MenuItem } = require('electron')
+const {
+  app,
+  BrowserWindow,
+  ipcMain,
+  dialog,
+  Menu,
+  MenuItem,
+} = require("electron");
 
-import { ReplayDetectionListener } from './detector/replayDetectionListener';
-import { ReplayDetailsDialog } from "./entry/replayDetailsDialog"
-import { ReplayDetailsEvents } from './entry/replayDetailsEvents';
-import { ReplaySaver } from './saver/replaySaver';
-import { AppSettings } from './settings/appSettings';
-import ExtensionManager from './extensions/management/extensionManager';
-import ExtensionSettingsApp from './extensions/settings/extensionSettingsApp';
-import { AppEvents } from './events/appEvents';
-import ExtensionManagementApp from './extensions/management/extensionManagementApp';
-import { isProduction } from './util/processInfo';
-import Logger from './logger/logger';
+import { ReplayDetectionListener } from "./detector/replayDetectionListener";
+import { ReplayDetailsDialog } from "./entry/replayDetailsDialog";
+import { ReplayDetailsEvents } from "./entry/replayDetailsEvents";
+import { ReplaySaver } from "./saver/replaySaver";
+import { AppSettings } from "./settings/appSettings";
+import ExtensionManager from "./extensions/management/extensionManager";
+import ExtensionSettingsApp from "./extensions/settings/extensionSettingsApp";
+import { AppEvents } from "./events/appEvents";
+import ExtensionManagementApp from "./extensions/management/extensionManagementApp";
+import { isProduction } from "./util/processInfo";
+import Logger from "./logger/logger";
 
+const isMac = process.platform === "darwin";
 
-const isMac = process.platform === 'darwin'
+const logger = new Logger("MainApp");
 
-const logger = new Logger('MainApp');
-
-const path = require('path')
-const fs = require('fs');
+const path = require("path");
+const fs = require("fs");
 
 const appSettingsStore = new AppSettings();
 
 const replayDialog = new ReplayDetailsDialog();
 const replaySaver = new ReplaySaver();
-const replayDetectionListener = new ReplayDetectionListener(replayDialog, replaySaver);
+const replayDetectionListener = new ReplayDetectionListener(
+  replayDialog,
+  replaySaver
+);
 
 const extensionManager = new ExtensionManager();
 const extensionsApp = new ExtensionSettingsApp(extensionManager);
@@ -36,21 +45,20 @@ function installBuiltins() {
 
   for (var file of files) {
     if (file.isDirectory()) {
-      extensionManager.install(path.join(builtIns, file.name))
+      extensionManager.install(path.join(builtIns, file.name));
     }
   }
 }
 
 function extensionChangeListener(eventData) {
-  logger.logMethod('extensionChangeListener', eventData);
-
+  logger.logMethod("extensionChangeListener", eventData);
 
   let appSettings = appSettingsStore.getAll();
   if (eventData.event === "uninstall") {
     const selectedByType = appSettings.extensions?.selected;
 
     if (selectedByType[eventData.type] === eventData.name) {
-      appSettingsStore.clear('extensions.selected.' + eventData.type);
+      appSettingsStore.clear("extensions.selected." + eventData.type);
       // update
       appSettings = appSettingsStore.getAll();
     }
@@ -60,9 +68,9 @@ function extensionChangeListener(eventData) {
   const currSettings = {
     ...appSettings,
     detectors: extensionManager.getExtensionsOfType("detector"),
-    uploaders: extensionManager.getExtensionsOfType("uploader")
-  }
-  mainWindow.webContents.send('AppSettings.Initialize', currSettings);
+    uploaders: extensionManager.getExtensionsOfType("uploader"),
+  };
+  mainWindow.webContents.send("AppSettings.Initialize", currSettings);
 }
 
 let mainWindow;
@@ -76,21 +84,17 @@ const createWindow = () => {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       nodeIntegration: true,
       contextIsolation: false,
-    }
-  })
+    },
+  });
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
-  mainWindow.setIcon(
-    path.resolve(__dirname, "images", "logo_256.png")
-  );
+  mainWindow.setIcon(path.resolve(__dirname, "images", "logo_256.png"));
 
   const appMenu = new Menu();
   const fileItems = new MenuItem({
-    label: 'File',
-    submenu: [
-      isMac ? { role: 'close' } : { role: 'quit' }
-    ]
+    label: "File",
+    submenu: [isMac ? { role: "close" } : { role: "quit" }],
   });
 
   const extensionsMenu = new Menu();
@@ -98,20 +102,17 @@ const createWindow = () => {
     label: "Manage",
     click: (MenuItem, browserWindow, event) => {
       extensionManagementApp.manage(browserWindow);
-    }
+    },
   });
   extensionsMenu.append(item);
   const extensionsMenuItem = new MenuItem({
-    label: 'Extensions',
-    submenu: extensionsMenu
-  }
-  );
+    label: "Extensions",
+    submenu: extensionsMenu,
+  });
 
   const view = new MenuItem({
-    label: 'View',
-    submenu: [
-      { role: 'toggleDevTools' }
-    ]
+    label: "View",
+    submenu: [{ role: "toggleDevTools" }],
   });
 
   appMenu.append(fileItems);
@@ -122,38 +123,36 @@ const createWindow = () => {
   Menu.setApplicationMenu(appMenu);
 
   extensionsApp.setMainWindow(mainWindow);
-}
+};
 
-app.on('window-all-closed', () => {
-  this.logger.info('tearing down');
+app.on("window-all-closed", () => {
+  this.logger.info("tearing down");
   // TODO teardown active extensions
-  if (process.platform !== 'darwin') {
+  if (process.platform !== "darwin") {
     replayDialog.destroy();
     extensionManager.shutdown();
-    app.quit()
+    app.quit();
   }
-})
-
+});
 
 app.whenReady().then(() => {
-  createWindow()
+  createWindow();
 
-  app.on('activate', () => {
+  app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow()
+      createWindow();
     }
-  })
+  });
 
   const appSettings = appSettingsStore.getAll();
   const currSettings = {
     ...appSettings,
     detectors: extensionManager.getExtensionsOfType("detector"),
-    uploaders: extensionManager.getExtensionsOfType("uploader")
-  }
-  mainWindow.webContents.on('did-finish-load', () => {
-    mainWindow.webContents.send('AppSettings.Initialize', currSettings);
+    uploaders: extensionManager.getExtensionsOfType("uploader"),
+  };
+  mainWindow.webContents.on("did-finish-load", () => {
+    mainWindow.webContents.send("AppSettings.Initialize", currSettings);
   });
-
 
   installBuiltins();
   extensionManager.loadInstalled();
@@ -178,8 +177,7 @@ app.whenReady().then(() => {
   if (selectedByType?.uploader) {
     extensionManager.activate(selectedByType.uploader);
   }
-
-})
+});
 
 ipcMain.on(ReplayDetailsEvents.DIALOG.CANCEL, (event, data) => {
   logger.logEvent(ReplayDetailsEvents.DIALOG.CANCEL, data);
@@ -194,7 +192,7 @@ ipcMain.on(ReplayDetailsEvents.DIALOG.APPLY, (event, data) => {
   const replayData = replaySaver.getReplayData(data.replayUuid);
 
   // get uploader extension
-  const selectedUploader = appSettingsStore.get('extensions.selected.uploader');
+  const selectedUploader = appSettingsStore.get("extensions.selected.uploader");
   if (selectedUploader) {
     extensionManager.getExtension(selectedUploader).instance.upload(replayData);
   }
@@ -211,7 +209,7 @@ ipcMain.on(AppEvents.SETTINGS.APPLY, (event, data) => {
 
 ipcMain.on(AppEvents.SETTINGS.APPLY_PREFIX, (event, prefix) => {
   logger.logEvent(AppEvents.SETTINGS.APPLY_PREFIX, prefix);
-  appSettingsStore.save('prefix', prefix);
+  appSettingsStore.save("prefix", prefix);
   replayDetectionListener.setPrefix(prefix);
 });
 
@@ -219,8 +217,8 @@ ipcMain.on(AppEvents.SETTINGS.SELECT_EXTENSION, (event, data) => {
   logger.logEvent(AppEvents.SETTINGS.SELECT_EXTENSION, data);
 
   //  { type , name }
-  const old = appSettingsStore.get('extensions.selected.' + data.type);
-  appSettingsStore.save('extensions.selected.' + data.type, data.name);
+  const old = appSettingsStore.get("extensions.selected." + data.type);
+  appSettingsStore.save("extensions.selected." + data.type, data.name);
   // going from none to something, old would be null
   if (old) {
     extensionManager.deactivate(old);
@@ -239,7 +237,7 @@ ipcMain.on(AppEvents.SETTINGS.SELECT_EXTENSION, (event, data) => {
 
 ipcMain.on(AppEvents.ACTIONS.SELECT_DIRECTORY, async (event, data) => {
   const result = await dialog.showOpenDialog(mainWindow, {
-    properties: ['openDirectory']
+    properties: ["openDirectory"],
   });
 
   const selectedDir = result.filePaths.length > 0 ? result.filePaths[0] : null;

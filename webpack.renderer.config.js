@@ -1,4 +1,4 @@
-const rules = require('./webpack.rules');
+const rules = require("./webpack.rules");
 const path = require("path");
 const fs = require("fs");
 
@@ -15,12 +15,10 @@ const assetPatterns = assets.map((asset) => {
 
 const faPath = path.resolve(__dirname, "src", "assets", "font-awesome-4.7.0");
 fs.readdirSync(faPath).forEach((f) => {
-  assetPatterns.push(
-    {
-      from: path.join(faPath, f),
-      to: path.resolve(__dirname, ".webpack/renderer", "font-awesome-4.7.0", f)
-    }
-  )
+  assetPatterns.push({
+    from: path.join(faPath, f),
+    to: path.resolve(__dirname, ".webpack/renderer", "font-awesome-4.7.0", f),
+  });
 });
 
 module.exports = {

@@ -1,15 +1,13 @@
-
-const log = require('electron-log');
+const log = require("electron-log");
 
 export default class ExtensionLogger {
-
   constructor(extensionName) {
     this.logger = log.scope(extensionName);
   }
 
   /**
-     * Log an error message
-     */
+   * Log an error message
+   */
   error(...params) {
     this.logger.error(...params);
   }

@@ -1,10 +1,10 @@
 import { BrowserWindow, ipcMain } from "electron";
-import * as path from 'path';
+import * as path from "path";
 import Logger from "../../logger/logger";
 import { isProduction } from "../../util/processInfo";
 import { ExtensionEvents } from "../extensionEvents";
 
-const logger = new Logger('ExtensionManagementApp');
+const logger = new Logger("ExtensionManagementApp");
 
 /**
  * Responsible for managing the available extensions, installing/uninstalling
@@ -18,7 +18,7 @@ export default class ExtensionManagementApp {
 
   _getExtensionData() {
     const extensionNames = this.extensionManager.getExtensionNames();
-    const extensionData = extensionNames.map(name => {
+    const extensionData = extensionNames.map((name) => {
       const extension = this.extensionManager.getExtension(name);
 
       return {
@@ -26,13 +26,12 @@ export default class ExtensionManagementApp {
         display: extension.display(),
         description: extension.description(),
         isBuiltIn: extension.isBuiltIn(),
-      }
+      };
     });
     return extensionData;
   }
 
   manage(mainWindow) {
-
     const production = isProduction();
 
     const manageWindow = new BrowserWindow({
@@ -46,18 +45,23 @@ export default class ExtensionManagementApp {
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: false,
-        sandbox: false
+        sandbox: false,
       },
-    })
+    });
     manageWindow.setBackgroundColor("#d7dbe3");
     manageWindow.setFullScreenable(false);
     if (production) {
       manageWindow.removeMenu();
     }
 
-    manageWindow.loadURL(path.resolve(__dirname, "views", "extensions", "management.html"));
+    manageWindow.loadURL(
+      path.resolve(__dirname, "views", "extensions", "management.html")
+    );
     manageWindow.once("ready-to-show", () => {
-      manageWindow.webContents.send(ExtensionEvents.EXTENSION_MANAGEMENT.INITIALIZE, this._getExtensionData());
+      manageWindow.webContents.send(
+        ExtensionEvents.EXTENSION_MANAGEMENT.INITIALIZE,
+        this._getExtensionData()
+      );
       manageWindow.show();
     });
 
@@ -73,15 +77,24 @@ export default class ExtensionManagementApp {
     this.extensionManager.loadExternal(extName);
 
     // rebind the new extensions
-    this.manageWindow.webContents.send(ExtensionEvents.EXTENSION_MANAGEMENT.INITIALIZE, this._getExtensionData());
+    this.manageWindow.webContents.send(
+      ExtensionEvents.EXTENSION_MANAGEMENT.INITIALIZE,
+      this._getExtensionData()
+    );
   }
 
   handleExtensionUninstall(event, extensionName) {
-    logger.logEvent(ExtensionEvents.EXTENSION_MANAGEMENT.UNINSTALL, extensionName);
+    logger.logEvent(
+      ExtensionEvents.EXTENSION_MANAGEMENT.UNINSTALL,
+      extensionName
+    );
 
     this.extensionManager.uninstall(extensionName);
     // rebind the new extensions
-    this.manageWindow.webContents.send(ExtensionEvents.EXTENSION_MANAGEMENT.INITIALIZE, this._getExtensionData());
+    this.manageWindow.webContents.send(
+      ExtensionEvents.EXTENSION_MANAGEMENT.INITIALIZE,
+      this._getExtensionData()
+    );
   }
 
   handleClose(event, data) {
@@ -89,8 +102,17 @@ export default class ExtensionManagementApp {
   }
 
   registerEvents() {
-    ipcMain.on(ExtensionEvents.EXTENSION_MANAGEMENT.INSTALL, this.handleExtensionInstall.bind(this));
-    ipcMain.on(ExtensionEvents.EXTENSION_MANAGEMENT.UNINSTALL, this.handleExtensionUninstall.bind(this));
-    ipcMain.on(ExtensionEvents.EXTENSION_MANAGEMENT.CLOSE, this.handleClose.bind(this));
+    ipcMain.on(
+      ExtensionEvents.EXTENSION_MANAGEMENT.INSTALL,
+      this.handleExtensionInstall.bind(this)
+    );
+    ipcMain.on(
+      ExtensionEvents.EXTENSION_MANAGEMENT.UNINSTALL,
+      this.handleExtensionUninstall.bind(this)
+    );
+    ipcMain.on(
+      ExtensionEvents.EXTENSION_MANAGEMENT.CLOSE,
+      this.handleClose.bind(this)
+    );
   }
 }
