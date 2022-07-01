@@ -109,10 +109,13 @@ class HotkeyReplayDetector {
       if (e.state == "DOWN" && e.vKey == settings.vKey) {
         setTimeout(() => {
           const last = findLastReplay(this.settings.replayDirectory);
-          this.detectListener.detected({
-            fileName: last.name,
-            filePath: last.path,
-          });
+          // mechanism that writes replays is not active, detect nothing.
+          if (last) {
+            this.detectListener.detected({
+              fileName: last.name,
+              filePath: last.path,
+            });
+          }
         }, settings.hotkeyDelayMS);
       }
     };
