@@ -18,6 +18,7 @@ import { AppEvents } from "./events/appEvents";
 import ExtensionManagementApp from "./extensions/management/extensionManagementApp";
 import { isProduction } from "./util/processInfo";
 import Logger from "./logger/logger";
+import { BUILTIN_EXTENSIONS } from "./extensions/builtin";
 
 const isMac = process.platform === "darwin";
 
@@ -160,8 +161,7 @@ app.whenReady().then(() => {
   extensionManager.registerChangeListener(extensionChangeListener);
 
   // mark the built ins
-  const builtIns = ["avocapture-replay-mover", "avocapture-search-on-hotkey"];
-  for (const builtIn of builtIns) {
+  for (const builtIn of BUILTIN_EXTENSIONS) {
     extensionManager.getExtension(builtIn).markBuiltIn();
   }
 

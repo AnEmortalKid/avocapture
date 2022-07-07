@@ -14,5 +14,13 @@
   "license": "MIT",
   "dependencies": {
     "obs-websocket-js": "^5.0.0"
+  },
+  "avocapture": {
+    "type": "detector",
+    "display": "OBS Replay Detector",
+    "settings": {
+      "defaults": {},
+      "view": {}
+    }
   }
 }

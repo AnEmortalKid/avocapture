@@ -96,7 +96,7 @@ class HotkeyReplayDetector {
   }
 
   register(detectListener) {
-    this.logger.info("register");
+    this.logger.info('Registering detection listener.');
     this.detectListener = detectListener;
 
     // rebind this now that the detectListener is passed to us
