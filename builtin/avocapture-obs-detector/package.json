@@ -20,7 +20,9 @@
     "display": "OBS Replay Detector",
     "settings": {
       "defaults": {},
-      "view": {}
+      "view": {
+        "entry": "index.html"
+      }
     }
   }
 }
