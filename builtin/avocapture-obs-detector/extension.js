@@ -8,29 +8,58 @@ class ObsEventDetector {
 
     this.obs = new OBSWebSocket();
     this.isConnected = false;
+
+    // track an interval
+    this.connectIntervalId = null;
   }
 
-  _connect(settings) {
-    // TODO setInterval for attempting connections
+  _tryConnecting(settings) {
+    if (this.isConnected) {
+      this._stopTryingToConnect();
+      return;
+    }
 
-    // TODO handle settings changes, etc
-    this.obs.connect().then((ack) => {
-      this.logger.info('Received ack:', ack);
-      this.isConnected = true;
-      this.obs.on('ReplayBufferSaved', (data) => {
-        this.logger.info('Got response', data);
-        this.logger.info('Calling', this.detectListener);
-        const fileName = path.basename(data.savedReplayPath);
-        this.logger.info('fileName', fileName);
-        this.detectListener.detected({
-          filePath: data.savedReplayPath,
-          fileName: fileName
+    const { serverPort, serverPassword } = settings;
+
+    this.obs.connect(`ws://127.0.0.1:${serverPort}`, serverPassword, { rpcVersion: 1 })
+      .then((ack) => {
+        this.logger.info('Received ack:', ack);
+        this.isConnected = true;
+        this._stopTryingToConnect();
+
+        this.obs.on('ReplayBufferSaved', (data) => {
+          this.logger.info('Got response', data);
+          this.logger.info('Calling', this.detectListener);
+          const fileName = path.basename(data.savedReplayPath);
+          this.logger.info('fileName', fileName);
+          this.detectListener.detected({
+            filePath: data.savedReplayPath,
+            fileName: fileName
+          });
         });
+
+        this.obs.on('ExitStarted', () => {
+          // set an interval
+          this.logger.info('OBS is exiting, re-polling');
+
+          // remove existing listeners
+          this._removeListeners();
+          this.isConnected = false;
+
+          // restart poller in case obs comes back
+          this._startPolling(settings);
+        });
+
+        // on close , set reconnection
+      }).catch((error) => {
+        this.logger.error('Failed to connect', error.code, error.message);
+        this.isConnected = false;
       });
-    }).catch((error) => {
-      this.logger.error('Failed to connect', error.code, error.message);
-      this.isConnected = false;
-    });
+  }
+
+  _stopTryingToConnect() {
+    clearInterval(this.connectIntervalId);
+    this.connectIntervalId = null;
   }
 
   /**
@@ -40,26 +69,48 @@ class ObsEventDetector {
    */
   initialize(settings) {
     this.logger.info(`initializing with ${JSON.stringify(settings)}`);
-    this._connect(settings);
+
+    // if already in interval, re-init
+    if (this.connectIntervalId) {
+      this._stopTryingToConnect();
+    }
+
+    this._startPolling(settings);
+  }
+
+  _startPolling(settings) {
+
+    // safeguard against unset values
+    let reconnectIntervalMS = 3000;
+    if (settings.reconnectIntervalSeconds) {
+      reconnectIntervalMS = settings.reconnectIntervalSeconds * 1000
+    }
+
+    this.connectIntervalId = setInterval(
+      () => {
+        this._tryConnecting(settings)
+      },
+      2000
+    );
+  }
+
+  _removeListeners() {
+    this.obs.off('ReplayBufferSaved');
+    this.obs.off('ExitStarted');
   }
 
   /**
    * Destroys any state the extension requires
    */
   teardown() {
-    // TODO clear reconnect otherwise
     if (this.isConnected) {
+      this._removeListeners();
       this.obs.disconnect();
+      this.isConnected = false;
     }
-  }
-
-  /**
-   * The extension's settings are in the process of being modified.
-   *
-   * An extension can use this function to pause any side processes (example: a listener for ShadowPlay) while the settings are being modified.
-   */
-  notifyModifying() {
-
+    else {
+      this._stopTryingToConnect();
+    }
   }
 
   /**
@@ -75,7 +126,16 @@ class ObsEventDetector {
    * The extension's settings were not changed.
    */
   notifyModifyCancel() {
+    // nothing changed
+  }
 
+  /**
+ * The extension's settings are in the process of being modified.
+ *
+ * An extension can use this function to pause any side processes (example: a listener for ShadowPlay) while the settings are being modified.
+ */
+  notifyModifying() {
+    // do nothing
   }
 
   /**

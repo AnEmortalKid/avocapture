@@ -19,7 +19,11 @@
     "type": "detector",
     "display": "OBS Replay Detector",
     "settings": {
-      "defaults": {},
+      "defaults": {
+        "serverPort": 4455,
+        "serverPassword": null,
+        "reconnectIntervalSeconds": 5
+      },
       "view": {}
     }
   }
