@@ -15,7 +15,7 @@ class ObsEventDetector {
 
   _tryConnecting(settings) {
     if (this.isConnected) {
-      this._stopTryingToConnect();
+      this._stopConnectPolling();
       return;
     }
 
@@ -23,15 +23,14 @@ class ObsEventDetector {
 
     this.obs.connect(`ws://127.0.0.1:${serverPort}`, serverPassword, { rpcVersion: 1 })
       .then((ack) => {
-        this.logger.info('Received ack:', ack);
+        this.logger.info('Received [Hello]: ', ack);
         this.isConnected = true;
-        this._stopTryingToConnect();
+        this._stopConnectPolling();
 
         this.obs.on('ReplayBufferSaved', (data) => {
-          this.logger.info('Got response', data);
-          this.logger.info('Calling', this.detectListener);
+          this.logger.info('Received response for [ReplayBufferSaved]: ', data);
+
           const fileName = path.basename(data.savedReplayPath);
-          this.logger.info('fileName', fileName);
           this.detectListener.detected({
             filePath: data.savedReplayPath,
             fileName: fileName
@@ -47,7 +46,7 @@ class ObsEventDetector {
           this.isConnected = false;
 
           // restart poller in case obs comes back
-          this._startPolling(settings);
+          this._startConnectPolling(settings);
         });
 
         // on close , set reconnection
@@ -55,11 +54,6 @@ class ObsEventDetector {
         this.logger.error('Failed to connect', error.code, error.message);
         this.isConnected = false;
       });
-  }
-
-  _stopTryingToConnect() {
-    clearInterval(this.connectIntervalId);
-    this.connectIntervalId = null;
   }
 
   /**
@@ -72,14 +66,18 @@ class ObsEventDetector {
 
     // if already in interval, re-init
     if (this.connectIntervalId) {
-      this._stopTryingToConnect();
+      this._stopConnectPolling();
     }
 
-    this._startPolling(settings);
+    this._startConnectPolling(settings);
   }
 
-  _startPolling(settings) {
+  _stopConnectPolling() {
+    clearInterval(this.connectIntervalId);
+    this.connectIntervalId = null;
+  }
 
+  _startConnectPolling(settings) {
     // safeguard against unset values
     let reconnectIntervalMS = 3000;
     if (settings.reconnectIntervalSeconds) {
@@ -109,7 +107,7 @@ class ObsEventDetector {
       this.isConnected = false;
     }
     else {
-      this._stopTryingToConnect();
+      this._stopConnectPolling();
     }
   }
 
@@ -119,7 +117,15 @@ class ObsEventDetector {
    * @param {*} newSettings the new settings specific to this extension
    */
   notifyModifyApply(newSettings) {
+    this.logger.info(`modify ${JSON.stringify(newSettings)}`);
+    this.teardown();
 
+    // if already in interval, re-init
+    if (this.connectIntervalId) {
+      this._stopConnectPolling();
+    }
+
+    this._startConnectPolling(settings);
   }
 
   /**

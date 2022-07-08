@@ -189,6 +189,7 @@ export default class ExtensionManager {
   applyEdit(extensionName, newSettings) {
     logger.logMethod("applyEdit", extensionName);
     const instance = this.extensions[extensionName].instance;
+    // TODO compare old settings to new settings 
     extensionSettingsStore.save(extensionName, newSettings);
     instance.notifyModifyApply(newSettings);
   }
