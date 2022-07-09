@@ -1,7 +1,7 @@
 import { BrowserWindow } from "electron";
 import * as path from "path";
 import { ReplayDetailsEvents } from "./replayDetailsEvents";
-const ffbindings = require('bindings')('forcefocus.node');
+
 const forceFocus = require('forcefocus');
 
 export class ReplayDetailsDialog {
@@ -42,8 +42,6 @@ export class ReplayDetailsDialog {
 
     entryWindow.on('show', () => {
       setTimeout(() => {
-
-        // entryWindow.focus();
         forceFocus.focusWindow(entryWindow);
       }, 200);
     });
@@ -67,7 +65,6 @@ export class ReplayDetailsDialog {
       );
 
       this.entryWindow.show();
-      this.entryWindow.restore();
     }
   }
 

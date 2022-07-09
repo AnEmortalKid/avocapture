@@ -124,15 +124,24 @@ const createWindow = () => {
   Menu.setApplicationMenu(appMenu);
 
   extensionsApp.setMainWindow(mainWindow);
+
+  mainWindow.once('close', () => {
+    logger.log('Received close.');
+    closeAndQuit();
+  });
 };
 
-app.on("window-all-closed", () => {
-  logger.log('Application closing.');
+function closeAndQuit() {
   if (process.platform !== "darwin") {
     replayDialog.destroy();
     extensionManager.shutdown();
     app.quit();
   }
+}
+
+app.on("window-all-closed", () => {
+  logger.log('Received window-all-closed.');
+  closeAndQuit();
 });
 
 app.whenReady().then(() => {
