@@ -36,6 +36,6 @@ avocapture.extensions.onInitialize((data) => {
   if (data) {
     portInput.value = data.serverPort;
     passwordInput.value = data.serverPassword;
-    reconnectInput.value = reconnectIntervalSeconds;
+    reconnectInput.value = data.reconnectIntervalSeconds;
   }
 });

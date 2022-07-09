@@ -125,7 +125,7 @@ class ObsEventDetector {
       this._stopConnectPolling();
     }
 
-    this._startConnectPolling(settings);
+    this._startConnectPolling(newSettings);
   }
 
   /**
