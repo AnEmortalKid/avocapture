@@ -127,8 +127,7 @@ const createWindow = () => {
 };
 
 app.on("window-all-closed", () => {
-  this.logger.info("tearing down");
-  // TODO teardown active extensions
+  logger.log('Application closing.');
   if (process.platform !== "darwin") {
     replayDialog.destroy();
     extensionManager.shutdown();
