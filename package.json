@@ -32,17 +32,21 @@
     "@electron-forge/maker-zip": "^6.0.0-beta.63",
     "@electron-forge/plugin-webpack": "^6.0.0-beta.63",
     "electron": "^19.0.0",
+    "electron-rebuild": "^3.2.8",
     "fs": "^0.0.1-security",
     "prettier": "2.7.1"
   },
   "dependencies": {
     "@timfish/forge-externals-plugin": "^0.1.2",
+    "bindings": "^1.5.0",
     "copy-webpack-plugin": "^11.0.0",
     "electron-log": "^4.4.8",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^8.0.1",
     "electron-webpack": "^2.8.2",
+    "forcefocus": "^1.1.0",
     "node-global-key-listener": "^0.1.1",
+    "node-gyp": "^9.0.0",
     "node-polyfill-webpack-plugin": "^1.1.4",
     "path-browserify": "^1.0.1",
     "uuid": "^8.3.2"

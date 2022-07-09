@@ -2,6 +2,8 @@ import { BrowserWindow } from "electron";
 import * as path from "path";
 import { ReplayDetailsEvents } from "./replayDetailsEvents";
 
+const forceFocus = require('forcefocus');
+
 export class ReplayDetailsDialog {
   _create(settings) {
     const entryWindow = new BrowserWindow({
@@ -34,9 +36,14 @@ export class ReplayDetailsDialog {
         ReplayDetailsEvents.DIALOG.INITIALIZE,
         settings
       );
-      entryWindow.moveTop();
+
       entryWindow.show();
-      entryWindow.focus();
+    });
+
+    entryWindow.on('show', () => {
+      setTimeout(() => {
+        forceFocus.focusWindow(entryWindow);
+      }, 200);
     });
 
     return entryWindow;
@@ -44,7 +51,7 @@ export class ReplayDetailsDialog {
 
   handleBeforeInputEvent(event, input) {
     if (input.key == "Escape") {
-      this.entryWindow.hide();
+      this.hide();
     }
   }
 
@@ -56,14 +63,15 @@ export class ReplayDetailsDialog {
         ReplayDetailsEvents.DIALOG.INITIALIZE,
         settings
       );
-      this.entryWindow.moveTop();
+
       this.entryWindow.show();
-      this.entryWindow.focus();
     }
   }
 
   hide() {
     if (this.entryWindow) {
+      // https://stackoverflow.com/a/55104179/2262802
+      this.entryWindow.minimize();
       this.entryWindow.hide();
     }
   }

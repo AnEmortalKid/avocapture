@@ -24,10 +24,10 @@ module.exports = {
     [
       "@timfish/forge-externals-plugin",
       {
-        externals: ["node-global-key-listener"],
-        includeDeps: true,
-      },
-    ],
+        "externals": ["forcefocus"],
+        "includeDeps": true
+      }
+    ]
   ],
   makers: [
     {

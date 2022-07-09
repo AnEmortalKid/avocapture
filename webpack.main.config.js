@@ -68,4 +68,7 @@ module.exports = {
       ],
     }),
   ],
+  externals: {
+    'forcefocus': 'commonjs2 forcefocus'
+  },
 };
