@@ -49,4 +49,16 @@ module.exports = {
   packagerConfig: {
     icon: "branding/logo",
   },
+  publishers: [
+    {
+      name: '@electron-forge/publisher-github',
+      config: {
+        repository: {
+          owner: 'AnEmortalKid',
+          name: 'avocapture'
+        },
+        prerelease: true
+      }
+    }
+  ]
 };

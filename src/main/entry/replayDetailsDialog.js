@@ -67,7 +67,7 @@ export class ReplayDetailsDialog {
       this.entryWindow.show();
     }
   }
-.
+
   hide() {
     if (this.entryWindow) {
       // https://stackoverflow.com/a/55104179/2262802

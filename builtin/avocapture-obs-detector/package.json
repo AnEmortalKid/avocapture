@@ -1,6 +1,6 @@
 {
   "name": "avocapture-obs-detector",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A replay detector for avocapture that uses obs events",
   "main": "extension.js",
   "scripts": {
