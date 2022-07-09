@@ -1,47 +1,55 @@
 <!DOCTYPE html>
 
 <html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Name Replay</title>
+    <link rel="stylesheet" href="../../css/w3.css" />
+    <link rel="stylesheet" href="../../css/theme.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <title>Name Replay</title>
-  <link rel="stylesheet" href="../../css/w3.css" />
-  <link rel="stylesheet" href="../../css/theme.css" />
-</head>
+  <header class="w3-container w3-theme-l4 w3-card">
+    <h4 class="w3-center" id="dialog.title">Renaming Replay</h4>
+  </header>
 
-<header class="w3-container w3-theme-l4 w3-card">
-  <h4 class="w3-center" id="dialog.title">Renaming Replay</h4>
-</header>
-
-<div id="form-container" class="w3-theme-l4">
-  <form class="w3-container" onsubmit="submitData()">
-    <div class="w3-row-padding">
-      <div class="w3-third">
-        <label>Prefix</label>
-        <input id="replay.prefix" class="w3-input w3-border" type="text" placeholder="Prefix" />
+  <div id="form-container" class="w3-theme-l4">
+    <form class="w3-container" onsubmit="submitData()">
+      <div class="w3-row-padding">
+        <div class="w3-third">
+          <label>Prefix</label>
+          <input
+            id="replay.prefix"
+            class="w3-input w3-border"
+            type="text"
+            placeholder="Prefix"
+          />
+        </div>
+        <div class="w3-rest">
+          <label>Title</label>
+          <input
+            id="replay.title"
+            class="w3-input w3-border"
+            type="text"
+            placeholder="Title"
+          />
+        </div>
       </div>
-      <div class="w3-rest">
-        <label>Title</label>
-        <input id="replay.title" class="w3-input w3-border" type="text" placeholder="Title" />
-      </div>
-    </div>
 
-    <input id="replay.uuid" hidden />
-    <input type="submit" hidden />
-  </form>
-</div>
-
-<footer class="w3-container w3-padding w3-theme-l4">
-  <div class="w3-bar w3-center">
-    <button class="w3-button w3-round w3-theme-action" id="entry-apply-btn">
-      Apply
-    </button>
-    <button class="w3-button w3-round w3-theme-action" id="entry-cancel-btn">
-      Close
-    </button>
+      <input id="replay.uuid" hidden />
+      <input type="submit" hidden />
+    </form>
   </div>
-</footer>
 
-<script src="./replayDetailsEditor.js"></script>
+  <footer class="w3-container w3-padding w3-theme-l4">
+    <div class="w3-bar w3-center">
+      <button class="w3-button w3-round w3-theme-action" id="entry-apply-btn">
+        Apply
+      </button>
+      <button class="w3-button w3-round w3-theme-action" id="entry-cancel-btn">
+        Close
+      </button>
+    </div>
+  </footer>
 
+  <script src="./replayDetailsEditor.js"></script>
 </html>

@@ -24,10 +24,10 @@ module.exports = {
     [
       "@timfish/forge-externals-plugin",
       {
-        "externals": ["forcefocus"],
-        "includeDeps": true
-      }
-    ]
+        externals: ["forcefocus"],
+        includeDeps: true,
+      },
+    ],
   ],
   makers: [
     {

@@ -125,8 +125,8 @@ const createWindow = () => {
 
   extensionsApp.setMainWindow(mainWindow);
 
-  mainWindow.once('close', () => {
-    logger.log('Received close.');
+  mainWindow.once("close", () => {
+    logger.log("Received close.");
     closeAndQuit();
   });
 };
@@ -140,7 +140,7 @@ function closeAndQuit() {
 }
 
 app.on("window-all-closed", () => {
-  logger.log('Received window-all-closed.');
+  logger.log("Received window-all-closed.");
   closeAndQuit();
 });
 
