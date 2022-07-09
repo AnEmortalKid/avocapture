@@ -52,12 +52,14 @@ module.exports = {
   publishers: [
     {
       name: '@electron-forge/publisher-github',
+      platforms: ['win32'],
       config: {
         repository: {
           owner: 'AnEmortalKid',
           name: 'avocapture'
         },
-        prerelease: true
+        prerelease: true,
+        draft: true
       }
     }
   ]

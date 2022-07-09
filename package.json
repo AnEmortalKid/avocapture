@@ -6,8 +6,9 @@
   "scripts": {
     "start": "electron-forge start",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "package": "set NODE_ENV=production && electron-forge package",
-    "make": "set NODE_ENV=production && electron-forge make",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
     "prettier": "node ./node_modules/prettier/bin-prettier.js --write .",
     "prettier:check": "node ./node_modules/prettier/bin-prettier.js --check ."
   },
@@ -31,6 +32,7 @@
     "@electron-forge/maker-squirrel": "^6.0.0-beta.63",
     "@electron-forge/maker-zip": "^6.0.0-beta.63",
     "@electron-forge/plugin-webpack": "^6.0.0-beta.63",
+    "@electron-forge/publisher-github": "^6.0.0-beta.64",
     "electron": "^19.0.0",
     "electron-rebuild": "^3.2.8",
     "fs": "^0.0.1-security",
