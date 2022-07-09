@@ -4,6 +4,7 @@ function logOn(name, data) {
   console.log(`Received [${name}]`, data ? data : "");
 }
 
+const headerTitle = document.getElementById("dialog.title");
 const replayIdInput = document.getElementById("replay.uuid");
 const replayPrefixInput = document.getElementById("replay.prefix");
 const replayTitleInput = document.getElementById("replay.title");
@@ -13,7 +14,9 @@ function cleaner(str) {
 }
 
 function bindToForm(data) {
-  const { prefix, replayUuid } = data;
+  const { prefix, replayUuid, replayName } = data;
+
+  headerTitle.textContent = `Rename ${replayName}`;
 
   replayIdInput.value = replayUuid;
   replayPrefixInput.value = prefix;

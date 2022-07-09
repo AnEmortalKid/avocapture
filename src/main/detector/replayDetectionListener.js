@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import Logger from "../logger/logger";
+const path = require('path');
 
 const logger = new Logger("ReplayDetectionListener");
 
@@ -30,6 +31,7 @@ export class ReplayDetectionListener {
     this.replayDialog.show({
       prefix: this.prefix,
       replayUuid: replayUuid,
+      replayName: path.parse(replayData.fileName).name
     });
   }
 }
