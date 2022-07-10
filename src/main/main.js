@@ -7,6 +7,10 @@ const {
   MenuItem,
 } = require("electron");
 
+if (require('electron-squirrel-startup')) {
+  app.quit();
+}
+
 import { ReplayDetectionListener } from "./detector/replayDetectionListener";
 import { ReplayDetailsDialog } from "./entry/replayDetailsDialog";
 import { ReplayDetailsEvents } from "./entry/replayDetailsEvents";

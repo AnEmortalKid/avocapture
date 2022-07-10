@@ -37,6 +37,8 @@ module.exports = {
       name: "@electron-forge/maker-squirrel",
       config: {
         name: "avocapture",
+        setupIcon: "./branding/logo.ico",
+        loadingGif: './branding/logo_animated.gif'
       },
     },
     {
