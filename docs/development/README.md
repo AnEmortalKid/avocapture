@@ -4,7 +4,7 @@
 
 > Steps to release so i don't forget them
 
-1. `git tag $TAG_VERSION`
+1. `git tag -a $TAG_VERSION`
 2. `git checkout $TAG_VERSION`
 3. Publish
 
