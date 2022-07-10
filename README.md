@@ -17,3 +17,4 @@ replay files and rename them.
 * [Extension](./docs/extensions/) information for the built in extensions and how to create a new one
 * [Motivation](./docs/motivation.md) for creating this application
 * [Roadmap](./docs/roadmap.md) for future features
+* [Changelong](./docs/CHANGELOG.md)
