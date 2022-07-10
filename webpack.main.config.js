@@ -66,6 +66,8 @@ module.exports = {
               "**/node_modules/**",
               "**/package-lock.json",
               "**/CHANGELOG.md",
+              "**/README.md",
+              "**/images/**"
             ],
           },
         },

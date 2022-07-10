@@ -1,7 +1,7 @@
 # docs
 
-Documentation for `avocapture`
+Documentation for `avocapture`. 
 
-- [Roadmap](./roadmap.md)
-- [Extensions](./extensions.md)
-- [Motivation](./motivation.md)
+* [Extension](./extensions/) information for the built in extensions and how to create a new one
+* [Motivation](./motivation.md) for creating this application
+* [Roadmap](./roadmap.md) for future features
