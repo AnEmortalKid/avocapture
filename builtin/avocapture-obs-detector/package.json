@@ -28,5 +28,8 @@
         "entry": "index.html"
       }
     }
+  },
+  "devDependencies": {
+    "jest": "^28.1.2"
   }
 }
