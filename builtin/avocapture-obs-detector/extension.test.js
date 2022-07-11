@@ -1,14 +1,7 @@
 var mockLogger;
-var fakeSocket;
 
 const ObsWebSocket = require('obs-websocket-js');
 jest.mock('obs-websocket-js');
-
-function socketFactory() {
-  return {
-    connect: jest.fn()
-  }
-}
 
 const ObsEventDetector = require('./extension')
 
