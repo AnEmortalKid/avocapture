@@ -4,7 +4,7 @@
   "description": "An Avocapture uploader that moves replay files to a new folder.",
   "main": "extension.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "keywords": [
     "avocapture"
@@ -24,5 +24,8 @@
         "height": 240
       }
     }
+  },
+  "devDependencies": {
+    "jest": "^28.1.2"
   }
 }

@@ -47,7 +47,7 @@ function copyAssets(installedExtensionPath) {
 
 function nmpInstall(pluginPath) {
   execSync(
-    "npm install",
+    "npm install --omit=dev",
     { cwd: pluginPath },
     function (error, stdout, stderr) {
       console.log(error);
