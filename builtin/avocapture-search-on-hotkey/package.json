@@ -4,7 +4,7 @@
   "description": "An extension for avocapture that searches the filesystem when a hotkey is pressed.",
   "main": "extension.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "keywords": [
     "avocapture"
@@ -30,5 +30,8 @@
   },
   "dependencies": {
     "node-global-key-listener": "^0.1.1"
+  },
+  "devDependencies": {
+    "jest": "^28.1.3"
   }
 }
