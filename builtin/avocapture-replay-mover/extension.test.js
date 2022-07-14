@@ -11,7 +11,8 @@ describe("extension", () => {
 
   beforeEach(() => {
     mockLogger = {
-      info: jest.fn()
+      info: jest.fn(),
+      error: jest.fn()
     }
   });
 
@@ -43,6 +44,10 @@ describe("extension", () => {
 
   describe("on upload", () => {
 
+    beforeEach(() => {
+      fs.renameSync = jest.fn()
+    });
+
     test("moves replay to folder", () => {
       const rm = new ReplayMover({ logger: mockLogger });
       const fakeSettings = {
@@ -60,6 +65,21 @@ describe("extension", () => {
       // use path to ensure platform separator
       const expectedDestination = path.join('parentDir', 'destinationDir', 'replays', 'fake.mp4')
       expect(fs.renameSync).toHaveBeenCalledWith('anotherDir/fake.mp4', expectedDestination);
+    });
+
+    test("does nothing when destination missing", () => {
+      const rm = new ReplayMover({ logger: mockLogger });
+      rm.initialize({});
+
+      const fakeReplay = {
+        filePath: 'anotherDir/fake.mp4',
+        fileName: 'fake.mp4'
+      }
+
+      rm.upload(fakeReplay)
+
+      expect(fs.renameSync).not.toHaveBeenCalled();
+      expect(mockLogger.error).toHaveBeenCalled();
     });
   });
 });

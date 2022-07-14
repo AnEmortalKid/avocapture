@@ -25,6 +25,10 @@ function createFailurePromise() {
 }
 
 describe("extension", () => {
+  let mockConnect;
+  let mockOn;
+  let mockOff;
+  let mockDisconnect;
 
   beforeEach(() => {
     mockLogger = {
@@ -32,9 +36,17 @@ describe("extension", () => {
       error: jest.fn()
     }
 
+    mockConnect = jest.fn();
+    mockConnect.mockImplementation(createSuccessPromise);
+    mockOff = jest.fn();
+    mockOn = jest.fn();
+    mockDisconnect = jest.fn()
     ObsWebSocket.default.mockImplementation(() => {
       return {
-        connect: jest.fn().mockImplementation(createSuccessPromise)
+        connect: mockConnect,
+        on: mockOn,
+        off: mockOff,
+        disconnect: mockDisconnect
       }
     });
 
@@ -43,18 +55,13 @@ describe("extension", () => {
     jest.spyOn(global, 'clearInterval');
   });
 
+  afterEach(() => {
+    jest.clearAllTimers();
+  });
+
   describe('connection handling', () => {
 
     test("sets listeners on connect", async () => {
-      let mockOn = jest.fn()
-
-      ObsWebSocket.default.mockImplementation(() => {
-        return {
-          connect: jest.fn().mockImplementation(createSuccessPromise),
-          on: mockOn
-        }
-      });
-
       const od = new ObsEventDetector({ logger: mockLogger });
       od.initialize({
         serverPort: 4444,
@@ -72,20 +79,23 @@ describe("extension", () => {
       expect(clearInterval).toHaveBeenCalledTimes(1);
     });
 
+    test("uses default interval when not provided", async () => {
+      const od = new ObsEventDetector({ logger: mockLogger });
+      od.initialize({
+        serverPort: 4444
+      });
+
+      expect(setInterval).toHaveBeenCalledWith(expect.any(Function), 3000);
+    });
+
     test("attempts to reconnect on an interval", async () => {
-      let mockConnection = jest.fn().mockImplementationOnce(
+      mockConnect.mockImplementationOnce(
         createFailurePromise)
         .mockImplementationOnce(
           createFailurePromise
         ).mockImplementationOnce(
           createSuccessPromise
         );
-
-      ObsWebSocket.default.mockImplementation(() => {
-        return {
-          connect: mockConnection
-        }
-      });
 
       const od = new ObsEventDetector({ logger: mockLogger });
       od.initialize({
@@ -108,6 +118,28 @@ describe("extension", () => {
 
       expect(clearInterval).toHaveBeenCalledTimes(1);
     });
+
+    test('re initialize when disconnected creates new interval', async () => {
+      mockConnect.mockImplementation(createFailurePromise);
+
+      const od = new ObsEventDetector({ logger: mockLogger });
+      od.initialize({
+        serverPort: 4444,
+        reconnectIntervalSeconds: 1
+      });
+      jest.advanceTimersByTime(1000);
+      await Promise.resolve();
+
+      od.initialize({
+        serverPort: 4444,
+        reconnectIntervalSeconds: 2
+      });
+
+      // restarts polling (1 initial, 1 now)
+      expect(setInterval).toHaveBeenCalledTimes(2);
+      expect(setInterval).toHaveBeenCalledWith(expect.any(Function), 2000);
+    });
+
   });
 
   describe('event listeners', () => {
@@ -176,7 +208,6 @@ describe("extension", () => {
 
       // it should restart the interval after exiting
       expect(setInterval).toHaveBeenCalledTimes(2);
-      jest.clearAllTimers();
     });
   });
 
@@ -184,17 +215,6 @@ describe("extension", () => {
   describe('notifyModifyApply', () => {
 
     test('updates settings and disconnects when already connected', async () => {
-      let mockOff = jest.fn()
-      let mockDisconnect = jest.fn()
-
-      ObsWebSocket.default.mockImplementation(() => {
-        return {
-          connect: jest.fn().mockImplementation(createSuccessPromise),
-          off: mockOff,
-          disconnect: mockDisconnect
-        }
-      });
-
       // connect successfully
       const od = new ObsEventDetector({ logger: mockLogger });
       od.initialize({
@@ -215,20 +235,10 @@ describe("extension", () => {
 
       // restarts polling (1 initial, 1 now)
       expect(setInterval).toHaveBeenCalledTimes(2);
-      jest.clearAllTimers();
     });
 
     test('restarts poller when not connected', async () => {
-      let mockOff = jest.fn()
-      let mockDisconnect = jest.fn()
-
-      ObsWebSocket.default.mockImplementation(() => {
-        return {
-          connect: jest.fn().mockImplementation(createFailurePromise),
-          off: mockOff,
-          disconnect: mockDisconnect
-        }
-      });
+      mockConnect.mockImplementation(createFailurePromise);
 
       const od = new ObsEventDetector({ logger: mockLogger });
       od.initialize({
@@ -256,17 +266,6 @@ describe("extension", () => {
   describe('teardown', () => {
 
     test('removes listeners and disconnects', async () => {
-      let mockOff = jest.fn()
-      let mockDisconnect = jest.fn()
-
-      ObsWebSocket.default.mockImplementation(() => {
-        return {
-          connect: jest.fn().mockImplementation(createSuccessPromise),
-          off: mockOff,
-          disconnect: mockDisconnect
-        }
-      });
-
       // connect successfully
       const od = new ObsEventDetector({ logger: mockLogger });
       od.initialize({
@@ -288,11 +287,7 @@ describe("extension", () => {
     });
 
     test('stops polling when not connected', async () => {
-      ObsWebSocket.default.mockImplementation(() => {
-        return {
-          connect: jest.fn().mockImplementation(createFailurePromise),
-        }
-      });
+      mockConnect.mockImplementation(createFailurePromise);
 
       const od = new ObsEventDetector({ logger: mockLogger });
       od.initialize({

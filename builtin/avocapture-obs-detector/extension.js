@@ -115,11 +115,6 @@ class ObsEventDetector {
     this.logger.info(`modify ${JSON.stringify(newSettings)}`);
     this.teardown();
 
-    // if already in interval, re-init
-    if (this.connectIntervalId) {
-      this._stopConnectPolling();
-    }
-
     this._startConnectPolling(newSettings);
   }
 

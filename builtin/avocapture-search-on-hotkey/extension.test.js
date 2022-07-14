@@ -1,10 +1,14 @@
-var mockLogger;
+const mockLogger = {
+  info: jest.fn(),
+  error: jest.fn()
+};
 
 const { GlobalKeyboardListener } = require("node-global-key-listener");
 const HotkeyReplayDetector = require("./extension");
 jest.mock('node-global-key-listener');
 
 const fs = require('fs');
+const path = require("path");
 jest.mock('fs')
 
 describe("extension", () => {
@@ -13,14 +17,7 @@ describe("extension", () => {
   let mockRemoveListener = jest.fn()
   let mockKill = jest.fn()
 
-
-
   beforeEach(() => {
-    mockLogger = {
-      info: jest.fn(),
-      error: jest.fn()
-    }
-
     GlobalKeyboardListener.mockImplementation(() => {
       return {
         addListener: mockAddListener,
@@ -36,7 +33,7 @@ describe("extension", () => {
   const defaults = {
     "vKey": 111,
     "browserName": "NumpadDivide",
-    "replayDirectory": "~/Videos",
+    "replayDirectory": "replayDir",
     "hotkeyDelayMS": 500
   }
 
@@ -86,33 +83,86 @@ describe("extension", () => {
       expect(setTimeout).not.toHaveBeenCalled();
     });
 
-    test("searches after delay", () => {
+    describe("search mechanism", () => {
       const sok = new HotkeyReplayDetector({ logger: mockLogger });
       sok.initialize(defaults);
 
-      const detectionListener = {
-        detected: jest.fn()
-      };
-
-      sok.register(detectionListener);
-      const keyListener = sok.keyListener;
+      let detectionListener;
+      let keyListener;
 
       const event = {
         state: "DOWN",
         vKey: 111
       };
 
-      // setup files search
-      jest.readdirSync.mockReturnValue([]);
+      beforeEach(() => {
+        detectionListener = {
+          detected: jest.fn()
+        };
 
-      // pretend a hotkey is pressed
-      keyListener(event, false);
+        sok.register(detectionListener);
+        keyListener = sok.keyListener;
+      });
 
-      jest.advanceTimersByTime(500);
+      test("notifies listener when a file is found", () => {
+        // setup files search
+        fs.readdirSync.mockReturnValue(["firstReplay.mp4"]);
+        fs.lstatSync.mockReturnValue({
+          isDirectory: () => false,
+          ctimeMs: 100
+        });
 
-      // TODO setup FS and shit
+        // pretend a hotkey is pressed
+        keyListener(event, false);
+        jest.advanceTimersByTime(500);
 
-      // check fs
+        expect(detectionListener.detected).toHaveBeenCalledWith({ fileName: 'firstReplay.mp4', filePath: path.join('replayDir', 'firstReplay.mp4') });
+      });
+
+
+      test("Uses most recent replay", () => {
+        // setup files search
+        fs.readdirSync.mockReturnValue(["replay1.mp4", "replay3.mp4", "replay2.mp4"]);
+        fs.lstatSync.mockReturnValueOnce({
+          isDirectory: () => false,
+          ctimeMs: 100
+        }).mockReturnValueOnce({
+          isDirectory: () => false,
+          ctimeMs: 700
+        }).mockReturnValueOnce({
+          isDirectory: () => false,
+          ctimeMs: 400
+        });
+
+        // pretend a hotkey is pressed
+        keyListener(event, false);
+        jest.advanceTimersByTime(500);
+
+        expect(detectionListener.detected).toHaveBeenCalledWith({ fileName: 'replay3.mp4', filePath: path.join('replayDir', 'replay3.mp4') });
+      });
+
+      test("Ignores empty dir", () => {
+        fs.readdirSync.mockReturnValue([]);
+
+        keyListener(event, false);
+        jest.advanceTimersByTime(500);
+
+        expect(detectionListener.detected).not.toHaveBeenCalled();
+      });
+
+      test("Ignores subdirectories", () => {
+        fs.readdirSync.mockReturnValue(["subDir"]);
+        fs.lstatSync.mockReturnValue({
+          isDirectory: () => true,
+          ctimeMs: 100
+        })
+
+        keyListener(event, false);
+        jest.advanceTimersByTime(500);
+
+        expect(detectionListener.detected).not.toHaveBeenCalled();
+      });
+
     });
   });
 

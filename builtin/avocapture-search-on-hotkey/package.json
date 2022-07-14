@@ -4,7 +4,8 @@
   "description": "An extension for avocapture that searches the filesystem when a hotkey is pressed.",
   "main": "extension.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "test:cov": "jest --coverage"
   },
   "keywords": [
     "avocapture"
