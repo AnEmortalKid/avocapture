@@ -65,9 +65,10 @@ module.exports = {
             ignore: [
               "**/node_modules/**",
               "**/package-lock.json",
-              "**/CHANGELOG.md",
-              "**/README.md",
-              "**/images/**"
+              "**/*.md",
+              "**/images/**",
+              "**/*test.js",
+              "**/coverage/**"
             ],
           },
         },

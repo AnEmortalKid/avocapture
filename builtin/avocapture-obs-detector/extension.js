@@ -14,11 +14,6 @@ class ObsEventDetector {
   }
 
   _tryConnecting(settings) {
-    if (this.isConnected) {
-      this._stopConnectPolling();
-      return;
-    }
-
     const { serverPort, serverPassword } = settings;
 
     this.obs.connect(`ws://127.0.0.1:${serverPort}`, serverPassword, { rpcVersion: 1 })
@@ -119,11 +114,6 @@ class ObsEventDetector {
   notifyModifyApply(newSettings) {
     this.logger.info(`modify ${JSON.stringify(newSettings)}`);
     this.teardown();
-
-    // if already in interval, re-init
-    if (this.connectIntervalId) {
-      this._stopConnectPolling();
-    }
 
     this._startConnectPolling(newSettings);
   }

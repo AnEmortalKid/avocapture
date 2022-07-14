@@ -54,7 +54,7 @@ class ReplayMover {
       this.logger.info(`Computed destination ${destinationPath}`);
       fs.renameSync(replayData.filePath, destinationPath);
     } else {
-      this.logger.info("No destination to upload to!");
+      this.logger.error("No destination to upload to!");
     }
   }
 }

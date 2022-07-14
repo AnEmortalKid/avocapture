@@ -4,7 +4,8 @@
   "description": "A replay detector for avocapture that uses obs events",
   "main": "extension.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "test:cov": "jest --coverage"
   },
   "keywords": [
     "avocapture",
@@ -28,5 +29,8 @@
         "entry": "index.html"
       }
     }
+  },
+  "devDependencies": {
+    "jest": "^28.1.2"
   }
 }

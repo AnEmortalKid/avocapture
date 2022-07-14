@@ -69,8 +69,12 @@ class HotkeyReplayDetector {
   initialize(hotkeySettings) {
     this.logger.info(`initialize ${JSON.stringify(hotkeySettings)}`);
     this.settings = hotkeySettings;
-    this.keyListener = this.createKeyListener(hotkeySettings);
-    return;
+
+    /**
+ * not adding the listener here is fine since register 
+ * is called when this extension is activated
+ */
+    this.keyListener = this.createKeyListener(hotkeySettings).bind(this);
   }
 
   notifyModifying() {
