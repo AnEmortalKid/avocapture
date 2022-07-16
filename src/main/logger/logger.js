@@ -1,13 +1,5 @@
-import { app } from "electron";
-
-const path = require("path");
-const fs = require("fs");
-
-// cleanup old log on startup
-const logPath = path.join(app.getPath("userData"), "logs/main.log");
-if (fs.existsSync(logPath)) {
-  fs.rmSync(logPath);
-}
+import { logCleaner } from "./logCleaner";
+logCleaner();
 
 const log = require("electron-log");
 

@@ -1,5 +1,7 @@
 import { app, clipboard } from 'electron';
 
+const appPath = app.getPath("userData");
+
 export default class PathReader {
 
   static create() {

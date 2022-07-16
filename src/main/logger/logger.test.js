@@ -1,13 +1,9 @@
-import { app } from 'electron';
-jest.mock('electron', () => {
+import { logCleaner } from './logCleaner'
+jest.mock('./logCleaner', () => {
   return {
-    getPath: jest.fn().mockReturnValue("testUserData")
-  };
+    logCleaner: jest.fn()
+  }
 });
-
-
-jest.mock('fs');
-const fs = require('fs');
 
 jest.mock('electron-log');
 const electronLog = require('electron-log');
