@@ -1,4 +1,5 @@
 import { logCleaner } from "./logCleaner";
+// TODO move call to app
 logCleaner();
 
 const log = require("electron-log");
