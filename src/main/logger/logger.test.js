@@ -27,6 +27,8 @@ describe('Logger', () => {
     const loggy = Logger.create('testFile');
 
     expect(electronLog.scope).toHaveBeenCalledWith('testFile');
+    // calls log cleaner on load
+    expect(logCleaner).toHaveBeenCalledTimes(1);
   });
 
   test('logEvent formats message correctly', () => {
@@ -52,4 +54,5 @@ describe('Logger', () => {
 
     expect(mockLogger.info).toHaveBeenCalledWith('a random message');
   });
+
 });
