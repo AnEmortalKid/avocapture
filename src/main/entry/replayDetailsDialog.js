@@ -2,7 +2,7 @@ import { BrowserWindow } from "electron";
 import * as path from "path";
 import { ReplayDetailsEvents } from "./replayDetailsEvents";
 
-const forceFocus = require('forcefocus');
+const forceFocus = require("forcefocus");
 
 export class ReplayDetailsDialog {
   _create(settings) {
@@ -40,7 +40,7 @@ export class ReplayDetailsDialog {
       entryWindow.show();
     });
 
-    entryWindow.on('show', () => {
+    entryWindow.on("show", () => {
       setTimeout(() => {
         forceFocus.focusWindow(entryWindow);
       }, 200);

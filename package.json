@@ -6,6 +6,7 @@
   "scripts": {
     "start": "electron-forge start",
     "test": "jest",
+    "test:cov": "jest --coverage",
     "test:all": "sh test_all.sh",
     "package": "electron-forge package",
     "make": "electron-forge make",

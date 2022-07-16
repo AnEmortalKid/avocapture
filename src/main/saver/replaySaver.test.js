@@ -1,23 +1,41 @@
+import Logger from "../logger/logger";
+jest.mock("../logger/logger");
 
-import { logCleaner } from '../logger/logCleaner'
-jest.mock('../logger/logCleaner');
+const fs = require("fs");
+jest.mock("fs");
 
-import Logger from '../logger/logger';
-jest.mock('../logger/logger');
+const path = require("path");
 
-// TODO user mocks
-// TODO mock Logger
-
-import { ReplaySaver } from './replaySaver'
+import { ReplaySaver } from "./replaySaver";
 
 describe("ReplaySaver", () => {
-
   test("stores and retrieves", () => {
     const rd = new ReplaySaver();
 
-    rd.storeReplay({ replayUuid: 'someUuid', filePath: 'replays/rep1.mp4' });
+    rd.storeReplay({ replayUuid: "someUuid", filePath: "replays/rep1.mp4" });
 
-    expect(rd.getReplayData('someUuid')).not.toBeNull();
+    expect(rd.getReplayData("someUuid")).toEqual({
+      replayUuid: "someUuid",
+      filePath: "replays/rep1.mp4",
+    });
   });
 
+  test("renames replay", () => {
+    fs.renameSync = jest.fn();
+
+    const rd = new ReplaySaver();
+
+    rd.storeReplay({ replayUuid: "renameable", filePath: "replays/rep1.mp4" });
+
+    rd.setTitle({
+      replayUuid: "renameable",
+      prefix: "thePrefix",
+      title: "myTitle",
+    });
+
+    expect(fs.renameSync).toHaveBeenCalledWith(
+      "replays/rep1.mp4",
+      path.join("replays", "thePrefix myTitle" + ".mp4")
+    );
+  });
 });

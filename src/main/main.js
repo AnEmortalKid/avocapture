@@ -7,7 +7,7 @@ const {
   MenuItem,
 } = require("electron");
 
-if (require('electron-squirrel-startup')) {
+if (require("electron-squirrel-startup")) {
   app.quit();
 }
 
@@ -23,9 +23,11 @@ import ExtensionManagementApp from "./extensions/management/extensionManagementA
 import { isProduction } from "./util/processInfo";
 import Logger from "./logger/logger";
 import { BUILTIN_EXTENSIONS } from "./extensions/builtin";
+import { logCleaner } from "../logger/logCleaner";
 
 const isMac = process.platform === "darwin";
 
+logCleaner();
 const logger = new Logger("MainApp");
 
 const path = require("path");

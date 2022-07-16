@@ -1,7 +1,3 @@
-import { logCleaner } from "./logCleaner";
-// TODO move call to app
-logCleaner();
-
 const log = require("electron-log");
 
 export default class Logger {
@@ -19,11 +15,11 @@ export default class Logger {
   }
 
   logEvent(eventName, data) {
-    this.ownerLog.info(`[@ ${eventName}] ${data ? data : ""}`);
+    this.ownerLog.info(`[@ ${eventName}]${data ? " " + data : ""}`);
   }
 
   logMethod(method, data) {
-    this.ownerLog.info(`[${method}] ${data ? data : ""}`);
+    this.ownerLog.info(`[${method}]${data ? " " + data : ""}`);
   }
 
   log(msg) {

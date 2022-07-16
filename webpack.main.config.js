@@ -68,7 +68,7 @@ module.exports = {
               "**/*.md",
               "**/images/**",
               "**/*test.js",
-              "**/coverage/**"
+              "**/coverage/**",
             ],
           },
         },

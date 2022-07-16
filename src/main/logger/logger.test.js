@@ -1,58 +1,65 @@
-import { logCleaner } from './logCleaner'
-jest.mock('./logCleaner', () => {
-  return {
-    logCleaner: jest.fn()
-  }
-});
-
-jest.mock('electron-log');
-const electronLog = require('electron-log');
+jest.mock("electron-log");
+const electronLog = require("electron-log");
 
 import Logger from "./logger";
 
-describe('Logger', () => {
-
+describe("Logger", () => {
   let mockLogger;
 
   beforeEach(() => {
     mockLogger = {
-      info: jest.fn()
-    }
+      info: jest.fn(),
+    };
     electronLog.scope.mockImplementation(() => mockLogger);
   });
 
-  test('creates scoped logger', () => {
+  test("creates scoped logger", () => {
     electronLog.scope = jest.fn();
 
-    const loggy = Logger.create('testFile');
+    const loggy = Logger.create("testFile");
 
-    expect(electronLog.scope).toHaveBeenCalledWith('testFile');
-    // calls log cleaner on load
-    expect(logCleaner).toHaveBeenCalledTimes(1);
+    expect(electronLog.scope).toHaveBeenCalledWith("testFile");
   });
 
-  test('logEvent formats message correctly', () => {
-    const loggy = Logger.create('testFile');
+  test("logEvent formats message correctly", () => {
+    const loggy = Logger.create("testFile");
 
-    loggy.logEvent('someEvent', 'received { foo }')
+    loggy.logEvent("someEvent", "received { foo }");
 
-    expect(mockLogger.info).toHaveBeenCalledWith('[@ someEvent] received { foo }');
+    expect(mockLogger.info).toHaveBeenCalledWith(
+      "[@ someEvent] received { foo }"
+    );
   });
 
-  test('logMethod formats message correctly', () => {
-    const loggy = Logger.create('testFile');
+  test("logEvent logs without data", () => {
+    const loggy = Logger.create("testFile");
 
-    loggy.logMethod('myMethod', 'received { foo }')
+    loggy.logEvent("someEvent");
 
-    expect(mockLogger.info).toHaveBeenCalledWith('[myMethod] received { foo }');
+    expect(mockLogger.info).toHaveBeenCalledWith("[@ someEvent]");
   });
 
-  test('log formats message correctly', () => {
-    const loggy = Logger.create('testFile');
+  test("logMethod formats message correctly", () => {
+    const loggy = Logger.create("testFile");
 
-    loggy.log('a random message')
+    loggy.logMethod("myMethod", "received { foo }");
 
-    expect(mockLogger.info).toHaveBeenCalledWith('a random message');
+    expect(mockLogger.info).toHaveBeenCalledWith("[myMethod] received { foo }");
   });
 
+  test("logMethod logs without data", () => {
+    const loggy = Logger.create("testFile");
+
+    loggy.logMethod("myMethod");
+
+    expect(mockLogger.info).toHaveBeenCalledWith("[myMethod]");
+  });
+
+  test("log formats message correctly", () => {
+    const loggy = Logger.create("testFile");
+
+    loggy.log("a random message");
+
+    expect(mockLogger.info).toHaveBeenCalledWith("a random message");
+  });
 });

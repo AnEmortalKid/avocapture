@@ -1,3 +1,3 @@
 module.exports = {
-  testPathIgnorePatterns: ["/node_modules/", "builtin/", ".webpack/"]
-}
+  testPathIgnorePatterns: ["/node_modules/", "builtin/", ".webpack/"],
+};
