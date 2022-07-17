@@ -1,0 +1,1 @@
+export const dialogBackgroundColor = "#d7dbe3";

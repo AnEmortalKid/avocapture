@@ -16,9 +16,9 @@ module.exports = {
       close: jest.fn(),
       on: jest.fn(),
       webContents: {
-        send: jest.fn()
+        send: jest.fn(),
+        on: jest.fn()
       }
     }
-  }),
-  bw: bw
+  })
 };
