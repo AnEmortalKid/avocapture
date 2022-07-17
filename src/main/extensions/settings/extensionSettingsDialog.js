@@ -1,5 +1,6 @@
 import { BrowserWindow } from "electron";
 import { isProduction } from "../../util/processInfo";
+import { dialogBackgroundColor } from "../../util/styling";
 import { ExtensionEvents } from "../extensionEvents";
 
 const path = require("path");
@@ -37,7 +38,7 @@ export class ExtensionSettingsDialog {
       },
     });
 
-    settingsWindow.setBackgroundColor("#d7dbe3");
+    settingsWindow.setBackgroundColor(dialogBackgroundColor);
     settingsWindow.setFullScreenable(false);
     if (production) {
       settingsWindow.removeMenu();
