@@ -25,6 +25,16 @@ describe("AppSettings", () => {
     jest.clearAllMocks();
   });
 
+  test("creates app store with correct config", () => {
+    // this will be the mock
+    const es = require('electron-store');
+    expect(es).toHaveBeenCalledWith({
+      name: "avocapture",
+      cwd: "settings",
+      clearInvalidConfig: true,
+    });
+  });
+
   test("save stores key when provided with data", () => {
     const appSettings = new AppSettings();
 
