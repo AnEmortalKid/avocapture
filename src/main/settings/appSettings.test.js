@@ -11,7 +11,8 @@ jest.mock("electron-store", () => {
     return {
       set: (k, v) => mockSet(k, v),
       delete: (k) => mockDelete(k),
-      get: (k) => mockGet(k)
+      get: (k) => mockGet(k),
+      store: {}
     };
   })
 })
@@ -65,5 +66,14 @@ describe("AppSettings", () => {
     appSettings.clear("someKey");
 
     expect(mockDelete).toHaveBeenCalledWith("someKey")
+  });
+
+  test("getAll  returns defaults when no keys", () => {
+    const appSettings = new AppSettings();
+    const all = appSettings.getAll();
+
+    expect(all).toEqual({
+      prefix: "Prefix",
+    });
   });
 });
