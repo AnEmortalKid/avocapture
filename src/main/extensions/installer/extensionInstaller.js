@@ -1,35 +1,11 @@
 import { app } from "electron";
 import { isAvocaptureDebug } from "../../util/processInfo";
-import { semVerCompare } from "../../util/semverCompare";
+import { semVerCompare } from "./semverCompare";
+import { copyAssets, copyDirectory } from "./copyUtils";
 
 const execSync = require("child_process").execSync;
 const fs = require("fs");
 const path = require("path");
-
-function copyDirectory(source, destination) {
-  fs.mkdirSync(destination, { recursive: true });
-  fs.readdirSync(source, { withFileTypes: true }).forEach((entry) => {
-    let sourcePath = path.join(source, entry.name);
-    let destinationPath = path.join(destination, entry.name);
-
-    entry.isDirectory()
-      ? copyDirectory(sourcePath, destinationPath)
-      : fs.copyFileSync(sourcePath, destinationPath);
-  });
-}
-
-function copyAssets(installedExtensionPath) {
-  const assetPaths = ["css", "font-awesome-4.7.0"];
-  for (var assetPath of assetPaths) {
-    const assetDir = path.resolve(__dirname, assetPath);
-    const destinationPath = path.resolve(
-      installedExtensionPath,
-      "assets",
-      assetPath
-    );
-    copyDirectory(assetDir, destinationPath);
-  }
-}
 
 function nmpInstall(pluginPath) {
   execSync(
