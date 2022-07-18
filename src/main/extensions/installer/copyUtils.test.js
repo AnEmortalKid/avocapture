@@ -1,9 +1,8 @@
 jest.mock('fs');
 const fs = require("fs");
-const { copyDirectory } = require("./copyUtils");
+const { copyDirectory, copyAssets } = require("./copyUtils");
 
 const path = require("path");
-
 
 describe("copyUtils", () => {
 
@@ -42,4 +41,19 @@ describe("copyUtils", () => {
         path.join("source", "subdir", "childFile"), path.join("destination", "subdir", "childFile"));
     });
   });
+
+  describe("copyAssets", () => {
+
+    const expectedPaths = ["css", "font-awesome-4.7.0"]
+    test.each(expectedPaths)("copies %s to sub asset dir", (assetDir) => {
+      // pretend empty
+      fs.readdirSync.mockReturnValue([]);
+      copyAssets("destination");
+
+      // copies from root to destination subdir
+      expect(fs.readdirSync).toHaveBeenCalledWith(path.join(__dirname, assetDir), { withFileTypes: true });
+      expect(fs.mkdirSync).toHaveBeenCalledWith(path.resolve("destination", "assets", assetDir), { recursive: true })
+    });
+
+  })
 });
