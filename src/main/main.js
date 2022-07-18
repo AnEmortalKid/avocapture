@@ -23,7 +23,7 @@ import ExtensionManagementApp from "./extensions/management/extensionManagementA
 import { isProduction } from "./util/processInfo";
 import Logger from "./logger/logger";
 import { BUILTIN_EXTENSIONS } from "./extensions/builtin";
-import { logCleaner } from "../logger/logCleaner";
+import { logCleaner } from "./logger/logCleaner";
 
 const isMac = process.platform === "darwin";
 
@@ -169,6 +169,7 @@ app.whenReady().then(() => {
     mainWindow.webContents.send("AppSettings.Initialize", currSettings);
   });
 
+  // TODO add a listener sort of thing here to display extension status
   installBuiltins();
   extensionManager.loadInstalled();
   // start to get notified about any changes
