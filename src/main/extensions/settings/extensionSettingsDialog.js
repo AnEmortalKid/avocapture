@@ -14,6 +14,11 @@ export class ExtensionSettingsDialog {
   constructor(extensionData, parent, cancelCallback) {
     const { name, settings, displaySettings } = extensionData;
 
+    /**
+     * webpack moves the file relative to where the main app runs
+     * 
+     * so this directory won't be src/main/extensions/settings/commonPreload
+     */
     const preloadPath = path.resolve(
       __dirname,
       "extensions",

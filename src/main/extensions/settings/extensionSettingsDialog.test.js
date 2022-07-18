@@ -12,6 +12,7 @@ let mock_show = jest.fn();
 let mock_minimize = jest.fn();
 let mock_hide = jest.fn();
 let mock_removeMenu = jest.fn();
+let mock_focus = jest.fn();
 
 let mock_webContents = {
   on: jest.fn(),
@@ -34,17 +35,22 @@ jest.mock('electron', () => {
         minimize: mock_minimize,
         hide: mock_hide,
         removeMenu: mock_removeMenu,
+        focus: mock_focus,
         webContents: mock_webContents
       }
     }),
     app: {
-      isPackaged: jest.fn().mockReturnValue(true)
+      isPackaged: true
     }
   }
 });
 
+const path = require("path");
+
 import { ExtensionSettingsDialog } from './extensionSettingsDialog'
 import { dialogBackgroundColor } from '../../util/styling.js'
+import { ExtensionEvents } from '../extensionEvents'
+import { EventEmitter } from 'events';
 
 describe("ExtensionSettingsDialog", () => {
   afterEach(() => {
@@ -55,7 +61,9 @@ describe("ExtensionSettingsDialog", () => {
     const esd = new ExtensionSettingsDialog({
       name: "fake",
       settings: {},
-      displaySettings: {}
+      displaySettings: {
+        viewPath: 'myViewPath'
+      }
     },
       { fakeParentField: true },
       jest.fn()
@@ -67,14 +75,141 @@ describe("ExtensionSettingsDialog", () => {
     });
 
     expect(mock_setBackgroundColor).toHaveBeenCalledWith(dialogBackgroundColor);
-    expect(mock_setAlwaysOnTop).toHaveBeenCalledWith(true, "screen-saver");
-    expect(mock_setVisibleOnAllWorkspaces).toHaveBeenCalledWith(true);
     expect(mock_setFullScreenable).toHaveBeenCalledWith(false);
-    expect(mock_loadURL).toHaveBeenCalledWith(path.resolve(__dirname, "views", "replay", "index.html"))
+    expect(mock_loadURL).toHaveBeenCalledWith("myViewPath")
 
     // sets listeners
     expect(mock_once).toHaveBeenCalledWith("ready-to-show", expect.any(Function));
-    expect(mock_on).toHaveBeenCalledWith("show", expect.any(Function));
+    expect(mock_on).toHaveBeenCalledWith("close", expect.any(Function));
+  });
+
+  test("show ready-to-show listener, invokes webcontents and displays", () => {
+    const emitter = new EventEmitter();
+    mock_once.mockImplementation((event, cb) => emitter.once(event, cb))
+
+    const esd = new ExtensionSettingsDialog({
+      name: "fake",
+      settings: {
+        textcontent: 'foo'
+      },
+      displaySettings: {
+        viewPath: 'myViewPath'
+      }
+    },
+      { fakeParentField: true },
+      jest.fn()
+    );
+
+    emitter.emit("ready-to-show");
+
+    expect(mock_webContents.send).toHaveBeenCalledWith(ExtensionEvents.EXTENSION_SETTINGS.INITIALIZE, {
+      textcontent: 'foo'
+    });
+    expect(mock_show).toHaveBeenCalled();
+  });
+
+  test("creation of dialog uses display settings", () => {
+    let fakeParent = { fakeParentField: true }
+    const esd = new ExtensionSettingsDialog({
+      name: "fake",
+      settings: {
+        textcontent: 'foo'
+      },
+      displaySettings: {
+        viewPath: 'myViewPath',
+        width: 300,
+        height: 300
+      }
+    },
+      fakeParent,
+      jest.fn()
+    );
+
+    const commonPreloadPath = path.resolve(
+      __dirname,
+      "extensions",
+      "commonPreload.js"
+    );
+
+    expect(BrowserWindow).toHaveBeenCalledWith({
+      width: 300,
+      height: 300,
+      frame: true,
+      modal: true,
+      titleBarOverlay: false,
+      resizable: true,
+      parent: fakeParent,
+      webPreferences: {
+        nodeIntegration: false,
+        contextIsolation: true,
+        sandbox: true,
+        preload: commonPreloadPath,
+      },
+    })
+  });
+
+  test("close event invokes callback", () => {
+    const emitter = new EventEmitter();
+    mock_on.mockImplementation((event, cb) => emitter.on(event, cb))
+
+    let fakeCallback = jest.fn()
+
+    const esd = new ExtensionSettingsDialog({
+      name: "fake",
+      settings: {
+        textcontent: 'foo'
+      },
+      displaySettings: {
+        viewPath: 'myViewPath'
+      }
+    },
+      { fakeParentField: true },
+      fakeCallback
+    );
+
+    emitter.emit("close");
+
+    expect(fakeCallback).toHaveBeenCalled();
+  });
+
+  test("destroy closes dialog", () => {
+
+    const esd = new ExtensionSettingsDialog({
+      name: "fake",
+      settings: {
+        textcontent: 'foo'
+      },
+      displaySettings: {
+        viewPath: 'myViewPath'
+      }
+    },
+      { fakeParentField: true },
+      jest.fn()
+    );
+
+    esd.destroy();
+
+    expect(mock_close).toHaveBeenCalled();
+  });
+
+  test("focus focuses dialog", () => {
+
+    const esd = new ExtensionSettingsDialog({
+      name: "fake",
+      settings: {
+        textcontent: 'foo'
+      },
+      displaySettings: {
+        viewPath: 'myViewPath'
+      }
+    },
+      { fakeParentField: true },
+      jest.fn()
+    );
+
+    esd.focus();
+
+    expect(mock_focus).toHaveBeenCalled();
   });
 });
 

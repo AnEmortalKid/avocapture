@@ -47,6 +47,8 @@ import { ReplayDetailsDialog } from './replayDetailsDialog'
 import { dialogBackgroundColor } from '../util/styling.js'
 import { ReplayDetailsEvents } from './replayDetailsEvents';
 
+import { EventEmitter } from "events";
+
 describe("ReplayDetailsDialog", () => {
 
   afterEach(() => {
@@ -109,14 +111,15 @@ describe("ReplayDetailsDialog", () => {
   });
 
   test("show ready-to-show listener, invokes webcontents and displays", () => {
-    mock_once.mockImplementation((event, cb) => {
-      cb();
-    });
+    const emitter = new EventEmitter();
+    mock_once.mockImplementation((event, cb) => emitter.once(event, cb))
+
 
     const dd = new ReplayDetailsDialog();
     dd.show({
       replayUuuid: 'fake'
     });
+    emitter.emit("ready-to-show");
 
     expect(mock_webContents.send).toHaveBeenCalledWith(ReplayDetailsEvents.DIALOG.INITIALIZE, {
       replayUuuid: 'fake'
@@ -125,21 +128,19 @@ describe("ReplayDetailsDialog", () => {
   });
 
   test("show before-input-event listener, hides dialog on Escape", () => {
-    mock_once.mockImplementation((event, cb) => {
-      // setup listener
-      cb();
-    });
-    let bieCallback;
+    const emitter = new EventEmitter();
+    mock_once.mockImplementation((event, cb) => emitter.once(event, cb))
+
     mock_webContents.on.mockImplementation((event, cb) => {
-      bieCallback = cb;
+      emitter.on(event, cb);
     });
 
     const dd = new ReplayDetailsDialog();
     dd.show({
       replayUuuid: 'fake'
     });
-
-    bieCallback(null, { key: "Escape" });
+    emitter.emit("ready-to-show");
+    emitter.emit("before-input-event", null, { key: "Escape" });
 
     expect(mock_webContents.on).toHaveBeenCalledWith("before-input-event", expect.any(Function));
     expect(mock_minimize).toHaveBeenCalled();
@@ -147,21 +148,18 @@ describe("ReplayDetailsDialog", () => {
   });
 
   test("show before-input-event listener, does nothing on other keys", () => {
-    mock_once.mockImplementation((event, cb) => {
-      // setup listener
-      cb();
-    });
-    let bieCallback;
+    const emitter = new EventEmitter();
+    mock_once.mockImplementation((event, cb) => emitter.once(event, cb))
     mock_webContents.on.mockImplementation((event, cb) => {
-      bieCallback = cb;
+      emitter.on(event, cb);
     });
 
     const dd = new ReplayDetailsDialog();
     dd.show({
       replayUuuid: 'fake'
     });
-
-    bieCallback(null, { key: "Enter" });
+    emitter.emit("ready-to-show");
+    emitter.emit("before-input-event", null, { key: "Enter" });
 
     expect(mock_webContents.on).toHaveBeenCalledWith("before-input-event", expect.any(Function));
     expect(mock_minimize).not.toHaveBeenCalled();
@@ -169,18 +167,15 @@ describe("ReplayDetailsDialog", () => {
   });
 
   test("show event calls forcefocus after timeout", async () => {
-
-    let onCallback;
-    mock_on.mockImplementation((event, cb) => {
-      onCallback = cb;
-    });
+    const emitter = new EventEmitter();
+    mock_on.mockImplementation((event, cb) => emitter.once(event, cb))
 
     const dd = new ReplayDetailsDialog();
     dd.show({
       replayUuuid: 'fake'
     });
+    emitter.emit("show");
 
-    onCallback();
     expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), 200);
 
     jest.advanceTimersByTime(200);
