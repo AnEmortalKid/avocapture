@@ -20,7 +20,6 @@ let mock_webContents = {
   send: jest.fn()
 }
 jest.mock('electron', () => {
-
   return {
     BrowserWindow: jest.fn().mockImplementation(() => {
       return {
