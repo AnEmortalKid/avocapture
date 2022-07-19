@@ -38,7 +38,9 @@ export default function installExtension(extensionPath) {
   );
 
   if (!newPackage.version) {
-    throw new Error("Cannot install extension without declaring a 'version'");
+    throw new Error(
+      `Cannot install extension ${newPackage.name} without declaring a 'version'`
+    );
   }
 
   // disable comparison in debug mode

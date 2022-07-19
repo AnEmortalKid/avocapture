@@ -1,8 +1,8 @@
-const mockSet = jest.fn()
-const mockDelete = jest.fn()
-const mockGet = jest.fn()
+const mockSet = jest.fn();
+const mockDelete = jest.fn();
+const mockGet = jest.fn();
 
-import { Store } from 'electron-store';
+import { Store } from "electron-store";
 
 //do it like this since it is a default export
 //and we can't reference a var
@@ -12,23 +12,21 @@ jest.mock("electron-store", () => {
       set: (k, v) => mockSet(k, v),
       delete: (k) => mockDelete(k),
       get: (k) => mockGet(k),
-      store: {}
+      store: {},
     };
-  })
-})
-
+  });
+});
 
 import { AppSettings } from "./appSettings";
 
 describe("AppSettings", () => {
-
   afterEach(() => {
     jest.clearAllMocks();
   });
 
   test("creates app store with correct config", () => {
     // this will be the mock
-    const es = require('electron-store');
+    const es = require("electron-store");
     expect(es).toHaveBeenCalledWith({
       name: "avocapture",
       cwd: "settings",
@@ -39,7 +37,7 @@ describe("AppSettings", () => {
   test("save stores key when provided with data", () => {
     const appSettings = new AppSettings();
 
-    appSettings.save("someKey", 'valueObj');
+    appSettings.save("someKey", "valueObj");
 
     expect(mockSet).toHaveBeenCalledWith("someKey", "valueObj");
   });
@@ -57,7 +55,7 @@ describe("AppSettings", () => {
 
     appSettings.get("someKey");
 
-    expect(mockGet).toHaveBeenCalledWith("someKey")
+    expect(mockGet).toHaveBeenCalledWith("someKey");
   });
 
   test("clear deletes key", () => {
@@ -65,7 +63,7 @@ describe("AppSettings", () => {
 
     appSettings.clear("someKey");
 
-    expect(mockDelete).toHaveBeenCalledWith("someKey")
+    expect(mockDelete).toHaveBeenCalledWith("someKey");
   });
 
   test("getAll  returns defaults when no keys", () => {

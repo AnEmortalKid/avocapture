@@ -27,11 +27,7 @@ export function copyDirectory(source, destination) {
 export function copyAssets(destination) {
   for (var assetPath of assetPaths) {
     const assetDir = path.resolve(__dirname, assetPath);
-    const destinationPath = path.resolve(
-      destination,
-      "assets",
-      assetPath
-    );
+    const destinationPath = path.resolve(destination, "assets", assetPath);
     copyDirectory(assetDir, destinationPath);
   }
 }

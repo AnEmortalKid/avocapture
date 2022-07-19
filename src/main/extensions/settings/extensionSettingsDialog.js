@@ -16,7 +16,7 @@ export class ExtensionSettingsDialog {
 
     /**
      * webpack moves the file relative to where the main app runs
-     * 
+     *
      * so this directory won't be src/main/extensions/settings/commonPreload
      */
     const preloadPath = path.resolve(

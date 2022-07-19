@@ -3,7 +3,7 @@ module.exports = {
     getPath: jest.fn(),
     getName: jest.fn(),
     getVersion: jest.fn(),
-    isPackaged: jest.fn()
+    isPackaged: jest.fn(),
   },
   clipboard: jest.fn(),
   BrowserWindow: jest.fn().mockImplementation(() => {
@@ -19,8 +19,8 @@ module.exports = {
       removeMenu: jest.fn(),
       webContents: {
         send: jest.fn(),
-        on: jest.fn()
-      }
-    }
-  })
+        on: jest.fn(),
+      },
+    };
+  }),
 };

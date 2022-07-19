@@ -1,7 +1,7 @@
 import { BrowserWindow } from "electron";
 import * as path from "path";
 import { ReplayDetailsEvents } from "./replayDetailsEvents";
-import { dialogBackgroundColor } from '../util/styling'
+import { dialogBackgroundColor } from "../util/styling";
 
 const forceFocus = require("forcefocus");
 
