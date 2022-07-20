@@ -2,6 +2,7 @@ import { BrowserWindow, ipcMain } from "electron";
 import * as path from "path";
 import Logger from "../../logger/logger";
 import { isProduction } from "../../util/processInfo";
+import { dialogBackgroundColor } from "../../util/styling";
 import { ExtensionEvents } from "../extensionEvents";
 
 const logger = new Logger("ExtensionManagementApp");
@@ -48,7 +49,7 @@ export default class ExtensionManagementApp {
         sandbox: false,
       },
     });
-    manageWindow.setBackgroundColor("#d7dbe3");
+    manageWindow.setBackgroundColor(dialogBackgroundColor);
     manageWindow.setFullScreenable(false);
     if (production) {
       manageWindow.removeMenu();
