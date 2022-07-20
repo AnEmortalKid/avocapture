@@ -116,7 +116,7 @@ export default class ExtensionLoader {
       logger: new ExtensionLogger(configuration.name),
     });
     checkExtension(extensionInstance, configuration.name, configuration.type);
-
+    // TODO mark builtin here
     return new LoadedExtension(extensionInstance, configuration, extensionPath);
   }
 
