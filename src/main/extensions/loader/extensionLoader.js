@@ -5,7 +5,8 @@ import { createRequire } from "module";
 import LoadedExtension from "./loadedExtension";
 import Logger from "../../logger/logger";
 import ExtensionLogger from "../../logger/extensionLogger";
-const require = createRequire(import.meta.url);
+import { requireProvider } from "../../util/requireProvider";
+const require = requireProvider();
 
 const logger = new Logger("ExtensionLoader");
 
