@@ -10,6 +10,8 @@
 
 import { requireProvider } from "../../util/requireProvider";
 
+import { BaseExtension } from '../extensionSchema'
+
 let mock_require = jest.fn()
 jest.mock('../../util/requireProvider', () => {
   return {
@@ -52,6 +54,16 @@ class TestExtension {
   }
 }
 
+// all methods missing
+class NotAnExtension {
+  constructor() {
+    // nothing
+  }
+}
+
+// misses the extension specific method
+class NoExtensionMethod extends BaseExtension { }
+
 describe("ExtensionLoader", () => {
 
   describe("loadExtension", () => {
@@ -66,7 +78,7 @@ describe("ExtensionLoader", () => {
 
       // mock loaded json
       mock_require.mockReturnValueOnce(loadableExtensionJson)
-        .mockReturnValueOnce(TestExtension);
+        .mockReturnValueOnce(NoExtensionMethod);
 
       const el = new ExtensionLoader();
       el.loadExtension('foo');
