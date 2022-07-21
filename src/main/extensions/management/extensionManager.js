@@ -142,6 +142,7 @@ export default class ExtensionManager {
     if (type === "uploader") {
       return this.uploaderNames;
     }
+    throw new Error("Unsupported type " + type);
   }
 
   getExtensionNames() {
