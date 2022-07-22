@@ -1,4 +1,3 @@
-
 import { createRequire } from "module";
 
 export function requireProvider() {

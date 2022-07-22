@@ -1,7 +1,6 @@
 import path from "path";
 import * as fs from "fs";
 
-import { createRequire } from "module";
 import LoadedExtension from "./loadedExtension";
 import Logger from "../../logger/logger";
 import ExtensionLogger from "../../logger/extensionLogger";
