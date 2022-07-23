@@ -1,19 +1,18 @@
-import LoadedExtension from "./loadedExtension"
-
+import LoadedExtension from "./loadedExtension";
 
 const instance = {
-  fakeMethod: () => { }
+  fakeMethod: () => {},
 };
 
 describe("LoadedExtension", () => {
   test("Stores instance", () => {
     const fakeInst = {
-      fakeMethod: () => { }
+      fakeMethod: () => {},
     };
     const loaded = new LoadedExtension(fakeInst, {}, "fakePath");
 
     expect(loaded.instance).toBe(fakeInst);
-  })
+  });
 
   test("Stores extensionPath", () => {
     const loaded = new LoadedExtension(instance, {}, "extPath");
@@ -22,11 +21,10 @@ describe("LoadedExtension", () => {
   });
 
   describe("configuration properties", () => {
-
     test("stores configuration", () => {
       const conf = {
-        name: 'name'
-      }
+        name: "name",
+      };
 
       const loaded = new LoadedExtension(instance, conf, "extPath");
 
@@ -35,68 +33,67 @@ describe("LoadedExtension", () => {
 
     test("name() returns name", () => {
       const conf = {
-        name: 'myName'
-      }
+        name: "myName",
+      };
 
       const loaded = new LoadedExtension(instance, conf, "extPath");
 
-      expect(loaded.name()).toBe('myName');
+      expect(loaded.name()).toBe("myName");
     });
 
     test("type() returns type", () => {
       const conf = {
-        type: 'detector'
-      }
+        type: "detector",
+      };
 
       const loaded = new LoadedExtension(instance, conf, "extPath");
 
-      expect(loaded.type()).toBe('detector');
+      expect(loaded.type()).toBe("detector");
     });
 
     test("display() uses prop when it exists", () => {
       const conf = {
-        display: 'overriden'
-      }
+        display: "overriden",
+      };
 
       const loaded = new LoadedExtension(instance, conf, "extPath");
 
-      expect(loaded.display()).toBe('overriden');
+      expect(loaded.display()).toBe("overriden");
     });
 
     test("display() uses name when display doesn't exist", () => {
       const conf = {
-        name: 'name'
-      }
+        name: "name",
+      };
 
       const loaded = new LoadedExtension(instance, conf, "extPath");
 
-      expect(loaded.display()).toBe('name');
+      expect(loaded.display()).toBe("name");
     });
-
 
     test("description() uses prop when it exists", () => {
       const conf = {
-        description: 'overriden'
-      }
+        description: "overriden",
+      };
 
       const loaded = new LoadedExtension(instance, conf, "extPath");
 
-      expect(loaded.description()).toBe('overriden');
+      expect(loaded.description()).toBe("overriden");
     });
 
     test("description() uses name when description doesn't exist", () => {
       const conf = {
-        name: 'name'
-      }
+        name: "name",
+      };
 
       const loaded = new LoadedExtension(instance, conf, "extPath");
 
-      expect(loaded.description()).toBe('name');
+      expect(loaded.description()).toBe("name");
     });
   });
 
   test("marks extension as built in", () => {
-    const loaded = new LoadedExtension(instance, { name: 'ext' }, "extPath");
+    const loaded = new LoadedExtension(instance, { name: "ext" }, "extPath");
 
     loaded.markBuiltIn();
 
@@ -104,8 +101,8 @@ describe("LoadedExtension", () => {
   });
 
   test("isBuiltIn defaults to false", () => {
-    const loaded = new LoadedExtension(instance, { name: 'ext' }, "extPath");
+    const loaded = new LoadedExtension(instance, { name: "ext" }, "extPath");
 
     expect(loaded.isBuiltIn()).toBe(false);
   });
-})
+});

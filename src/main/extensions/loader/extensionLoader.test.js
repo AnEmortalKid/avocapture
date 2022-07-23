@@ -1,11 +1,3 @@
-// jest.mock('../../util/requireProvider', () => {
-//   // Works and lets you check for constructor calls:
-//   return {
-//     requireProvider: jest.fn()
-//   }
-// }
-// );
-
 import { requireProvider } from "../../util/requireProvider";
 
 import { BaseExtension } from "../extensionSchema";
