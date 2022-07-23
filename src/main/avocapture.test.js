@@ -1,4 +1,4 @@
-import { ipcMain, Menu } from "electron";
+import { ipcMain, Menu, app } from "electron";
 
 let mock_setBackgroundColor = jest.fn();
 let mock_setAlwaysOnTop = jest.fn();
@@ -13,6 +13,7 @@ let mock_minimize = jest.fn();
 let mock_hide = jest.fn();
 let mock_app_on = jest.fn();
 let mock_setIcon = jest.fn();
+let mock_getAllWindows = jest.fn();
 
 let mock_webContents = {
   on: jest.fn(),
@@ -38,6 +39,7 @@ jest.mock("electron", () => {
         minimize: mock_minimize,
         hide: mock_hide,
         setIcon: mock_setIcon,
+        getAllWindows: mock_getAllWindows,
         webContents: mock_webContents,
       };
     }),
@@ -55,6 +57,7 @@ jest.mock("electron", () => {
           then: mock_whenReady_then,
         };
       }),
+      quit: jest.fn()
     },
     Menu: jest.fn().mockImplementation(() => {
       return {
@@ -86,8 +89,18 @@ const fs = require("fs");
 import { logCleaner } from "./logger/logCleaner";
 jest.mock("./logger/logCleaner");
 
-import { ReplayDetailsDialog } from "./entry/replayDetailsDialog";
-jest.mock("./entry/replayDetailsDialog");
+let mock_ReplayDetailsDialog = {
+  destroy: jest.fn()
+}
+jest.mock("./entry/replayDetailsDialog", () => {
+  return {
+    ReplayDetailsDialog: jest.fn().mockImplementation(() => {
+      return {
+        destroy: () => mock_ReplayDetailsDialog.destroy()
+      }
+    })
+  }
+});
 
 import { ReplaySaver } from "./saver/replaySaver";
 jest.mock("./saver/replaySaver");
@@ -104,6 +117,7 @@ let mock_ExtensionManager = {
   getExtensionsOfType: jest.fn(),
   loadInstalled: jest.fn(),
   getExtension: jest.fn().mockReturnValue(mock_loadedExtension),
+  shutdown: jest.fn()
 };
 jest.mock("./extensions/management/extensionmanager", () => {
   return jest.fn().mockImplementation(() => {
@@ -113,6 +127,7 @@ jest.mock("./extensions/management/extensionmanager", () => {
       getExtensionsOfType: (t) => mock_ExtensionManager.getExtensionsOfType(t),
       loadInstalled: () => mock_ExtensionManager.loadInstalled(),
       getExtension: (e) => mock_ExtensionManager.getExtension(e),
+      shutdown: () => mock_ExtensionManager.shutdown()
     };
   });
 });
@@ -141,11 +156,15 @@ jest.mock("./extensions/management/extensionManagementApp", () => {
 
 let mock_Logger = {
   logEvent: jest.fn(),
+  log: jest.fn(),
+  logMethod: jest.fn()
 };
 jest.mock("./logger/logger", () => {
   return jest.fn().mockImplementation(() => {
     return {
       logEvent: (e, d) => mock_Logger.logEvent(e, d),
+      log: (d) => mock_Logger.log(d),
+      logMethod: (m, d) => mock_Logger.logMethod(m, d)
     };
   });
 });
@@ -153,6 +172,7 @@ jest.mock("./logger/logger", () => {
 import { runApp } from "./avocapture";
 import { ReplayDetailsEvents } from "./entry/replayDetailsEvents";
 import { AppEvents } from "./events/appEvents";
+import { EventEmitter } from "events";
 
 describe("Avocapture Application", () => {
   afterEach(() => {
@@ -160,10 +180,6 @@ describe("Avocapture Application", () => {
   });
 
   describe("initialization", () => {
-    afterEach(() => {
-      jest.clearAllMocks();
-    });
-
     test("cleans up logs", () => {
       runApp();
 
@@ -212,16 +228,106 @@ describe("Avocapture Application", () => {
         expect.any(Function)
       );
     });
+
+    test("destroys and terminates resources when all windows close", () => {
+      const emitter = new EventEmitter();
+      mock_app_on.mockImplementation((e, cb) => {
+        emitter.on(e, cb);
+      });
+
+      runApp();
+
+      emitter.emit("window-all-closed");
+
+      expect(mock_ReplayDetailsDialog.destroy).toHaveBeenCalled();
+      expect(mock_ExtensionManager.shutdown).toHaveBeenCalled();
+      expect(app.quit).toHaveBeenCalled();
+    });
   });
 
   describe("app.whenReady does all the things", () => {
-    mock_whenReady_then.mockImplementation((cb) => cb());
-    global.MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY = "mainPreload.js";
-    global.MAIN_WINDOW_WEBPACK_ENTRY = "main.html";
-    Menu.setApplicationMenu = jest.fn();
-    // set empty bulitns
-    fs.readdirSync.mockReturnValue([]);
 
-    runApp();
+    beforeEach(() => {
+      mock_whenReady_then.mockImplementation((cb) => cb());
+      global.MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY = "mainPreload.js";
+      global.MAIN_WINDOW_WEBPACK_ENTRY = "main.html";
+      Menu.setApplicationMenu = jest.fn();
+    });
+
+    test("do it", () => {
+      // set empty bulitns
+      fs.readdirSync.mockReturnValue([]);
+
+      runApp();
+    });
+
+    test("creates main window", () => {
+
+
+      // todo sets up on('did-finish-loading' on webcontents)
+    });
+
+    test("on did-finish-loading initializes app with settings", () => {
+
+      expect(mock_webContents.send).toHaveBeenCalled("AppSettings.Initialize", {
+        // add some curr setting
+        // add a fake detector and uploader
+      })
+    })
+
+    test("adds on activate event", () => {
+
+    });
+
+    test("installs built in extensions", () => {
+
+      // expect(extensionmanager.install);
+    })
+
+    test("loads installed and registers listener", () => {
+
+    });
+
+    test('calls setPrefix with the configured prefix', () => {
+
+    });
+
+    describe("Activates extensions", () => {
+      test("activates detector and registers", () => {
+
+      });
+      test("activates uploader", () => {
+
+      });
+
+    });
+
+    describe("Handles events", () => {
+
+      test("on cancel dialog", () => {
+        // hides dialog
+      })
+
+      test("on apply dialog", () => {
+
+        // hides dialog
+        // calls saver
+        // calls uploader if available
+        // downstream calls APP.ADD
+      });
+
+      // TODO Deleting this handler
+      // test("on apply settings", () => {});
+
+      test("on apply prefix", () => {
+        // saves new prefix
+      })
+
+      test('on select directory', () => {
+        // displays dialog
+        // sends result to caller
+      })
+    });
+
   });
 });

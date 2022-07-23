@@ -173,6 +173,7 @@ export function runApp() {
     extensionManager.registerChangeListener(extensionChangeListener);
 
     // mark the built ins
+    // TODO possibly add this into the loader
     for (const builtIn of BUILTIN_EXTENSIONS) {
       extensionManager.getExtension(builtIn).markBuiltIn();
     }
@@ -216,6 +217,7 @@ export function runApp() {
     mainWindow.webContents.send(ReplayDetailsEvents.APP.ADD, replayData);
   });
 
+  // TODO delete
   ipcMain.on(AppEvents.SETTINGS.APPLY, (event, data) => {
     logger.logEvent(AppEvents.SETTINGS.APPLY, data);
     appSettingsStore.save(data);
