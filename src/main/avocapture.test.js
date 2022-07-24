@@ -20,8 +20,11 @@ let mock_webContents = {
   send: jest.fn(),
 };
 
-let mock_Menu_append = jest.fn();
+let mock_dialog = {
+  showOpenDialog: jest.fn()
+}
 
+let mock_Menu_append = jest.fn();
 let mock_whenReady_then = jest.fn();
 jest.mock("electron", () => {
   return {
@@ -67,9 +70,15 @@ jest.mock("electron", () => {
     MenuItem: jest.fn().mockImplementation(() => {
       return {};
     }),
+    dialog: {
+      showOpenDialog: (w, o) => mock_dialog.showOpenDialog(w, o)
+    }
   };
 });
 
+let mock_AppSettings = {
+  save: jest.fn()
+}
 jest.mock("./settings/appSettings", () => {
   return {
     AppSettings: jest.fn().mockImplementation(() => {
@@ -78,6 +87,7 @@ jest.mock("./settings/appSettings", () => {
         getAll: jest.fn().mockReturnValue({
           prefix: "prefix",
         }),
+        save: (k, d) => mock_AppSettings.save(k, d)
       };
     }),
   };
@@ -107,8 +117,19 @@ jest.mock("./entry/replayDetailsDialog", () => {
 import { ReplaySaver } from "./saver/replaySaver";
 jest.mock("./saver/replaySaver");
 
+let mock_ReplayDetectionListener = {
+  setPrefix: jest.fn()
+}
 import { ReplayDetectionListener } from "./detector/replayDetectionListener";
-jest.mock("./detector/replayDetectionListener");
+jest.mock("./detector/replayDetectionListener", () => {
+  return {
+    ReplayDetectionListener: jest.fn().mockImplementation(() => {
+      return {
+        setPrefix: (p) => mock_ReplayDetectionListener.setPrefix(p)
+      }
+    })
+  }
+});
 
 let mock_loadedExtension = {
   markBuiltIn: jest.fn(),
@@ -176,6 +197,10 @@ import { ReplayDetailsEvents } from "./entry/replayDetailsEvents";
 import { AppEvents } from "./events/appEvents";
 import { EventEmitter } from "events";
 import { ReplayDetailsDialog } from "./entry/replayDetailsDialog";
+
+const fakeEvent = {
+  type: 'fakeEvent'
+}
 
 describe("Avocapture Application", () => {
   afterEach(() => {
@@ -273,19 +298,19 @@ describe("Avocapture Application", () => {
       });
     });
 
-    test("adds on activate event", () => {});
+    test("adds on activate event", () => { });
 
     test("installs built in extensions", () => {
       // expect(extensionmanager.install);
     });
 
-    test("loads installed and registers listener", () => {});
+    test("loads installed and registers listener", () => { });
 
-    test("calls setPrefix with the configured prefix", () => {});
+    test("calls setPrefix with the configured prefix", () => { });
 
     describe("Activates extensions", () => {
-      test("activates detector and registers", () => {});
-      test("activates uploader", () => {});
+      test("activates detector and registers", () => { });
+      test("activates uploader", () => { });
     });
 
     describe("Handles events", () => {
@@ -298,7 +323,7 @@ describe("Avocapture Application", () => {
       });
 
       test("on cancel dialog", () => {
-        emitter.emit(ReplayDetailsEvents.DIALOG.CANCEL, null, {
+        emitter.emit(ReplayDetailsEvents.DIALOG.CANCEL, fakeEvent, {
           some: "data ",
         });
 
@@ -315,13 +340,38 @@ describe("Avocapture Application", () => {
       // TODO Deleting this handler
       // test("on apply settings", () => {});
 
-      test("on apply prefix", () => {
-        // saves new prefix
+      test("on apply prefix saves the new prefix", () => {
+        emitter.emit(AppEvents.SETTINGS.APPLY_PREFIX, fakeEvent, "newPrefix")
+
+        // saves new prefix and stores it in the listener
+        expect(mock_AppSettings.save).toHaveBeenCalledWith("prefix", "newPrefix");
+        expect(mock_ReplayDetectionListener.setPrefix).toHaveBeenCalledWith("newPrefix");
       });
 
-      test("on select directory", () => {
+      test("on select directory handles no results", () => {
+        mock_dialog.showOpenDialog.mockReturnValue({ filePaths: [] })
+        let mock_sender = {
+          send: jest.fn(),
+          focus: jest.fn()
+        }
+        emitter.emit(AppEvents.ACTIONS.SELECT_DIRECTORY, {
+          sender: mock_sender
+        });
         // displays dialog
         // sends result to caller
+
+        // const result = await dialog.showOpenDialog(mainWindow, {
+        //   properties: ["openDirectory"],
+        // });
+
+        // const selectedDir =
+        //   result.filePaths.length > 0 ? result.filePaths[0] : null;
+        // event.sender.send(AppEvents.ACTIONS.SELECT_DIRECTORY_RESPONSE, selectedDir);
+        // event.sender.focus();
+        // TODO more assert
+        expect(mock_dialog.showOpenDialog).toHaveBeenCalled();
+        expect(mock_sender.send).toHaveBeenCalledWith(AppEvents.ACTIONS.SELECT_DIRECTORY_RESPONSE, null);
+        expect(mock_sender.focus).toHaveBeenCalled();
       });
     });
   });
