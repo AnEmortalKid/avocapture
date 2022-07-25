@@ -1,8 +1,7 @@
-npm install --prefix builtin/avocapture-search-on-hotkey
-npm run test --prefix builtin/avocapture-search-on-hotkey
-
-npm install --prefix builtin/avocapture-replay-mover
-npm run test --prefix builtin/avocapture-replay-mover
-
-npm install --prefix builtin/avocapture-obs-detector
-npm run test --prefix builtin/avocapture-obs-detector
+for d in builtin/*/ ; do
+  echo "Testing $d"
+  cd $d
+  npm install
+  npm run test
+  cd ../../
+done
