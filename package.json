@@ -8,6 +8,7 @@
     "test": "jest",
     "test:cov": "jest --coverage",
     "test:all": "sh test_all.sh",
+    "test:extensions": "sh test_extensions.sh",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
