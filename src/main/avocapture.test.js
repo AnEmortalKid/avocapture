@@ -80,6 +80,7 @@ let mock_AppSettings = {
   save: jest.fn(),
   get: jest.fn(),
   getAll: jest.fn(),
+  clear: jest.fn(),
 };
 jest.mock("./settings/appSettings", () => {
   return {
@@ -92,6 +93,7 @@ jest.mock("./settings/appSettings", () => {
         save: (k, d) => mock_AppSettings.save(k, d),
         get: (k) => mock_AppSettings.get(k),
         getAll: () => mock_AppSettings.getAll(),
+        clear: (k) => mock_AppSettings.clear(k),
       };
     }),
   };
@@ -465,6 +467,70 @@ describe("Avocapture Application", () => {
 
       expect(mock_ReplayDetectionListener.setPrefix).toHaveBeenCalledWith(
         "thePrefix"
+      );
+    });
+
+    test("changeListener updates settings on app uninstall", () => {
+      let captured;
+      mock_ExtensionManager.registerChangeListener.mockImplementation((cl) => {
+        captured = cl;
+      });
+
+      mock_AppSettings.getAll
+        // initial settings
+        .mockReturnValueOnce({
+          prefix: "fakePrefix",
+          extensions: {
+            selected: {
+              detector: "loaded-detector",
+            },
+          },
+        })
+        // settings for changeListener
+        .mockReturnValueOnce({
+          prefix: "fakePrefix",
+          extensions: {
+            selected: {
+              detector: "loaded-detector",
+            },
+          },
+        })
+        // updated settings after clear
+        .mockReturnValue({ prefix: "fakePrefix" });
+
+      mock_ExtensionManager.getExtensionsOfType.mockImplementation((t) => {
+        if (t === "detector") {
+          return ["fake-detector"];
+        }
+        return ["fake-uploader"];
+      });
+
+      mock_ExtensionManager.getExtension.mockReturnValue({
+        instance: {
+          register: jest.fn(),
+        },
+        markBuiltIn: jest.fn(),
+      });
+
+      runApp();
+
+      // notify
+      captured({
+        event: "uninstall",
+        type: "detector",
+        name: "loaded-detector",
+      });
+
+      expect(mock_AppSettings.clear).toHaveBeenCalledWith(
+        "extensions.selected.detector"
+      );
+      expect(mock_webContents.send).toHaveBeenCalledWith(
+        "AppSettings.Initialize",
+        {
+          prefix: "fakePrefix",
+          detectors: ["fake-detector"],
+          uploaders: ["fake-uploader"],
+        }
       );
     });
 
