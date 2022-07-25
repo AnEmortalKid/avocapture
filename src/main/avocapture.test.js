@@ -163,7 +163,7 @@ let mock_ExtensionManager = {
   activate: jest.fn(),
   deactivate: jest.fn(),
 };
-jest.mock("./extensions/management/extensionmanager", () => {
+jest.mock("./extensions/management/extensionManager", () => {
   return jest.fn().mockImplementation(() => {
     return {
       registerChangeListener: (cl) =>
