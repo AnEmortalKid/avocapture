@@ -1,4 +1,4 @@
-import { ipcMain, Menu, app, BrowserWindow, MenuItem } from "electron";
+import { ipcMain, Menu, app } from "electron";
 
 let mock_setBackgroundColor = jest.fn();
 let mock_setAlwaysOnTop = jest.fn();
@@ -21,8 +21,8 @@ let mock_webContents = {
 };
 
 let mock_dialog = {
-  showOpenDialog: jest.fn(),
-};
+  showOpenDialog: jest.fn()
+}
 
 let mock_Menu_append = jest.fn();
 let mock_whenReady_then = jest.fn();
@@ -71,17 +71,14 @@ jest.mock("electron", () => {
       return {};
     }),
     dialog: {
-      showOpenDialog: (w, o) => mock_dialog.showOpenDialog(w, o),
-    },
+      showOpenDialog: (w, o) => mock_dialog.showOpenDialog(w, o)
+    }
   };
 });
 
 let mock_AppSettings = {
-  save: jest.fn(),
-  get: jest.fn(),
-  getAll: jest.fn(),
-  clear: jest.fn(),
-};
+  save: jest.fn()
+}
 jest.mock("./settings/appSettings", () => {
   return {
     AppSettings: jest.fn().mockImplementation(() => {
@@ -90,10 +87,7 @@ jest.mock("./settings/appSettings", () => {
         getAll: jest.fn().mockReturnValue({
           prefix: "prefix",
         }),
-        save: (k, d) => mock_AppSettings.save(k, d),
-        get: (k) => mock_AppSettings.get(k),
-        getAll: () => mock_AppSettings.getAll(),
-        clear: (k) => mock_AppSettings.clear(k),
+        save: (k, d) => mock_AppSettings.save(k, d)
       };
     }),
   };
@@ -120,33 +114,21 @@ jest.mock("./entry/replayDetailsDialog", () => {
   };
 });
 
-let mock_ReplaySaver = {
-  setTitle: jest.fn(),
-  getReplayData: jest.fn(),
-};
-jest.mock("./saver/replaySaver", () => {
-  return {
-    ReplaySaver: jest.fn().mockImplementation(() => {
-      return {
-        setTitle: (t) => mock_ReplaySaver.setTitle(t),
-        getReplayData: (uuid) => mock_ReplaySaver.getReplayData(uuid),
-      };
-    }),
-  };
-});
+import { ReplaySaver } from "./saver/replaySaver";
+jest.mock("./saver/replaySaver");
 
 let mock_ReplayDetectionListener = {
-  setPrefix: jest.fn(),
-};
+  setPrefix: jest.fn()
+}
 import { ReplayDetectionListener } from "./detector/replayDetectionListener";
 jest.mock("./detector/replayDetectionListener", () => {
   return {
     ReplayDetectionListener: jest.fn().mockImplementation(() => {
       return {
-        setPrefix: (p) => mock_ReplayDetectionListener.setPrefix(p),
-      };
-    }),
-  };
+        setPrefix: (p) => mock_ReplayDetectionListener.setPrefix(p)
+      }
+    })
+  }
 });
 
 let mock_loadedExtension = {
@@ -159,11 +141,8 @@ let mock_ExtensionManager = {
   loadInstalled: jest.fn(),
   getExtension: jest.fn().mockReturnValue(mock_loadedExtension),
   shutdown: jest.fn(),
-  install: jest.fn(),
-  activate: jest.fn(),
-  deactivate: jest.fn(),
 };
-jest.mock("./extensions/management/extensionmanager", () => {
+jest.mock("./extensions/management/extensionManager", () => {
   return jest.fn().mockImplementation(() => {
     return {
       registerChangeListener: (cl) =>
@@ -172,9 +151,6 @@ jest.mock("./extensions/management/extensionmanager", () => {
       loadInstalled: () => mock_ExtensionManager.loadInstalled(),
       getExtension: (e) => mock_ExtensionManager.getExtension(e),
       shutdown: () => mock_ExtensionManager.shutdown(),
-      install: (e) => mock_ExtensionManager.install(e),
-      activate: (e) => mock_ExtensionManager.activate(e),
-      deactivate: (e) => mock_ExtensionManager.deactivate(e),
     };
   });
 });
@@ -216,9 +192,6 @@ jest.mock("./logger/logger", () => {
   });
 });
 
-import { isProduction } from "./util/processInfo";
-jest.mock("./util/processInfo");
-
 import { runApp } from "./avocapture";
 import { ReplayDetailsEvents } from "./entry/replayDetailsEvents";
 import { AppEvents } from "./events/appEvents";
@@ -226,19 +199,10 @@ import { EventEmitter } from "events";
 import { ReplayDetailsDialog } from "./entry/replayDetailsDialog";
 
 const fakeEvent = {
-  type: "fakeEvent",
-};
-const path = require("path");
-
-// for when someone runs it on mac
-const isMac = process.platform === "darwin";
+  type: 'fakeEvent'
+}
 
 describe("Avocapture Application", () => {
-  beforeEach(() => {
-    // pretend all built ins are loaded
-    mock_ExtensionManager.getExtension.mockReturnValue(mock_loadedExtension);
-  });
-
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -309,7 +273,7 @@ describe("Avocapture Application", () => {
     });
   });
 
-  describe("app.whenReady runs application", () => {
+  describe("app.whenReady does all the things", () => {
     beforeEach(() => {
       mock_whenReady_then.mockImplementation((cb) => cb());
       global.MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY = "mainPreload.js";
@@ -317,263 +281,36 @@ describe("Avocapture Application", () => {
       Menu.setApplicationMenu = jest.fn();
       // set empty bulitns
       fs.readdirSync.mockReturnValue([]);
-      isProduction.mockReturnValue(true);
+    });
 
-      mock_AppSettings.getAll.mockReturnValue({
-        prefix: "thePrefix",
-      });
+    test("do it", () => {
+      runApp();
     });
 
     test("creates main window", () => {
-      runApp();
-
-      expect(BrowserWindow).toHaveBeenCalledWith({
-        width: 800,
-        height: 600,
-        frame: true,
-        webPreferences: {
-          preload: "mainPreload.js",
-          nodeIntegration: true,
-          contextIsolation: false,
-        },
-      });
-      expect(mock_loadURL).toHaveBeenCalledWith("main.html");
-      expect(mock_setIcon).toHaveBeenCalledWith(
-        path.resolve(__dirname, "images", "logo_256.png")
-      );
-
-      expect(mock_once).toHaveBeenCalledWith("close", expect.any(Function));
-
-      // Check menu creation
-      expect(MenuItem).toHaveBeenCalledWith({
-        label: "File",
-        submenu: [isMac ? { role: "close" } : { role: "quit" }],
-      });
-      expect(MenuItem).toHaveBeenCalledWith({
-        label: "Manage",
-        click: expect.any(Function),
-      });
-      expect(MenuItem).toHaveBeenCalledWith({
-        label: "Extensions",
-        submenu: expect.anything(),
-      });
-      expect(Menu.setApplicationMenu).toHaveBeenCalled();
-      expect(mock_ExtensionSettingsApp.setMainWindow).toHaveBeenCalledWith(
-        expect.anything()
-      );
-    });
-
-    test("adds dev tools when not production", () => {
-      isProduction.mockReturnValue(false);
-
-      runApp();
-
-      // adds menu when not in prod
-      expect(MenuItem).toHaveBeenCalledWith({
-        label: "View",
-        submenu: [{ role: "toggleDevTools" }],
-      });
+      // todo sets up on('did-finish-loading' on webcontents)
     });
 
     test("on did-finish-loading initializes app with settings", () => {
-      const emitter = new EventEmitter();
-      mock_webContents.on.mockImplementation((e, cb) => emitter.on(e, cb));
-
-      mock_AppSettings.getAll.mockReturnValue({
-        fakeSettings: "true",
+      expect(mock_webContents.send).toHaveBeenCalled("AppSettings.Initialize", {
+        // add some curr setting
+        // add a fake detector and uploader
       });
-      // pretend these are loaded and installed
-      mock_ExtensionManager.getExtensionsOfType
-        .mockReturnValueOnce(["fake-detector"])
-        .mockReturnValueOnce(["fake-uploader"]);
-
-      runApp();
-      emitter.emit("did-finish-load");
-
-      expect(mock_webContents.send).toHaveBeenCalledWith(
-        "AppSettings.Initialize",
-        {
-          fakeSettings: "true",
-          detectors: ["fake-detector"],
-          uploaders: ["fake-uploader"],
-        }
-      );
     });
 
-    test("on close destroys/shuts down and quits the app", () => {
-      const emitter = new EventEmitter();
-      mock_once.mockImplementation((e, cb) => emitter.once(e, cb));
-
-      runApp();
-      emitter.emit("close");
-
-      expect(mock_ReplayDetailsDialog.destroy).toHaveBeenCalled();
-      expect(mock_ExtensionManager.shutdown).toHaveBeenCalled();
-      expect(app.quit).toHaveBeenCalled();
-    });
-
-    test("adds on activate event", () => {
-      runApp();
-
-      expect(mock_app_on).toHaveBeenCalledWith(
-        "activate",
-        expect.any(Function)
-      );
-    });
+    test("adds on activate event", () => { });
 
     test("installs built in extensions", () => {
-      // add a builtin
-      fs.readdirSync.mockReturnValue([
-        {
-          name: "builtin-extension",
-          isDirectory: () => true,
-        },
-        {
-          name: "some-file",
-          isDirectory: () => false,
-        },
-      ]);
-
-      runApp();
-
-      const builtIns = path.resolve(__dirname, "builtin");
-      expect(mock_ExtensionManager.install).toHaveBeenCalledWith(
-        path.join(builtIns, "builtin-extension")
-      );
+      // expect(extensionmanager.install);
     });
 
-    test("loads installed and marks built ins", () => {
-      runApp();
+    test("loads installed and registers listener", () => { });
 
-      expect(mock_ExtensionManager.loadInstalled).toHaveBeenCalled();
-      expect(mock_ExtensionManager.registerChangeListener).toHaveBeenCalledWith(
-        expect.any(Function)
-      );
-
-      expect(mock_ExtensionManager.getExtension).toHaveBeenCalledWith(
-        "avocapture-replay-mover"
-      );
-      expect(mock_ExtensionManager.getExtension).toHaveBeenCalledWith(
-        "avocapture-search-on-hotkey"
-      );
-      expect(mock_ExtensionManager.getExtension).toHaveBeenCalledWith(
-        "avocapture-obs-detector"
-      );
-      expect(mock_loadedExtension.markBuiltIn).toHaveBeenCalledTimes(3);
-    });
-
-    test("calls setPrefix with the configured prefix", () => {
-      runApp();
-
-      expect(mock_ReplayDetectionListener.setPrefix).toHaveBeenCalledWith(
-        "thePrefix"
-      );
-    });
-
-    test("changeListener updates settings on app uninstall", () => {
-      let captured;
-      mock_ExtensionManager.registerChangeListener.mockImplementation((cl) => {
-        captured = cl;
-      });
-
-      mock_AppSettings.getAll
-        // initial settings
-        .mockReturnValueOnce({
-          prefix: "fakePrefix",
-          extensions: {
-            selected: {
-              detector: "loaded-detector",
-            },
-          },
-        })
-        // settings for changeListener
-        .mockReturnValueOnce({
-          prefix: "fakePrefix",
-          extensions: {
-            selected: {
-              detector: "loaded-detector",
-            },
-          },
-        })
-        // updated settings after clear
-        .mockReturnValue({ prefix: "fakePrefix" });
-
-      mock_ExtensionManager.getExtensionsOfType.mockImplementation((t) => {
-        if (t === "detector") {
-          return ["fake-detector"];
-        }
-        return ["fake-uploader"];
-      });
-
-      mock_ExtensionManager.getExtension.mockReturnValue({
-        instance: {
-          register: jest.fn(),
-        },
-        markBuiltIn: jest.fn(),
-      });
-
-      runApp();
-
-      // notify
-      captured({
-        event: "uninstall",
-        type: "detector",
-        name: "loaded-detector",
-      });
-
-      expect(mock_AppSettings.clear).toHaveBeenCalledWith(
-        "extensions.selected.detector"
-      );
-      expect(mock_webContents.send).toHaveBeenCalledWith(
-        "AppSettings.Initialize",
-        {
-          prefix: "fakePrefix",
-          detectors: ["fake-detector"],
-          uploaders: ["fake-uploader"],
-        }
-      );
-    });
+    test("calls setPrefix with the configured prefix", () => { });
 
     describe("Activates extensions", () => {
-      test("activates detector and registers", () => {
-        mock_AppSettings.getAll.mockReturnValue({
-          extensions: {
-            selected: {
-              detector: "loaded-detector",
-            },
-          },
-        });
-
-        // return a fake extension
-        let fakeInstance = {
-          register: jest.fn(),
-        };
-        mock_ExtensionManager.getExtension.mockReturnValue({
-          instance: fakeInstance,
-          markBuiltIn: jest.fn(),
-        });
-        runApp();
-
-        expect(mock_ExtensionManager.activate).toHaveBeenCalledWith(
-          "loaded-detector"
-        );
-        expect(fakeInstance.register).toHaveBeenCalled();
-      });
-      test("activates uploader", () => {
-        mock_AppSettings.getAll.mockReturnValue({
-          extensions: {
-            selected: {
-              uploader: "loaded-uploader",
-            },
-          },
-        });
-
-        runApp();
-
-        expect(mock_ExtensionManager.activate).toHaveBeenCalledWith(
-          "loaded-uploader"
-        );
-      });
+      test("activates detector and registers", () => { });
+      test("activates uploader", () => { });
     });
 
     describe("Handles events", () => {
@@ -594,170 +331,46 @@ describe("Avocapture Application", () => {
       });
 
       test("on apply dialog", () => {
-        // pretend an uploader was selected
-        mock_AppSettings.get.mockReturnValue("my-uploader");
-        const fakeInstance = {
-          upload: jest.fn(),
-        };
-        mock_ExtensionManager.getExtension.mockReturnValue({
-          instance: fakeInstance,
-          markBuiltIn: jest.fn(),
-        });
-
-        const eventData = {
-          replayUuid: "testUUID",
-          prefix: "prefix",
-          name: "replayFile",
-        };
-        mock_ReplaySaver.getReplayData.mockReturnValue({
-          replayData: "test",
-        });
-
-        emitter.emit(ReplayDetailsEvents.DIALOG.APPLY, fakeEvent, eventData);
-
-        const replayData = { replayData: "test" };
-        expect(mock_ReplayDetailsDialog.hide).toHaveBeenCalled();
-        expect(mock_ReplaySaver.setTitle).toHaveBeenCalledWith(eventData);
-        expect(mock_ReplaySaver.getReplayData).toHaveBeenCalledWith("testUUID");
-
-        expect(mock_AppSettings.get).toHaveBeenCalledWith(
-          "extensions.selected.uploader"
-        );
-        expect(mock_ExtensionManager.getExtension).toHaveBeenCalledWith(
-          "my-uploader"
-        );
-        expect(fakeInstance.upload).toHaveBeenCalledWith(replayData);
-
-        expect(mock_webContents.send).toHaveBeenCalledWith(
-          ReplayDetailsEvents.APP.ADD,
-          replayData
-        );
+        // hides dialog
+        // calls saver
+        // calls uploader if available
+        // downstream calls APP.ADD
       });
 
       // TODO Deleting this handler
       // test("on apply settings", () => {});
 
-      test("on select extension with new uploader, saves uploader", () => {
-        // set old selected
-        mock_AppSettings.get.mockReturnValue("old-uploader");
-
-        emitter.emit(AppEvents.SETTINGS.SELECT_EXTENSION, fakeEvent, {
-          type: "uploader",
-          name: "new-uploader",
-        });
-
-        expect(mock_AppSettings.save).toHaveBeenCalledWith(
-          "extensions.selected.uploader",
-          "new-uploader"
-        );
-        expect(mock_ExtensionManager.deactivate).toHaveBeenCalledWith(
-          "old-uploader"
-        );
-        expect(mock_ExtensionManager.activate).toHaveBeenCalledWith(
-          "new-uploader"
-        );
-      });
-
-      test("on select extension with no previous uploader", () => {
-        // set old selected
-        mock_AppSettings.get.mockReturnValue(null);
-
-        emitter.emit(AppEvents.SETTINGS.SELECT_EXTENSION, fakeEvent, {
-          type: "uploader",
-          name: "an-uploader",
-        });
-
-        expect(mock_AppSettings.save).toHaveBeenCalledWith(
-          "extensions.selected.uploader",
-          "an-uploader"
-        );
-        expect(mock_ExtensionManager.activate).toHaveBeenCalledWith(
-          "an-uploader"
-        );
-        expect(mock_ExtensionManager.deactivate).not.toHaveBeenCalled();
-      });
-
-      test("on select extension with new detector, deactivates and registers", () => {
-        // set old selected
-        mock_AppSettings.get.mockReturnValue("old-detector");
-        let fakeInstance = {
-          register: jest.fn(),
-        };
-        mock_ExtensionManager.getExtension.mockReturnValue({
-          instance: fakeInstance,
-        });
-
-        emitter.emit(AppEvents.SETTINGS.SELECT_EXTENSION, fakeEvent, {
-          type: "detector",
-          name: "new-detector",
-        });
-
-        expect(mock_AppSettings.save).toHaveBeenCalledWith(
-          "extensions.selected.detector",
-          "new-detector"
-        );
-        expect(mock_ExtensionManager.deactivate).toHaveBeenCalledWith(
-          "old-detector"
-        );
-        expect(mock_ExtensionManager.getExtension).toHaveBeenCalledWith(
-          "new-detector"
-        );
-        expect(mock_ExtensionManager.activate).toHaveBeenCalledWith(
-          "new-detector"
-        );
-        expect(fakeInstance.register).toHaveBeenCalled();
-      });
-
-      test("allows selecting nothing", () => {
-        mock_AppSettings.get.mockReturnValue("old-detector");
-
-        emitter.emit(AppEvents.SETTINGS.SELECT_EXTENSION, fakeEvent, {
-          type: "detector",
-        });
-
-        expect(mock_ExtensionManager.deactivate).toHaveBeenCalledWith(
-          "old-detector"
-        );
-        expect(mock_ExtensionManager.activate).not.toHaveBeenCalled();
-      });
-
       test("on apply prefix saves the new prefix", () => {
-        emitter.emit(AppEvents.SETTINGS.APPLY_PREFIX, fakeEvent, "newPrefix");
+        emitter.emit(AppEvents.SETTINGS.APPLY_PREFIX, fakeEvent, "newPrefix")
 
         // saves new prefix and stores it in the listener
-        expect(mock_AppSettings.save).toHaveBeenCalledWith(
-          "prefix",
-          "newPrefix"
-        );
-        expect(mock_ReplayDetectionListener.setPrefix).toHaveBeenCalledWith(
-          "newPrefix"
-        );
+        expect(mock_AppSettings.save).toHaveBeenCalledWith("prefix", "newPrefix");
+        expect(mock_ReplayDetectionListener.setPrefix).toHaveBeenCalledWith("newPrefix");
       });
 
-      test("on select directory handles no results", async () => {
-        mock_dialog.showOpenDialog.mockReturnValue({ filePaths: [] });
+      test("on select directory handles no results", () => {
+        mock_dialog.showOpenDialog.mockReturnValue({ filePaths: [] })
         let mock_sender = {
           send: jest.fn(),
-          focus: jest.fn(),
-        };
+          focus: jest.fn()
+        }
         emitter.emit(AppEvents.ACTIONS.SELECT_DIRECTORY, {
-          sender: mock_sender,
+          sender: mock_sender
         });
-        // pretend something was selected
-        await Promise.resolve();
-
         // displays dialog
         // sends result to caller
-        expect(mock_dialog.showOpenDialog).toHaveBeenCalledWith(
-          expect.anything(),
-          {
-            properties: ["openDirectory"],
-          }
-        );
-        expect(mock_sender.send).toHaveBeenCalledWith(
-          AppEvents.ACTIONS.SELECT_DIRECTORY_RESPONSE,
-          null
-        );
+
+        // const result = await dialog.showOpenDialog(mainWindow, {
+        //   properties: ["openDirectory"],
+        // });
+
+        // const selectedDir =
+        //   result.filePaths.length > 0 ? result.filePaths[0] : null;
+        // event.sender.send(AppEvents.ACTIONS.SELECT_DIRECTORY_RESPONSE, selectedDir);
+        // event.sender.focus();
+        // TODO more assert
+        expect(mock_dialog.showOpenDialog).toHaveBeenCalled();
+        expect(mock_sender.send).toHaveBeenCalledWith(AppEvents.ACTIONS.SELECT_DIRECTORY_RESPONSE, null);
         expect(mock_sender.focus).toHaveBeenCalled();
       });
     });
