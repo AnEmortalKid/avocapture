@@ -30,6 +30,6 @@ export default class ExtensionLogger {
    * Log a debug message
    */
   debug(...params) {
-    this.logger.info(...params);
+    this.logger.debug(...params);
   }
 }

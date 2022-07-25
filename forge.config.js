@@ -38,7 +38,7 @@ module.exports = {
       config: {
         name: "avocapture",
         setupIcon: "./branding/logo.ico",
-        loadingGif: './branding/logo_animated.gif'
+        loadingGif: "./branding/logo_animated.gif",
       },
     },
     {
@@ -53,16 +53,16 @@ module.exports = {
   },
   publishers: [
     {
-      name: '@electron-forge/publisher-github',
-      platforms: ['win32'],
+      name: "@electron-forge/publisher-github",
+      platforms: ["win32"],
       config: {
         repository: {
-          owner: 'AnEmortalKid',
-          name: 'avocapture'
+          owner: "AnEmortalKid",
+          name: "avocapture",
         },
         prerelease: true,
-        draft: true
-      }
-    }
-  ]
+        draft: true,
+      },
+    },
+  ],
 };

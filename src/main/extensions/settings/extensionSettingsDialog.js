@@ -1,5 +1,6 @@
 import { BrowserWindow } from "electron";
 import { isProduction } from "../../util/processInfo";
+import { dialogBackgroundColor } from "../../util/styling";
 import { ExtensionEvents } from "../extensionEvents";
 
 const path = require("path");
@@ -13,6 +14,11 @@ export class ExtensionSettingsDialog {
   constructor(extensionData, parent, cancelCallback) {
     const { name, settings, displaySettings } = extensionData;
 
+    /**
+     * webpack moves the file relative to where the main app runs
+     *
+     * so this directory won't be src/main/extensions/settings/commonPreload
+     */
     const preloadPath = path.resolve(
       __dirname,
       "extensions",
@@ -37,7 +43,7 @@ export class ExtensionSettingsDialog {
       },
     });
 
-    settingsWindow.setBackgroundColor("#d7dbe3");
+    settingsWindow.setBackgroundColor(dialogBackgroundColor);
     settingsWindow.setFullScreenable(false);
     if (production) {
       settingsWindow.removeMenu();

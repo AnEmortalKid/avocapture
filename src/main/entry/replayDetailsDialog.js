@@ -1,8 +1,9 @@
 import { BrowserWindow } from "electron";
 import * as path from "path";
 import { ReplayDetailsEvents } from "./replayDetailsEvents";
+import { dialogBackgroundColor } from "../util/styling";
 
-const forceFocus = require('forcefocus');
+const forceFocus = require("forcefocus");
 
 export class ReplayDetailsDialog {
   _create(settings) {
@@ -18,7 +19,7 @@ export class ReplayDetailsDialog {
         contextIsolation: false,
       },
     });
-    entryWindow.setBackgroundColor("#d7dbe3");
+    entryWindow.setBackgroundColor(dialogBackgroundColor);
     entryWindow.setAlwaysOnTop(true, "screen-saver");
     entryWindow.setVisibleOnAllWorkspaces(true);
     entryWindow.setFullScreenable(false);
@@ -40,7 +41,7 @@ export class ReplayDetailsDialog {
       entryWindow.show();
     });
 
-    entryWindow.on('show', () => {
+    entryWindow.on("show", () => {
       setTimeout(() => {
         forceFocus.focusWindow(entryWindow);
       }, 200);

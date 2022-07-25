@@ -1,11 +1,11 @@
 import path from "path";
 import * as fs from "fs";
 
-import { createRequire } from "module";
 import LoadedExtension from "./loadedExtension";
 import Logger from "../../logger/logger";
 import ExtensionLogger from "../../logger/extensionLogger";
-const require = createRequire(import.meta.url);
+import { requireProvider } from "../../util/requireProvider";
+const require = requireProvider();
 
 const logger = new Logger("ExtensionLoader");
 
@@ -116,7 +116,7 @@ export default class ExtensionLoader {
       logger: new ExtensionLogger(configuration.name),
     });
     checkExtension(extensionInstance, configuration.name, configuration.type);
-
+    // TODO mark builtin here
     return new LoadedExtension(extensionInstance, configuration, extensionPath);
   }
 

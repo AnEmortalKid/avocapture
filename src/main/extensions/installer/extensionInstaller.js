@@ -1,49 +1,11 @@
 import { app } from "electron";
 import { isAvocaptureDebug } from "../../util/processInfo";
+import { semVerCompare } from "./semverCompare";
+import { copyAssets, copyDirectory } from "./copyUtils";
 
 const execSync = require("child_process").execSync;
 const fs = require("fs");
 const path = require("path");
-
-function semVerCompare(oldVer, newVer) {
-  const oldChunks = oldVer.split(".").map((i) => parseInt(i));
-  const newChunks = newVer.split(".").map((i) => parseInt(i));
-
-  // compare equal numbers, return difference if not equal
-  for (var i = 0; i < 3; i++) {
-    if (oldChunks[i] !== newChunks[i]) {
-      return oldChunks[i] - newChunks[i];
-    }
-  }
-
-  // everything is equal
-  return 0;
-}
-
-function copyDirectory(source, destination) {
-  fs.mkdirSync(destination, { recursive: true });
-  fs.readdirSync(source, { withFileTypes: true }).forEach((entry) => {
-    let sourcePath = path.join(source, entry.name);
-    let destinationPath = path.join(destination, entry.name);
-
-    entry.isDirectory()
-      ? copyDirectory(sourcePath, destinationPath)
-      : fs.copyFileSync(sourcePath, destinationPath);
-  });
-}
-
-function copyAssets(installedExtensionPath) {
-  const assetPaths = ["css", "font-awesome-4.7.0"];
-  for (var assetPath of assetPaths) {
-    const assetDir = path.resolve(__dirname, assetPath);
-    const destinationPath = path.resolve(
-      installedExtensionPath,
-      "assets",
-      assetPath
-    );
-    copyDirectory(assetDir, destinationPath);
-  }
-}
 
 function nmpInstall(pluginPath) {
   execSync(
@@ -76,7 +38,9 @@ export default function installExtension(extensionPath) {
   );
 
   if (!newPackage.version) {
-    throw new Error("Cannot install extension without declaring a 'version'");
+    throw new Error(
+      `Cannot install extension ${newPackage.name} without declaring a 'version'`
+    );
   }
 
   // disable comparison in debug mode

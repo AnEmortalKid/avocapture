@@ -22,14 +22,14 @@ export default class ExtensionSettingsApp {
     this.mainWindow = mainWindow;
   }
 
-  handleExtensionApply(event, data) {
+  _handleExtensionApply(event, data) {
     logger.logEvent(ExtensionEvents.EXTENSION_SETTINGS.APPLY, data);
     this.extensionManager.applyEdit(this.editingContext, data.settings);
     this.editingContext = null;
     this.extensionSettingsDialog.destroy();
   }
 
-  handleExtensionCancel(event, data) {
+  _handleExtensionCancel(event, data) {
     logger.logEvent(ExtensionEvents.EXTENSION_SETTINGS.CANCEL);
     this.extensionManager.cancelEdit(this.editingContext);
     this.editingContext = null;
@@ -45,7 +45,7 @@ export default class ExtensionSettingsApp {
     }
   }
 
-  handleExtensionEdit(event, data) {
+  _handleExtensionEdit(event, data) {
     logger.logEvent(ExtensionEvents.EXTENSION_SETTINGS.EDIT, data);
 
     const extensionName = data.extensionName;
@@ -82,15 +82,15 @@ export default class ExtensionSettingsApp {
   registerEvents() {
     ipcMain.on(
       ExtensionEvents.EXTENSION_SETTINGS.APPLY,
-      this.handleExtensionApply.bind(this)
+      this._handleExtensionApply.bind(this)
     );
     ipcMain.on(
       ExtensionEvents.EXTENSION_SETTINGS.CANCEL,
-      this.handleExtensionCancel.bind(this)
+      this._handleExtensionCancel.bind(this)
     );
     ipcMain.on(
       ExtensionEvents.EXTENSION_SETTINGS.EDIT,
-      this.handleExtensionEdit.bind(this)
+      this._handleExtensionEdit.bind(this)
     );
   }
 }

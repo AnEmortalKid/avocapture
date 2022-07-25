@@ -41,3 +41,21 @@ export class BaseExtension {
     throw new Error("Unimplemented");
   }
 }
+
+export class ReplayDetectorExtension extends BaseExtension {
+  /**
+   * Registers a listener with this detector.
+   */
+  register(listener) {
+    throw new Error("Unimplemented");
+  }
+}
+
+export class ReplayUploaderExtension extends BaseExtension {
+  /**
+   * Uploads the replay to a desired location
+   */
+  upload(replayData) {
+    throw new Error("Unimplemented");
+  }
+}

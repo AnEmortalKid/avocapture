@@ -26,7 +26,7 @@ export default class ExtensionManager {
     this.changeListener = changeListener;
   }
 
-  notifyListener(eventData) {
+  _notifyListener(eventData) {
     if (this.changeListener) {
       this.changeListener(eventData);
     }
@@ -64,7 +64,7 @@ export default class ExtensionManager {
     }
 
     this._unstoreExtension(extension);
-    this.notifyListener({
+    this._notifyListener({
       event: "uninstall",
       name: extensionName,
       type: extension.type(),
@@ -74,7 +74,7 @@ export default class ExtensionManager {
   loadInstalled() {
     const destinationRoot = app.getPath("userData");
     const extensionsPath = path.join(destinationRoot, "extensions");
-    this.loadExtensions(extensionsPath);
+    this._loadExtensions(extensionsPath);
   }
 
   _storeExtension(extension) {
@@ -113,7 +113,7 @@ export default class ExtensionManager {
     );
   }
 
-  loadExtensions(filePath) {
+  _loadExtensions(filePath) {
     logger.logMethod("loadExtensions", filePath);
     const loaded = extensionLoader.loadExtensions(filePath);
     for (var extension of loaded) {
@@ -122,7 +122,7 @@ export default class ExtensionManager {
   }
 
   loadExternal(extensionName) {
-    logger.logMethod("loadExtension", extensionName);
+    logger.logMethod("loadExternal", extensionName);
     const destinationRoot = app.getPath("userData");
     const extensionPath = path.join(
       destinationRoot,
@@ -132,7 +132,7 @@ export default class ExtensionManager {
     const loaded = extensionLoader.loadExtension(extensionPath);
     this._storeExtension(loaded);
 
-    this.notifyListener({ event: "loadExternal", name: extensionName });
+    this._notifyListener({ event: "loadExternal", name: extensionName });
   }
 
   getExtensionsOfType(type) {
@@ -142,6 +142,7 @@ export default class ExtensionManager {
     if (type === "uploader") {
       return this.uploaderNames;
     }
+    throw new Error("Unsupported type " + type);
   }
 
   getExtensionNames() {

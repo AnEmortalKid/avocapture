@@ -12,6 +12,7 @@ export default class LoadedExtension {
     this.instance = instance;
     this.configuration = configuration;
     this.extensionPath = extensionPath;
+    this.builtIn = false;
   }
 
   /**
