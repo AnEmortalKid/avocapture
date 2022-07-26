@@ -630,9 +630,6 @@ describe("Avocapture Application", () => {
         );
       });
 
-      // TODO Deleting this handler
-      // test("on apply settings", () => {});
-
       test("on select extension with new uploader, saves uploader", () => {
         // set old selected
         mock_AppSettings.get.mockReturnValue("old-uploader");

@@ -30,7 +30,6 @@ const loadableExtensionJson = {
   },
 };
 
-// todo finish this
 let mock_constructor = jest.fn();
 let mock_initialize = jest.fn();
 let mock_teardown = jest.fn();
@@ -104,7 +103,7 @@ class NoBaseMethods {
 }
 
 // misses the extension specific method
-class NoExtensionMethod extends BaseExtension {}
+class NoExtensionMethod extends BaseExtension { }
 
 describe("ExtensionLoader", () => {
   afterEach(() => {
@@ -211,8 +210,8 @@ describe("ExtensionLoader", () => {
         expect(t).toThrow(Error);
         expect(t).toThrow(
           "Extension loadable-extension did not declare functions: [" +
-            expected +
-            "]"
+          expected +
+          "]"
         );
       });
 
@@ -242,8 +241,8 @@ describe("ExtensionLoader", () => {
         expect(t).toThrow(Error);
         expect(t).toThrow(
           "Extension loadable-extension did not declare functions: [" +
-            expected +
-            "]"
+          expected +
+          "]"
         );
       });
 
