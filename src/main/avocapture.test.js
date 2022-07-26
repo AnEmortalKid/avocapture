@@ -265,10 +265,6 @@ describe("Avocapture Application", () => {
 
       // sets app settings events
       expect(ipcMain.on).toHaveBeenCalledWith(
-        AppEvents.SETTINGS.APPLY,
-        expect.any(Function)
-      );
-      expect(ipcMain.on).toHaveBeenCalledWith(
         AppEvents.SETTINGS.APPLY_PREFIX,
         expect.any(Function)
       );
