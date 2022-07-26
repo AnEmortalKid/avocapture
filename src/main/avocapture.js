@@ -217,14 +217,6 @@ export function runApp() {
     mainWindow.webContents.send(ReplayDetailsEvents.APP.ADD, replayData);
   });
 
-  // TODO delete
-  ipcMain.on(AppEvents.SETTINGS.APPLY, (event, data) => {
-    logger.logEvent(AppEvents.SETTINGS.APPLY, data);
-    appSettingsStore.save(data);
-
-    replayDetectionListener.setPrefix(data.prefix);
-  });
-
   ipcMain.on(AppEvents.SETTINGS.APPLY_PREFIX, (event, prefix) => {
     logger.logEvent(AppEvents.SETTINGS.APPLY_PREFIX, prefix);
     appSettingsStore.save("prefix", prefix);
