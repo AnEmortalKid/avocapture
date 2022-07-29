@@ -9,10 +9,6 @@ with having a delay before the replay is saved and available to be found.
 
 This can be used in combination with OBS by setting up a replay buffer hotkey to the same hotkey and a sufficiently long delay before searching for replays.
 
-## Required Software
-
-* The [OBS WebSocket Server](https://github.com/obsproject/obs-websocket/releases) needs to be installed.
-
 ## Settings
 
 * **Hotkey**: the keybind to use to activate the search

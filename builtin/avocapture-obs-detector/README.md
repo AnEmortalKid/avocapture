@@ -1,6 +1,6 @@
 # avocapture-obs-detector
 
-This is a `detector` which moves uses [OBS Websocket Events](https://github.com/obs-websocket-community-projects/obs-websocket-js) to determine when a replay has been created.
+This is a `detector` which uses [OBS Websocket Events](https://github.com/obs-websocket-community-projects/obs-websocket-js) to determine when a replay has been created.
 
 ## Intended Usage
 
