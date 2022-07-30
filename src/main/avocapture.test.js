@@ -359,7 +359,6 @@ describe("Avocapture Application", () => {
           contextIsolation: false,
         },
       });
-      expect(mock_loadURL).toHaveBeenCalledWith("main.html");
       expect(mock_setIcon).toHaveBeenCalledWith(
         path.resolve(__dirname, "images", "logo_256.png")
       );
@@ -443,26 +442,43 @@ describe("Avocapture Application", () => {
       );
     });
 
-    test("installs built in extensions", () => {
-      // add a builtin
-      fs.readdirSync.mockReturnValue([
-        {
-          name: "builtin-extension",
-          isDirectory: () => true,
-        },
-        {
-          name: "some-file",
-          isDirectory: () => false,
-        },
-      ]);
+    describe("initialLoad", () => {
 
-      runApp();
+      let emitter;
+      beforEach(() => {
+        emitter = new EventEmitter();
+        mock_webContents.once.mockImplementation((e, cb) => emitter.on(e, cb));
 
-      const builtIns = path.resolve(__dirname, "builtin");
-      expect(mock_ExtensionManager.install).toHaveBeenCalledWith(
-        path.join(builtIns, "builtin-extension")
-      );
-    });
+        mock_appLoader.load.mockImplementation((cb) => {
+          cb();
+        });
+      });
+
+      test("installs built in extensions", () => {
+        // add a builtin
+        fs.readdirSync.mockReturnValue([
+          {
+            name: "builtin-extension",
+            isDirectory: () => true,
+          },
+          {
+            name: "some-file",
+            isDirectory: () => false,
+          },
+        ]);
+
+        runApp();
+        emitter.emit("did-finish-load");
+
+        const builtIns = path.resolve(__dirname, "builtin");
+        expect(mock_ExtensionManager.install).toHaveBeenCalledWith(
+          path.join(builtIns, "builtin-extension")
+        );
+      });
+
+    })
+
+
 
     test("loads installed and marks built ins", () => {
       runApp();
