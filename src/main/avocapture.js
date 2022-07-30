@@ -59,6 +59,12 @@ export function runApp() {
   function extensionChangeListener(eventData) {
     logger.logMethod("extensionChangeListener", eventData);
 
+    if (eventData.event == "install") {
+      mainWindow.webContents.send("App.Initialize", "Installing " + eventData.name + ". This may take a while.");
+      return;
+    }
+
+
     let appSettings = appSettingsStore.getAll();
     if (eventData.event === "uninstall") {
       const selectedByType = appSettings.extensions?.selected;
@@ -174,13 +180,13 @@ export function runApp() {
     mainWindow.loadURL(path.join(__dirname, 'views', 'loading', 'loading.html'))
     mainWindow.webContents.once('did-finish-load', () => {
       appLoader.load(() => {
-        // TODO add a listener sort of thing here to display extension status
-        mainWindow.webContents.send("loadit", "install builtins");
-        installBuiltins();
-        mainWindow.webContents.send("loadit", "load installed builtins");
-        extensionManager.loadInstalled();
+
         // start to get notified about any changes
         extensionManager.registerChangeListener(extensionChangeListener);
+        installBuiltins();
+
+        mainWindow.webContents.send("App.Initialize", "Loading extensions");
+        extensionManager.loadInstalled();
 
         // mark the built ins
         // TODO possibly add this into the loader
@@ -188,7 +194,7 @@ export function runApp() {
           extensionManager.getExtension(builtIn).markBuiltIn();
         }
 
-        mainWindow.webContents.send("loadit", "done marking");
+        mainWindow.webContents.send("App.Initialize", "Loading Settings");
         const selectedByType = appSettings.extensions?.selected;
         if (selectedByType?.detector) {
           extensionManager.activate(selectedByType.detector);

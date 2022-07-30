@@ -1,14 +1,7 @@
 const { ipcRenderer } = require("electron");
 
+const msgElem = document.getElementById('message');
 
-const h1 = document.createElement('h1');
-h1.textContent = "Loaded JS";
-document.getElementById('parent').append(h1);
-
-ipcRenderer.on("loadit", (e, data) => {
-
-  const h1 = document.createElement('h1');
-  h1.textContent = JSON.stringify(data);
-
-  document.getElementById('parent').append(h1);
+ipcRenderer.on("App.Initialize", (e, msg) => {
+  msgElem.textContent = msg
 });

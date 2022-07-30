@@ -12,6 +12,10 @@ export class AppLoader {
     this.emitter = new EventEmitter();
   }
 
+  /**
+   * Runs the desired loadingFunction and notifies any registered callbacks.
+   * @param {function} loadingFunction a function with work that needs to be done
+   */
   load(loadingFunction) {
     loadingFunction();
     this._finished();
