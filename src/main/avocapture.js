@@ -20,6 +20,7 @@ import { isProduction } from "./util/processInfo";
 import Logger from "./logger/logger";
 import { BUILTIN_EXTENSIONS } from "./extensions/builtin";
 import { logCleaner } from "./logger/logCleaner";
+import { EventEmitter } from "events";
 
 export function runApp() {
   const isMac = process.platform === "darwin";
@@ -42,6 +43,7 @@ export function runApp() {
   const extensionManager = new ExtensionManager();
   const extensionsApp = new ExtensionSettingsApp(extensionManager);
   const extensionManagementApp = new ExtensionManagementApp(extensionManager);
+  const loadingEvents = new EventEmitter();
 
   function installBuiltins() {
     const builtIns = path.resolve(__dirname, "builtin");
@@ -90,8 +92,6 @@ export function runApp() {
         contextIsolation: false,
       },
     });
-
-    mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
     mainWindow.setIcon(path.resolve(__dirname, "images", "logo_256.png"));
 
@@ -162,34 +162,44 @@ export function runApp() {
       detectors: extensionManager.getExtensionsOfType("detector"),
       uploaders: extensionManager.getExtensionsOfType("uploader"),
     };
-    mainWindow.webContents.on("did-finish-load", () => {
-      mainWindow.webContents.send("AppSettings.Initialize", currSettings);
-    });
-
-    // TODO add a listener sort of thing here to display extension status
-    installBuiltins();
-    extensionManager.loadInstalled();
-    // start to get notified about any changes
-    extensionManager.registerChangeListener(extensionChangeListener);
-
-    // mark the built ins
-    // TODO possibly add this into the loader
-    for (const builtIn of BUILTIN_EXTENSIONS) {
-      extensionManager.getExtension(builtIn).markBuiltIn();
-    }
-
     replayDetectionListener.setPrefix(appSettings.prefix);
 
-    const selectedByType = appSettings.extensions?.selected;
-    if (selectedByType?.detector) {
-      extensionManager.activate(selectedByType.detector);
-      const detector = extensionManager.getExtension(selectedByType.detector);
-      detector.instance.register(replayDetectionListener);
-    }
+    mainWindow.loadURL(path.join(__dirname, 'views', 'loading', 'loading.html'))
+    mainWindow.webContents.once('did-finish-load', () => {
+      // TODO add a listener sort of thing here to display extension status
+      mainWindow.webContents.send("loadit", "install builtins");
+      installBuiltins();
+      mainWindow.webContents.send("loadit", "load installed builtins");
+      extensionManager.loadInstalled();
+      // start to get notified about any changes
+      extensionManager.registerChangeListener(extensionChangeListener);
 
-    if (selectedByType?.uploader) {
-      extensionManager.activate(selectedByType.uploader);
-    }
+      // mark the built ins
+      // TODO possibly add this into the loader
+      for (const builtIn of BUILTIN_EXTENSIONS) {
+        extensionManager.getExtension(builtIn).markBuiltIn();
+      }
+
+      mainWindow.webContents.send("loadit", "done marking");
+      const selectedByType = appSettings.extensions?.selected;
+      if (selectedByType?.detector) {
+        extensionManager.activate(selectedByType.detector);
+        const detector = extensionManager.getExtension(selectedByType.detector);
+        detector.instance.register(replayDetectionListener);
+      }
+
+      if (selectedByType?.uploader) {
+        extensionManager.activate(selectedByType.uploader);
+      }
+      loadingEvents.emit('finished');
+    });
+
+    loadingEvents.on('finished', () => {
+      mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+      mainWindow.webContents.on("did-finish-load", () => {
+        mainWindow.webContents.send("AppSettings.Initialize", currSettings);
+      });
+    });
   });
 
   ipcMain.on(ReplayDetailsEvents.DIALOG.CANCEL, (event, data) => {
