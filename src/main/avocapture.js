@@ -18,7 +18,6 @@ import { AppEvents } from "./events/appEvents";
 import ExtensionManagementApp from "./extensions/management/extensionManagementApp";
 import { isProduction } from "./util/processInfo";
 import Logger from "./logger/logger";
-import { BUILTIN_EXTENSIONS } from "./extensions/builtin";
 import { logCleaner } from "./logger/logCleaner";
 import { AppLoader } from "./loader/appLoader";
 
@@ -190,12 +189,6 @@ export function runApp() {
 
         mainWindow.webContents.send("App.Initialize", "Loading extensions");
         extensionManager.loadInstalled();
-
-        // mark the built ins
-        // TODO possibly add this into the loader
-        for (const builtIn of BUILTIN_EXTENSIONS) {
-          extensionManager.getExtension(builtIn).markBuiltIn();
-        }
 
         mainWindow.webContents.send("App.Initialize", "Loading Settings");
         const selectedByType = appSettings.extensions?.selected;
