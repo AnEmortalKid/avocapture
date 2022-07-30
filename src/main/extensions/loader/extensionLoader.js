@@ -117,7 +117,11 @@ export default class ExtensionLoader {
       logger: new ExtensionLogger(configuration.name),
     });
     checkExtension(extensionInstance, configuration.name, configuration.type);
-    const loaded = new LoadedExtension(extensionInstance, configuration, extensionPath);
+    const loaded = new LoadedExtension(
+      extensionInstance,
+      configuration,
+      extensionPath
+    );
     if (BUILTIN_EXTENSIONS.includes(loaded.name())) {
       loaded.markBuiltIn();
     }
