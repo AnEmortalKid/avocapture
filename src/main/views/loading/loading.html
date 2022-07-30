@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Loading</title>
+    <link rel="stylesheet" href="../../css/w3.css" />
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link
+      rel="stylesheet"
+      href="../../font-awesome-4.7.0/css/font-awesome.css"
+    />
+
+    <style>
+      .animate-fading {
+        animation: fading 5s infinite;
+      }
+
+      @keyframes fading {
+        0% {
+          opacity: 0.1;
+        }
+
+        50% {
+          opacity: 1;
+        }
+
+        100% {
+          opacity: 0.1;
+        }
+      }
+    </style>
+  </head>
+
+  <div id="content" class="w3-modal" style="display: block">
+    <div class="w3-modal-content w3-card w3-theme-l3">
+      <header class="w3-container w3-theme-l1 w3-card">
+        <h4 class="w3-center">Initializing Avocapture</h4>
+      </header>
+
+      <div id="gif" class="w3-center w3-margin">
+        <img
+          class="animate-fading"
+          src="./logo.png"
+          style="width: 50%; height: 50%"
+        />
+      </div>
+
+      <div id="parent"></div>
+
+      <footer class="w3-container w3-theme-l1">
+        <h4 class="w3-center" id="message">Application is initializing!</h4>
+      </footer>
+    </div>
+  </div>
+
+  <script src="./loading.js"></script>
+</html>

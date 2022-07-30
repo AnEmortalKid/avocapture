@@ -18,8 +18,8 @@ import { AppEvents } from "./events/appEvents";
 import ExtensionManagementApp from "./extensions/management/extensionManagementApp";
 import { isProduction } from "./util/processInfo";
 import Logger from "./logger/logger";
-import { BUILTIN_EXTENSIONS } from "./extensions/builtin";
 import { logCleaner } from "./logger/logCleaner";
+import { AppLoader } from "./loader/appLoader";
 
 export function runApp() {
   const isMac = process.platform === "darwin";
@@ -42,6 +42,7 @@ export function runApp() {
   const extensionManager = new ExtensionManager();
   const extensionsApp = new ExtensionSettingsApp(extensionManager);
   const extensionManagementApp = new ExtensionManagementApp(extensionManager);
+  const appLoader = new AppLoader();
 
   function installBuiltins() {
     const builtIns = path.resolve(__dirname, "builtin");
@@ -56,6 +57,14 @@ export function runApp() {
 
   function extensionChangeListener(eventData) {
     logger.logMethod("extensionChangeListener", eventData);
+
+    if (eventData.event == "install") {
+      mainWindow.webContents.send(
+        "App.Initialize",
+        "Installing " + eventData.name + ". This may take a while."
+      );
+      return;
+    }
 
     let appSettings = appSettingsStore.getAll();
     if (eventData.event === "uninstall") {
@@ -90,8 +99,6 @@ export function runApp() {
         contextIsolation: false,
       },
     });
-
-    mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
     mainWindow.setIcon(path.resolve(__dirname, "images", "logo_256.png"));
 
@@ -162,34 +169,42 @@ export function runApp() {
       detectors: extensionManager.getExtensionsOfType("detector"),
       uploaders: extensionManager.getExtensionsOfType("uploader"),
     };
-    mainWindow.webContents.on("did-finish-load", () => {
-      mainWindow.webContents.send("AppSettings.Initialize", currSettings);
-    });
-
-    // TODO add a listener sort of thing here to display extension status
-    installBuiltins();
-    extensionManager.loadInstalled();
-    // start to get notified about any changes
-    extensionManager.registerChangeListener(extensionChangeListener);
-
-    // mark the built ins
-    // TODO possibly add this into the loader
-    for (const builtIn of BUILTIN_EXTENSIONS) {
-      extensionManager.getExtension(builtIn).markBuiltIn();
-    }
-
     replayDetectionListener.setPrefix(appSettings.prefix);
 
-    const selectedByType = appSettings.extensions?.selected;
-    if (selectedByType?.detector) {
-      extensionManager.activate(selectedByType.detector);
-      const detector = extensionManager.getExtension(selectedByType.detector);
-      detector.instance.register(replayDetectionListener);
-    }
+    appLoader.onFinished(() => {
+      mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+      mainWindow.webContents.on("did-finish-load", () => {
+        mainWindow.webContents.send("AppSettings.Initialize", currSettings);
+      });
+    });
 
-    if (selectedByType?.uploader) {
-      extensionManager.activate(selectedByType.uploader);
-    }
+    mainWindow.loadURL(
+      path.join(__dirname, "views", "loading", "loading.html")
+    );
+    mainWindow.webContents.once("did-finish-load", async () => {
+      await appLoader.load(() => {
+        // start to get notified about any changes
+        extensionManager.registerChangeListener(extensionChangeListener);
+        installBuiltins();
+
+        mainWindow.webContents.send("App.Initialize", "Loading extensions");
+        extensionManager.loadInstalled();
+
+        mainWindow.webContents.send("App.Initialize", "Loading Settings");
+        const selectedByType = appSettings.extensions?.selected;
+        if (selectedByType?.detector) {
+          extensionManager.activate(selectedByType.detector);
+          const detector = extensionManager.getExtension(
+            selectedByType.detector
+          );
+          detector.instance.register(replayDetectionListener);
+        }
+
+        if (selectedByType?.uploader) {
+          extensionManager.activate(selectedByType.uploader);
+        }
+      });
+    });
   });
 
   ipcMain.on(ReplayDetailsEvents.DIALOG.CANCEL, (event, data) => {

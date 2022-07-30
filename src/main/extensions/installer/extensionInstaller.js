@@ -7,6 +7,7 @@ const execSync = require("child_process").execSync;
 const fs = require("fs");
 const path = require("path");
 
+// TODO, add output function that can be passed in or create a logger
 function nmpInstall(pluginPath) {
   execSync(
     "npm install --omit=dev",

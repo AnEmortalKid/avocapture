@@ -18,6 +18,7 @@ let mock_getAllWindows = jest.fn();
 let mock_webContents = {
   on: jest.fn(),
   send: jest.fn(),
+  once: jest.fn(),
 };
 
 let mock_dialog = {
@@ -219,6 +220,21 @@ jest.mock("./logger/logger", () => {
 import { isProduction } from "./util/processInfo";
 jest.mock("./util/processInfo");
 
+let mock_appLoader = {
+  load: jest.fn(),
+  onFinished: jest.fn(),
+};
+jest.mock("./loader/appLoader", () => {
+  return {
+    AppLoader: jest.fn().mockImplementation(() => {
+      return {
+        load: (fn) => mock_appLoader.load(fn),
+        onFinished: (fn) => mock_appLoader.onFinished(fn),
+      };
+    }),
+  };
+});
+
 import { runApp } from "./avocapture";
 import { ReplayDetailsEvents } from "./entry/replayDetailsEvents";
 import { AppEvents } from "./events/appEvents";
@@ -333,7 +349,6 @@ describe("Avocapture Application", () => {
           contextIsolation: false,
         },
       });
-      expect(mock_loadURL).toHaveBeenCalledWith("main.html");
       expect(mock_setIcon).toHaveBeenCalledWith(
         path.resolve(__dirname, "images", "logo_256.png")
       );
@@ -371,31 +386,6 @@ describe("Avocapture Application", () => {
       });
     });
 
-    test("on did-finish-loading initializes app with settings", () => {
-      const emitter = new EventEmitter();
-      mock_webContents.on.mockImplementation((e, cb) => emitter.on(e, cb));
-
-      mock_AppSettings.getAll.mockReturnValue({
-        fakeSettings: "true",
-      });
-      // pretend these are loaded and installed
-      mock_ExtensionManager.getExtensionsOfType
-        .mockReturnValueOnce(["fake-detector"])
-        .mockReturnValueOnce(["fake-uploader"]);
-
-      runApp();
-      emitter.emit("did-finish-load");
-
-      expect(mock_webContents.send).toHaveBeenCalledWith(
-        "AppSettings.Initialize",
-        {
-          fakeSettings: "true",
-          detectors: ["fake-detector"],
-          uploaders: ["fake-uploader"],
-        }
-      );
-    });
-
     test("on close destroys/shuts down and quits the app", () => {
       const emitter = new EventEmitter();
       mock_once.mockImplementation((e, cb) => emitter.once(e, cb));
@@ -417,45 +407,247 @@ describe("Avocapture Application", () => {
       );
     });
 
-    test("installs built in extensions", () => {
-      // add a builtin
-      fs.readdirSync.mockReturnValue([
-        {
-          name: "builtin-extension",
-          isDirectory: () => true,
-        },
-        {
-          name: "some-file",
-          isDirectory: () => false,
-        },
-      ]);
+    describe("Application Loading", () => {
+      test("sets the loading screen", () => {
+        runApp();
 
-      runApp();
+        expect(mock_loadURL).toHaveBeenCalledWith(
+          path.join(__dirname, "views", "loading", "loading.html")
+        );
+      });
 
-      const builtIns = path.resolve(__dirname, "builtin");
-      expect(mock_ExtensionManager.install).toHaveBeenCalledWith(
-        path.join(builtIns, "builtin-extension")
-      );
+      test("registers a finishLoading callback", () => {
+        runApp();
+
+        expect(mock_appLoader.onFinished).toHaveBeenCalledWith(
+          expect.any(Function)
+        );
+      });
+
+      test("sets an on-finished-listener on the loading page", () => {
+        runApp();
+
+        expect(mock_webContents.once).toHaveBeenCalledWith(
+          "did-finish-load",
+          expect.any(Function)
+        );
+      });
     });
 
-    test("loads installed and marks built ins", () => {
-      runApp();
+    describe("Application loading function", () => {
+      let emitter;
+      beforeEach(() => {
+        emitter = new EventEmitter();
+        mock_webContents.once.mockImplementation((e, cb) => emitter.on(e, cb));
 
-      expect(mock_ExtensionManager.loadInstalled).toHaveBeenCalled();
-      expect(mock_ExtensionManager.registerChangeListener).toHaveBeenCalledWith(
-        expect.any(Function)
-      );
+        mock_appLoader.load.mockImplementation((cb) => {
+          cb();
+        });
+      });
 
-      expect(mock_ExtensionManager.getExtension).toHaveBeenCalledWith(
-        "avocapture-replay-mover"
-      );
-      expect(mock_ExtensionManager.getExtension).toHaveBeenCalledWith(
-        "avocapture-search-on-hotkey"
-      );
-      expect(mock_ExtensionManager.getExtension).toHaveBeenCalledWith(
-        "avocapture-obs-detector"
-      );
-      expect(mock_loadedExtension.markBuiltIn).toHaveBeenCalledTimes(3);
+      test("installs built in extensions", () => {
+        // add a builtin
+        fs.readdirSync.mockReturnValue([
+          {
+            name: "builtin-extension",
+            isDirectory: () => true,
+          },
+          {
+            name: "some-file",
+            isDirectory: () => false,
+          },
+        ]);
+
+        runApp();
+        emitter.emit("did-finish-load");
+
+        const builtIns = path.resolve(__dirname, "builtin");
+        expect(mock_ExtensionManager.install).toHaveBeenCalledWith(
+          path.join(builtIns, "builtin-extension")
+        );
+      });
+
+      test("registers change listener", () => {
+        runApp();
+        emitter.emit("did-finish-load");
+
+        expect(
+          mock_ExtensionManager.registerChangeListener
+        ).toHaveBeenCalledWith(expect.any(Function));
+      });
+
+      test("changeListener notifies loading screen on install", () => {
+        let captured;
+        mock_ExtensionManager.registerChangeListener.mockImplementation(
+          (cl) => {
+            captured = cl;
+          }
+        );
+
+        runApp();
+        emitter.emit("did-finish-load");
+
+        // notify
+        captured({
+          event: "install",
+          name: "loaded-detector",
+        });
+
+        expect(mock_webContents.send).toHaveBeenCalledWith(
+          "App.Initialize",
+          "Installing loaded-detector. This may take a while."
+        );
+      });
+
+      test("changeListener updates settings on app uninstall", () => {
+        let captured;
+        mock_ExtensionManager.registerChangeListener.mockImplementation(
+          (cl) => {
+            captured = cl;
+          }
+        );
+
+        mock_AppSettings.getAll
+          // initial settings
+          .mockReturnValueOnce({
+            prefix: "fakePrefix",
+            extensions: {
+              selected: {
+                detector: "loaded-detector",
+              },
+            },
+          })
+          // settings for changeListener
+          .mockReturnValueOnce({
+            prefix: "fakePrefix",
+            extensions: {
+              selected: {
+                detector: "loaded-detector",
+              },
+            },
+          })
+          // updated settings after clear
+          .mockReturnValue({ prefix: "fakePrefix" });
+
+        mock_ExtensionManager.getExtensionsOfType.mockImplementation((t) => {
+          if (t === "detector") {
+            return ["fake-detector"];
+          }
+          return ["fake-uploader"];
+        });
+
+        mock_ExtensionManager.getExtension.mockReturnValue({
+          instance: {
+            register: jest.fn(),
+          },
+        });
+
+        runApp();
+        // run load to register event
+        emitter.emit("did-finish-load");
+
+        // notify
+        captured({
+          event: "uninstall",
+          type: "detector",
+          name: "loaded-detector",
+        });
+
+        expect(mock_AppSettings.clear).toHaveBeenCalledWith(
+          "extensions.selected.detector"
+        );
+        expect(mock_webContents.send).toHaveBeenCalledWith(
+          "AppSettings.Initialize",
+          {
+            prefix: "fakePrefix",
+            detectors: ["fake-detector"],
+            uploaders: ["fake-uploader"],
+          }
+        );
+      });
+
+      test("loads installed applications", () => {
+        runApp();
+        emitter.emit("did-finish-load");
+
+        expect(mock_ExtensionManager.loadInstalled).toHaveBeenCalled();
+      });
+
+      describe("loading completion", () => {
+        test("changes view and initializes app with settings", () => {
+          // execute the finishLoading callback
+          mock_appLoader.onFinished.mockImplementation((cb) => {
+            cb();
+          });
+
+          mock_webContents.on.mockImplementation((e, cb) => emitter.on(e, cb));
+
+          mock_AppSettings.getAll.mockReturnValue({
+            fakeSettings: "true",
+          });
+          // pretend these are loaded and installed
+          mock_ExtensionManager.getExtensionsOfType
+            .mockReturnValueOnce(["fake-detector"])
+            .mockReturnValueOnce(["fake-uploader"]);
+
+          runApp();
+          emitter.emit("did-finish-load");
+
+          expect(mock_loadURL).toHaveBeenCalledWith("main.html");
+          expect(mock_webContents.send).toHaveBeenCalledWith(
+            "AppSettings.Initialize",
+            {
+              fakeSettings: "true",
+              detectors: ["fake-detector"],
+              uploaders: ["fake-uploader"],
+            }
+          );
+        });
+      });
+
+      describe("Activates extensions", () => {
+        test("activates detector and registers", () => {
+          mock_AppSettings.getAll.mockReturnValue({
+            extensions: {
+              selected: {
+                detector: "loaded-detector",
+              },
+            },
+          });
+
+          // return a fake extension
+          let fakeInstance = {
+            register: jest.fn(),
+          };
+          mock_ExtensionManager.getExtension.mockReturnValue({
+            instance: fakeInstance,
+          });
+          runApp();
+          emitter.emit("did-finish-load");
+
+          expect(mock_ExtensionManager.activate).toHaveBeenCalledWith(
+            "loaded-detector"
+          );
+          expect(fakeInstance.register).toHaveBeenCalled();
+        });
+
+        test("activates uploader", () => {
+          mock_AppSettings.getAll.mockReturnValue({
+            extensions: {
+              selected: {
+                uploader: "loaded-uploader",
+              },
+            },
+          });
+
+          runApp();
+          emitter.emit("did-finish-load");
+
+          expect(mock_ExtensionManager.activate).toHaveBeenCalledWith(
+            "loaded-uploader"
+          );
+        });
+      });
     });
 
     test("calls setPrefix with the configured prefix", () => {
@@ -464,112 +656,6 @@ describe("Avocapture Application", () => {
       expect(mock_ReplayDetectionListener.setPrefix).toHaveBeenCalledWith(
         "thePrefix"
       );
-    });
-
-    test("changeListener updates settings on app uninstall", () => {
-      let captured;
-      mock_ExtensionManager.registerChangeListener.mockImplementation((cl) => {
-        captured = cl;
-      });
-
-      mock_AppSettings.getAll
-        // initial settings
-        .mockReturnValueOnce({
-          prefix: "fakePrefix",
-          extensions: {
-            selected: {
-              detector: "loaded-detector",
-            },
-          },
-        })
-        // settings for changeListener
-        .mockReturnValueOnce({
-          prefix: "fakePrefix",
-          extensions: {
-            selected: {
-              detector: "loaded-detector",
-            },
-          },
-        })
-        // updated settings after clear
-        .mockReturnValue({ prefix: "fakePrefix" });
-
-      mock_ExtensionManager.getExtensionsOfType.mockImplementation((t) => {
-        if (t === "detector") {
-          return ["fake-detector"];
-        }
-        return ["fake-uploader"];
-      });
-
-      mock_ExtensionManager.getExtension.mockReturnValue({
-        instance: {
-          register: jest.fn(),
-        },
-        markBuiltIn: jest.fn(),
-      });
-
-      runApp();
-
-      // notify
-      captured({
-        event: "uninstall",
-        type: "detector",
-        name: "loaded-detector",
-      });
-
-      expect(mock_AppSettings.clear).toHaveBeenCalledWith(
-        "extensions.selected.detector"
-      );
-      expect(mock_webContents.send).toHaveBeenCalledWith(
-        "AppSettings.Initialize",
-        {
-          prefix: "fakePrefix",
-          detectors: ["fake-detector"],
-          uploaders: ["fake-uploader"],
-        }
-      );
-    });
-
-    describe("Activates extensions", () => {
-      test("activates detector and registers", () => {
-        mock_AppSettings.getAll.mockReturnValue({
-          extensions: {
-            selected: {
-              detector: "loaded-detector",
-            },
-          },
-        });
-
-        // return a fake extension
-        let fakeInstance = {
-          register: jest.fn(),
-        };
-        mock_ExtensionManager.getExtension.mockReturnValue({
-          instance: fakeInstance,
-          markBuiltIn: jest.fn(),
-        });
-        runApp();
-
-        expect(mock_ExtensionManager.activate).toHaveBeenCalledWith(
-          "loaded-detector"
-        );
-        expect(fakeInstance.register).toHaveBeenCalled();
-      });
-      test("activates uploader", () => {
-        mock_AppSettings.getAll.mockReturnValue({
-          extensions: {
-            selected: {
-              uploader: "loaded-uploader",
-            },
-          },
-        });
-
-        runApp();
-
-        expect(mock_ExtensionManager.activate).toHaveBeenCalledWith(
-          "loaded-uploader"
-        );
-      });
     });
 
     describe("Handles events", () => {
@@ -597,7 +683,6 @@ describe("Avocapture Application", () => {
         };
         mock_ExtensionManager.getExtension.mockReturnValue({
           instance: fakeInstance,
-          markBuiltIn: jest.fn(),
         });
 
         const eventData = {

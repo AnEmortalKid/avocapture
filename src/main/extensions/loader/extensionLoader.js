@@ -5,6 +5,7 @@ import LoadedExtension from "./loadedExtension";
 import Logger from "../../logger/logger";
 import ExtensionLogger from "../../logger/extensionLogger";
 import { requireProvider } from "../../util/requireProvider";
+import { BUILTIN_EXTENSIONS } from "../builtin";
 const require = requireProvider();
 
 const logger = new Logger("ExtensionLoader");
@@ -116,8 +117,15 @@ export default class ExtensionLoader {
       logger: new ExtensionLogger(configuration.name),
     });
     checkExtension(extensionInstance, configuration.name, configuration.type);
-    // TODO mark builtin here
-    return new LoadedExtension(extensionInstance, configuration, extensionPath);
+    const loaded = new LoadedExtension(
+      extensionInstance,
+      configuration,
+      extensionPath
+    );
+    if (BUILTIN_EXTENSIONS.includes(loaded.name())) {
+      loaded.markBuiltIn();
+    }
+    return loaded;
   }
 
   loadExtensions(directory) {

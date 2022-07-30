@@ -39,6 +39,11 @@ export default class ExtensionManager {
    */
   install(extensionPath) {
     logger.logMethod("install", extensionPath);
+    // TODO npmInstaller should let us peek name here
+    this._notifyListener({
+      event: "install",
+      name: path.basename(extensionPath),
+    });
     const extensionName = installExtension(extensionPath);
 
     return extensionName;
