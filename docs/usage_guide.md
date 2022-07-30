@@ -12,17 +12,17 @@
 3. Currently, the app will seem like it freezes while it installs the extensions. Which should be fixed [here](https://github.com/AnEmortalKid/avocapture/issues/15)
 4. Once application loads, you should be able to pick which mechanism to detect your replays and update the settings based on the extension's you're using:
 
-![](./docs/usage/images/app.PNG)
+![](./usage/images/app.PNG)
 
 
 ## Extension Setup
 
 1. Select a Replay Detection Method
   1. Configure the settings for it (see the [extension's documentation](./extensions/README.md) for more info)
-![](./docs/usage/imgs/settings_example.PNG)
+![](./usage/imgs/settings_example.PNG)
 2. _Optionally_ select a replay upload method
 3. Run the desired capture game in non Fullscreen mode
 
 When a replay is detected, a dialog will show up to allow you to rename that replay:
 
-![](./docs/usage/imgs/dialog_example.PNG)
+![](./usage/imgs/dialog_example.PNG)
