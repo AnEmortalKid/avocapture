@@ -20,7 +20,7 @@ import { isProduction } from "./util/processInfo";
 import Logger from "./logger/logger";
 import { BUILTIN_EXTENSIONS } from "./extensions/builtin";
 import { logCleaner } from "./logger/logCleaner";
-import { AppLoader } from './loader/appLoader';
+import { AppLoader } from "./loader/appLoader";
 
 export function runApp() {
   const isMac = process.platform === "darwin";
@@ -60,10 +60,12 @@ export function runApp() {
     logger.logMethod("extensionChangeListener", eventData);
 
     if (eventData.event == "install") {
-      mainWindow.webContents.send("App.Initialize", "Installing " + eventData.name + ". This may take a while.");
+      mainWindow.webContents.send(
+        "App.Initialize",
+        "Installing " + eventData.name + ". This may take a while."
+      );
       return;
     }
-
 
     let appSettings = appSettingsStore.getAll();
     if (eventData.event === "uninstall") {
@@ -177,10 +179,11 @@ export function runApp() {
       });
     });
 
-    mainWindow.loadURL(path.join(__dirname, 'views', 'loading', 'loading.html'))
-    mainWindow.webContents.once('did-finish-load', () => {
+    mainWindow.loadURL(
+      path.join(__dirname, "views", "loading", "loading.html")
+    );
+    mainWindow.webContents.once("did-finish-load", () => {
       appLoader.load(() => {
-
         // start to get notified about any changes
         extensionManager.registerChangeListener(extensionChangeListener);
         installBuiltins();
@@ -198,7 +201,9 @@ export function runApp() {
         const selectedByType = appSettings.extensions?.selected;
         if (selectedByType?.detector) {
           extensionManager.activate(selectedByType.detector);
-          const detector = extensionManager.getExtension(selectedByType.detector);
+          const detector = extensionManager.getExtension(
+            selectedByType.detector
+          );
           detector.instance.register(replayDetectionListener);
         }
 

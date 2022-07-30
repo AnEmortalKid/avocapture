@@ -42,7 +42,7 @@ export default class ExtensionManager {
     // TODO npmInstaller should let us peek name here
     this._notifyListener({
       event: "install",
-      name: path.basename(extensionPath)
+      name: path.basename(extensionPath),
     });
     const extensionName = installExtension(extensionPath);
 

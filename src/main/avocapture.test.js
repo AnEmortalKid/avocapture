@@ -18,7 +18,7 @@ let mock_getAllWindows = jest.fn();
 let mock_webContents = {
   on: jest.fn(),
   send: jest.fn(),
-  once: jest.fn()
+  once: jest.fn(),
 };
 
 let mock_dialog = {
