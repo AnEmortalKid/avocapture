@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.0
+
+- Implement loading screen for initial loading/install
 
 ## 0.2.0
 
