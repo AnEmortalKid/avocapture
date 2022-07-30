@@ -376,4 +376,34 @@ describe("ExtensionLoader", () => {
       expect(loaded.length).toBe(2);
     });
   });
+
+  test("marks a built in extension as built in", () => {
+    // pretend it exists
+    fs.existsSync.mockReturnValue(true);
+
+    const builtinJson = {
+      name: "avocapture-replay-mover",
+      description: "A loadable extension",
+      main: "extension.js",
+      version: "0.1.0",
+      avocapture: {
+        display: "Loadable Extension",
+        type: "uploader",
+        settings: {
+          defaults: {},
+        },
+      },
+    };
+
+    mock_require
+      // mock required json
+      .mockReturnValueOnce(builtinJson)
+      // mock required class
+      .mockReturnValueOnce(TestUploaderDetectorExtension);
+
+    const el = new ExtensionLoader();
+    const loaded = el.loadExtension("avocapture-replay-mover");
+
+    expect(loaded.isBuiltIn()).toBeTruthy();
+  });
 });

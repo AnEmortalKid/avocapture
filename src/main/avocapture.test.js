@@ -540,7 +540,6 @@ describe("Avocapture Application", () => {
           instance: {
             register: jest.fn(),
           },
-          markBuiltIn: jest.fn(),
         });
 
         runApp();
@@ -622,7 +621,6 @@ describe("Avocapture Application", () => {
           };
           mock_ExtensionManager.getExtension.mockReturnValue({
             instance: fakeInstance,
-            markBuiltIn: jest.fn(),
           });
           runApp();
           emitter.emit("did-finish-load");
@@ -685,7 +683,6 @@ describe("Avocapture Application", () => {
         };
         mock_ExtensionManager.getExtension.mockReturnValue({
           instance: fakeInstance,
-          markBuiltIn: jest.fn(),
         });
 
         const eventData = {
