@@ -220,6 +220,31 @@ jest.mock("./logger/logger", () => {
 import { isProduction } from "./util/processInfo";
 jest.mock("./util/processInfo");
 
+let mock_appLoader = {
+  load: jest.fn(),
+  onFinished: jest.fn()
+}
+jest.mock("./loader/appLoader", () => {
+  return {
+    AppLoader: jest.fn().mockImplementation(() => {
+      return {
+        load: (fn) => mock_appLoader.load(fn),
+        onFinished: (fn) => mock_appLoader.onFinished(fn)
+      }
+    })
+  }
+});
+
+// () => {
+//   return {
+//     ReplayDetectionListener: jest.fn().mockImplementation(() => {
+//       return {
+//         setPrefix: (p) => mock_ReplayDetectionListener.setPrefix(p),
+//       };
+//     }),
+//   };
+
+
 import { runApp } from "./avocapture";
 import { ReplayDetailsEvents } from "./entry/replayDetailsEvents";
 import { AppEvents } from "./events/appEvents";
