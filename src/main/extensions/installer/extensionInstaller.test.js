@@ -3,8 +3,6 @@ jest.mock("./copyUtils");
 jest.mock("fs");
 const fs = require("fs");
 
-jest.mock("child_process");
-
 jest.mock("electron", () => {
   return {
     app: {
@@ -13,11 +11,10 @@ jest.mock("electron", () => {
   };
 });
 
-import { copyDirectory, copyAssets } from "./copyUtils";
+import { copyAssets } from "./copyUtils";
 
 import installExtension from "./extensionInstaller";
 
-const execSync = require("child_process").execSync;
 const path = require("path");
 
 describe("extensionInstaller", () => {

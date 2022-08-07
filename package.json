@@ -47,6 +47,7 @@
   "dependencies": {
     "@timfish/forge-externals-plugin": "^0.1.2",
     "bindings": "^1.5.0",
+    "command-exists": "^1.2.9",
     "copy-webpack-plugin": "^11.0.0",
     "electron-log": "^4.4.8",
     "electron-squirrel-startup": "^1.0.0",
