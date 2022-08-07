@@ -4,6 +4,7 @@ import { semVerCompare } from "./semverCompare";
 import { copyAssets } from "./copyUtils";
 import { NpmInstaller } from "./npmInstaller";
 import { BaseExtensionInstaller } from "./baseExtensionInstaller";
+import { getInstallers } from "./installers";
 
 const fs = require("fs");
 const path = require("path");
@@ -61,16 +62,11 @@ function installWithInstaller(extensionPath, installer) {
  * @returns the name of the installed extension if needed
  */
 export default function installExtension(extensionPath) {
-  // TODO
-  // for each available installer
-  // check if it supports it
-  // get manifest
-  // do checks
-  // install to
-  const npmInstaller = new NpmInstaller();
-  if (npmInstaller.supportsInstalling(extensionPath)) {
-    const name = installWithInstaller(extensionPath, npmInstaller);
-    return name;
+  for (const installer of getInstallers()) {
+    if (installer.supportsInstalling(extensionPath)) {
+      const name = installWithInstaller(extensionPath, installer);
+      return name;
+    }
   }
 
   throw Error("No installer can handle " + extensionPath);
