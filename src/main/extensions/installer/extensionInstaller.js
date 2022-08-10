@@ -2,7 +2,6 @@ import { app } from "electron";
 import { isAvocaptureDebug } from "../../util/processInfo";
 import { semVerCompare } from "./semverCompare";
 import { copyAssets } from "./copyUtils";
-import { NpmInstaller } from "./npmInstaller";
 import { BaseExtensionInstaller } from "./baseExtensionInstaller";
 import { getInstallers } from "./installers";
 

@@ -10,15 +10,14 @@ const commandExistsSync = require("command-exists").sync;
 
 const logger = new Logger("NpmInstaller");
 
-// TODO, add output function that can be passed in or create a logger
 function nmpInstall(pluginPath) {
   execSync(
     "npm install --omit=dev",
     { cwd: pluginPath },
     function (error, stdout, stderr) {
-      console.log(error);
-      console.log(stdout);
-      console.log(stderr);
+      logger.error(error);
+      logger.log("> " + stdout);
+      logger.error(stderr);
     }
   );
 }

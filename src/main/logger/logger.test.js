@@ -9,6 +9,7 @@ describe("Logger", () => {
   beforeEach(() => {
     mockLogger = {
       info: jest.fn(),
+      error: jest.fn(),
     };
     electronLog.scope.mockImplementation(() => mockLogger);
   });
@@ -61,5 +62,15 @@ describe("Logger", () => {
     loggy.log("a random message");
 
     expect(mockLogger.info).toHaveBeenCalledWith("a random message");
+  });
+
+  test("logs errors", () => {
+    const loggy = Logger.create("testFile");
+
+    loggy.error(new Error("Something bad happened"));
+
+    expect(mockLogger.error).toHaveBeenCalledWith(
+      new Error("Something bad happened")
+    );
   });
 });

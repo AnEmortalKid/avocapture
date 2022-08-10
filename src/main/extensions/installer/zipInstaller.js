@@ -37,10 +37,12 @@ export class ZipInstaller extends BaseExtensionInstaller {
 
     const zip = new StreamZip({ file: extensionPath });
     zip.on("extract", (entry, file) => {
-      console.log(`Extracted ${entry.name} to ${file}`);
+      logger.log(">" + file);
     });
+
     zip.on("ready", () => {
       zip.extract(null, installationDestination, (err, count) => {
+        logger.error(err);
         zip.close();
       });
     });
