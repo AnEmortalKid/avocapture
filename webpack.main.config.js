@@ -64,7 +64,6 @@ module.exports = {
           globOptions: {
             ignore: [
               "**/node_modules/**",
-              "**/package-lock.json",
               "**/*.md",
               "**/images/**",
               "**/*test.js",
@@ -73,7 +72,7 @@ module.exports = {
           },
         },
       ],
-    }),
+    })
   ],
   externals: {
     forcefocus: "commonjs2 forcefocus",
