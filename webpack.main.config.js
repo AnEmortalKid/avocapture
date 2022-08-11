@@ -1,6 +1,7 @@
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
 const fs = require("fs");
+const ZipPlugin = require('zip-webpack-plugin');
 
 const assets = ["css", "images"];
 
@@ -18,6 +19,10 @@ fs.readdirSync(faPath).forEach((f) => {
     to: path.resolve(__dirname, ".webpack/main", "font-awesome-4.7.0", f),
   });
 });
+
+// TODO zip up rest
+
+const zipBuiltins = []
 
 module.exports = {
   /**
@@ -72,6 +77,17 @@ module.exports = {
           },
         },
       ],
+    }),
+    new ZipPlugin({
+      path: path.resolve(__dirname, ".webpack/main", "builtin"),
+      filename: "avocapture-replay-mover.zip",
+      pathPrefix: "avocapture-replay-mover",
+      exclude: [
+        "**/*.md",
+        "**/images/**",
+        "**/*test.js",
+        "**/coverage/**",
+      ]
     })
   ],
   externals: {

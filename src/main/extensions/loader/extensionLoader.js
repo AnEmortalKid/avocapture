@@ -6,8 +6,10 @@ import Logger from "../../logger/logger";
 import ExtensionLogger from "../../logger/extensionLogger";
 import { requireProvider } from "../../util/requireProvider";
 import { BUILTIN_EXTENSIONS } from "../builtin";
-const require = requireProvider();
+import { createRequire } from "module"
+const require = requireProvider() || createRequire(import.meta.url);
 
+const cRequire = createRequire(import.meta.url);
 const logger = new Logger("ExtensionLoader");
 
 function getMethods(obj) {
