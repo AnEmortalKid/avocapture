@@ -1,9 +1,22 @@
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
 const fs = require("fs");
-const ZipPlugin = require('zip-webpack-plugin');
+// const ZipPlugin = require('zip-webpack-plugin');
+
+const zipper = require('./packager/builtinZipper');
 
 const assets = ["css", "images"];
+zipper.zip({
+  path: path.resolve(__dirname, ".webpack/main", "builtin"),
+  filename: "avocapture-replay-mover.zip",
+  pathPrefix: "avocapture-replay-mover",
+  exclude: [
+    "**/*.md",
+    "**/images/**",
+    "**/*test.js",
+    "**/coverage/**",
+  ]
+})
 
 const assetPatterns = assets.map((asset) => {
   return {
@@ -21,6 +34,8 @@ fs.readdirSync(faPath).forEach((f) => {
 });
 
 // TODO zip up rest
+// TODO zip without using zipwebpack plugin since it depends on webpack
+// and webpack steals require
 
 const zipBuiltins = []
 
@@ -78,19 +93,20 @@ module.exports = {
         },
       ],
     }),
-    new ZipPlugin({
-      path: path.resolve(__dirname, ".webpack/main", "builtin"),
-      filename: "avocapture-replay-mover.zip",
-      pathPrefix: "avocapture-replay-mover",
-      exclude: [
-        "**/*.md",
-        "**/images/**",
-        "**/*test.js",
-        "**/coverage/**",
-      ]
-    })
+    // TODO something using webpack now injected require
+    // new ZipPlugin({
+    //   path: path.resolve(__dirname, ".webpack/main", "builtin"),
+    //   filename: "avocapture-replay-mover.zip",
+    //   pathPrefix: "avocapture-replay-mover",
+    //   exclude: [
+    //     "**/*.md",
+    //     "**/images/**",
+    //     "**/*test.js",
+    //     "**/coverage/**",
+    //   ]
+    // })
   ],
   externals: {
-    forcefocus: "commonjs2 forcefocus",
+    forcefocus: "commonjs2 forcefocus"
   },
 };
