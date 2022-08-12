@@ -12,6 +12,7 @@ export class ZipInstaller extends BaseExtensionInstaller {
    * Determines whether this installer is able to install an extension located at the given path.
    */
   supportsInstalling(extensionPath) {
+    // TODO this is not working
     logger.logMethod("supportsInstalling", `Checking ${extensionPath}`);
 
     const isDir = fs.lstatSync(extensionPath).isDirectory();
@@ -21,7 +22,7 @@ export class ZipInstaller extends BaseExtensionInstaller {
       `Evaluating based on isDirectory: ${isDir} extension: ${extension}`
     );
 
-    return !isDir && extension === "zip";
+    return !isDir && extension === ".zip";
   }
 
   /**
@@ -29,23 +30,30 @@ export class ZipInstaller extends BaseExtensionInstaller {
    * @param {file} extensionPath
    * @param {directory} installationDestination
    */
-  installTo(extensionPath, installationDestination) {
+  async installTo(extensionPath, installationDestination) {
     logger.logMethod(
       "installTo",
       `Copying and npm installing ${extensionPath} to ${installationDestination}`
     );
 
-    const zip = new StreamZip({ file: extensionPath });
+    const zip = new StreamZip.async({ file: extensionPath });
     zip.on("extract", (entry, file) => {
       logger.log(">" + file);
     });
 
-    zip.on("ready", () => {
-      zip.extract(null, installationDestination, (err, count) => {
-        logger.error(err);
-        zip.close();
-      });
+    const count = await zip.extract(null, installationDestination);
+    logger.log(`Extracted ${count} entries`);
+    await zip.close();
+    return new Promise(resolve => {
+      resolve(count)
     });
+
+    // zip.on("ready", () => {
+    //   zip.extract(null, installationDestination, (err, count) => {
+    //     logger.error(err);
+    //     zip.close();
+    //   });
+    // });
   }
 
   /**
@@ -55,12 +63,20 @@ export class ZipInstaller extends BaseExtensionInstaller {
    *
    * @param {file} extensionPath a file path to where the extension is defined
    */
-  getManifest(extensionPath) {
-    const zip = new StreamZip({ file: extensionPath });
-    zip.on("ready", () => {
-      const data = zip.entryDataSync("package.json");
-      zip.close();
-      return JSON.parse(data);
+  async getManifest(extensionPath) {
+    // TODO this isn't sync
+    const zip = new StreamZip.async({ file: extensionPath });
+
+    const data = await zip.entryData("package.json");
+    await zip.close();
+    return new Promise(resolve => {
+      resolve(JSON.parse(String.fromCharCode.apply(null, data)))
     });
+
+    // zip.on("ready", () => {
+    //   const data = zip.entryDataSync("package.json");
+    //   zip.close();
+    //   cb();
+    // });
   }
 }

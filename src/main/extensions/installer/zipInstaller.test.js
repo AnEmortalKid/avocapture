@@ -60,7 +60,7 @@ describe("ZipInstaller", () => {
       });
 
       const zi = new ZipInstaller();
-      expect(zi.supportsInstalling("someZip.zip")).toBeFalsy();
+      expect(zi.supportsInstalling("someZip.zip")).toBeTruthy();
     });
   });
 

@@ -37,14 +37,14 @@ export default class ExtensionManager {
    * @param {filePath} extensionPath file path for the location of the extension
    * @return the name of the extension based on the package json
    */
-  install(extensionPath) {
+  async install(extensionPath) {
     logger.logMethod("install", extensionPath);
     // TODO npmInstaller should let us peek name here
     this._notifyListener({
       event: "install",
       name: path.basename(extensionPath),
     });
-    const extensionName = installExtension(extensionPath);
+    const extensionName = await installExtension(extensionPath);
 
     return extensionName;
   }

@@ -44,14 +44,12 @@ export function runApp() {
   const extensionManagementApp = new ExtensionManagementApp(extensionManager);
   const appLoader = new AppLoader();
 
-  function installBuiltins() {
+  async function installBuiltins() {
     const builtIns = path.resolve(__dirname, "builtin");
     const files = fs.readdirSync(builtIns, { withFileTypes: true });
 
     for (var file of files) {
-      if (file.isDirectory()) {
-        extensionManager.install(path.join(builtIns, file.name));
-      }
+      await extensionManager.install(path.join(builtIns, file.name));
     }
   }
 

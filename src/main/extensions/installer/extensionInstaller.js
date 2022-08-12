@@ -1,5 +1,5 @@
 import { app } from "electron";
-import { isAvocaptureDebug } from "../../util/processInfo";
+import { isAvocaptureDebug, isProduction } from "../../util/processInfo";
 import { semVerCompare } from "./semverCompare";
 import { copyAssets } from "./copyUtils";
 import { BaseExtensionInstaller } from "./baseExtensionInstaller";
@@ -14,9 +14,8 @@ const path = require("path");
  * @param {BaseExtensionInstaller} installer an installer
  * @return the name of the installed extension
  */
-function installWithInstaller(extensionPath, installer) {
-  const newPackage = installer.getManifest(extensionPath);
-
+async function installWithInstaller(extensionPath, installer) {
+  const newPackage = await installer.getManifest(extensionPath);
   const destinationRoot = app.getPath("userData");
   const extensionDir = newPackage.name;
   const installDestination = path.join(
@@ -52,7 +51,9 @@ function installWithInstaller(extensionPath, installer) {
   fs.mkdirSync(installDestination, { recursive: true });
   // in the future, if we need to change themes, we have to re-install assets
   copyAssets(installDestination);
-  installer.installTo(extensionPath, installDestination);
+  await installer.installTo(extensionPath, installDestination);
+  // TODO needs to use Promise.resolve
+  // TODO check async/promise chain YUCK
 }
 
 /**
@@ -60,10 +61,10 @@ function installWithInstaller(extensionPath, installer) {
  * @param {*} extensionPath
  * @returns the name of the installed extension if needed
  */
-export default function installExtension(extensionPath) {
+export default async function installExtension(extensionPath) {
   for (const installer of getInstallers()) {
     if (installer.supportsInstalling(extensionPath)) {
-      const name = installWithInstaller(extensionPath, installer);
+      const name = await installWithInstaller(extensionPath, installer);
       return name;
     }
   }
