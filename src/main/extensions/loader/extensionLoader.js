@@ -6,6 +6,7 @@ import Logger from "../../logger/logger";
 import ExtensionLogger from "../../logger/extensionLogger";
 import { requireProvider } from "../../util/requireProvider";
 import { BUILTIN_EXTENSIONS } from "../builtin";
+
 const require = requireProvider();
 
 const logger = new Logger("ExtensionLoader");

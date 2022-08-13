@@ -2,6 +2,31 @@ const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
 const fs = require("fs");
 
+// zip our extensions up
+const zipper = require("./packager/builtinZipper");
+const zipBuiltins = [
+  "avocapture-replay-mover",
+  "avocapture-obs-detector",
+  "avocapture-search-on-hotkey",
+];
+
+var zipPatterns = [];
+for (const builtin of zipBuiltins) {
+  console.log("Zipping " + builtin);
+  const zipFrom = path.resolve(__dirname, "builtin", builtin);
+  const zipTo = path.resolve(__dirname, "builtin", builtin + ".zip");
+  zipPatterns.push({
+    from: zipTo,
+    to: path.resolve(__dirname, ".webpack/main", "builtin", builtin + ".zip"),
+  });
+  zipper.zip({
+    rootDir: zipFrom,
+    destination: zipTo,
+    exclude: ["*.md", "**/images/**", "*test.js", "**/coverage/**"],
+  });
+  console.log("Complete!");
+}
+
 const assets = ["css", "images"];
 
 const assetPatterns = assets.map((asset) => {
@@ -56,23 +81,27 @@ module.exports = {
         },
       ],
     }),
+    // to include npm installables
+    // new CopyPlugin({
+    //   patterns: [
+    //     {
+    //       from: path.resolve(__dirname, "builtin"),
+    //       to: path.resolve(__dirname, ".webpack/main", "builtin"),
+    //       globOptions: {
+    //         ignore: [
+    //           "**/node_modules/**",
+    //           "**/*.md",
+    //           "**/images/**",
+    //           "**/*test.js",
+    //           "**/coverage/**",
+    //         ],
+    //       },
+    //     },
+    //   ],
+    // }),
+    // zips only
     new CopyPlugin({
-      patterns: [
-        {
-          from: path.resolve(__dirname, "builtin"),
-          to: path.resolve(__dirname, ".webpack/main", "builtin"),
-          globOptions: {
-            ignore: [
-              "**/node_modules/**",
-              "**/package-lock.json",
-              "**/*.md",
-              "**/images/**",
-              "**/*test.js",
-              "**/coverage/**",
-            ],
-          },
-        },
-      ],
+      patterns: zipPatterns,
     }),
   ],
   externals: {

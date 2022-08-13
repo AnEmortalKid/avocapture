@@ -49,9 +49,7 @@ export function runApp() {
     const files = fs.readdirSync(builtIns, { withFileTypes: true });
 
     for (var file of files) {
-      if (file.isDirectory()) {
-        extensionManager.install(path.join(builtIns, file.name));
-      }
+      extensionManager.install(path.join(builtIns, file.name));
     }
   }
 
@@ -181,8 +179,8 @@ export function runApp() {
     mainWindow.loadURL(
       path.join(__dirname, "views", "loading", "loading.html")
     );
-    mainWindow.webContents.once("did-finish-load", async () => {
-      await appLoader.load(() => {
+    mainWindow.webContents.once("did-finish-load", () => {
+      appLoader.load(() => {
         // start to get notified about any changes
         extensionManager.registerChangeListener(extensionChangeListener);
         installBuiltins();
