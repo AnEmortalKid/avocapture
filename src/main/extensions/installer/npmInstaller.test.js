@@ -29,7 +29,8 @@ describe("NpmInstaller", () => {
       );
 
       const installer = new NpmInstaller();
-      installer.getManifest("someDir");
+      const manifest = installer.getManifest("someDir");
+      expect(manifest.version).toBe('0.1.0');
 
       expect(fs.readFileSync).toHaveBeenCalledWith(
         path.join("someDir", "package.json")

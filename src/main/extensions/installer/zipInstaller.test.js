@@ -1,18 +1,14 @@
 const mockZip = {
-  on: jest.fn(),
-  extract: jest.fn(),
-  close: jest.fn(),
-  entryDataSync: jest.fn(),
+  readAsText: jest.fn(),
+  extractAllTo: jest.fn()
 };
 
-jest.mock("node-stream-zip", () => {
+jest.mock("adm-zip", () => {
   // default export
   return jest.fn().mockImplementation(() => {
     return {
-      on: (event, cb) => mockZip.on(event, cb),
-      extract: (entry, name, cb) => mockZip.extract(entry, name, cb),
-      close: () => mockZip.close(),
-      entryDataSync: (entry) => mockZip.entryDataSync(entry),
+      readAsText: (n) => mockZip.readAsText(n),
+      extractAllTo: (dest, ow) => mockZip.extractAllTo(dest, ow)
     };
   });
 });
@@ -21,16 +17,8 @@ const fs = require("fs");
 jest.mock("fs");
 
 import { ZipInstaller } from "./ZipInstaller";
-import { EventEmitter } from "events";
-
-let emitter;
 
 describe("ZipInstaller", () => {
-  beforeEach(() => {
-    emitter = new EventEmitter();
-    mockZip.on.mockImplementation((n, c) => emitter.on(n, c));
-  });
-
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -65,7 +53,8 @@ describe("ZipInstaller", () => {
   });
 
   test("getManifest", () => {
-    mockZip.entryDataSync.mockReturnValue(
+
+    mockZip.readAsText.mockReturnValue(
       JSON.stringify({
         name: "test-extension",
         version: "0.1.0",
@@ -75,36 +64,15 @@ describe("ZipInstaller", () => {
     const zi = new ZipInstaller();
     const manifest = zi.getManifest("someZip.zip");
 
-    expect(mockZip.on).toHaveBeenCalledWith("ready", expect.any(Function));
-
-    // pretend ready fires
-    emitter.emit("ready");
-
-    expect(mockZip.entryDataSync).toHaveBeenCalledWith("package.json");
-    expect(mockZip.close).toHaveBeenCalled();
+    expect(manifest.version).toBe('0.1.0');
+    expect(mockZip.readAsText).toHaveBeenCalledWith("package.json");
   });
 
   test("installTo", () => {
-    mockZip.extract.mockImplementation((e, d, callback) => {
-      callback();
-    });
-
     const zi = new ZipInstaller();
 
     zi.installTo("source.zip", "destination");
 
-    // sets up listeners on our events
-    expect(mockZip.on).toHaveBeenCalledWith("extract", expect.any(Function));
-    expect(mockZip.on).toHaveBeenCalledWith("ready", expect.any(Function));
-
-    // pretend ready fires
-    emitter.emit("ready");
-
-    expect(mockZip.extract).toHaveBeenCalledWith(
-      null,
-      "destination",
-      expect.any(Function)
-    );
-    expect(mockZip.close).toHaveBeenCalled();
+    expect(mockZip.extractAllTo).toHaveBeenCalledWith('destination', true);
   });
 });

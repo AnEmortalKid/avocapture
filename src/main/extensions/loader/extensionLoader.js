@@ -9,7 +9,6 @@ import { BUILTIN_EXTENSIONS } from "../builtin";
 import { createRequire } from "module"
 const require = requireProvider();
 
-const cRequire = createRequire(import.meta.url);
 const logger = new Logger("ExtensionLoader");
 
 function getMethods(obj) {
