@@ -3,6 +3,7 @@
 ## 0.3.0
 
 - Implement loading screen for initial loading/install
+- Load extensions from a packaged zip instead of requiring `npm`
 
 ## 0.2.0
 

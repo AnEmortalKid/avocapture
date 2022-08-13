@@ -25,4 +25,8 @@ export default class Logger {
   log(msg) {
     this.ownerLog.info(msg);
   }
+
+  error(error) {
+    this.ownerLog.error(error);
+  }
 }

@@ -1,36 +1,22 @@
 import { app } from "electron";
-import { isAvocaptureDebug } from "../../util/processInfo";
+import { isAvocaptureDebug, isProduction } from "../../util/processInfo";
 import { semVerCompare } from "./semverCompare";
-import { copyAssets, copyDirectory } from "./copyUtils";
+import { copyAssets } from "./copyUtils";
+import { BaseExtensionInstaller } from "./baseExtensionInstaller";
+import { getInstallers } from "./installers";
 
-const execSync = require("child_process").execSync;
 const fs = require("fs");
 const path = require("path");
 
-// TODO, add output function that can be passed in or create a logger
-function nmpInstall(pluginPath) {
-  execSync(
-    "npm install --omit=dev",
-    { cwd: pluginPath },
-    function (error, stdout, stderr) {
-      console.log(error);
-      console.log(stdout);
-      console.log(stderr);
-    }
-  );
-}
-
 /**
- *
- * @param {*} extensionPath
- * @returns the name of the installed extension if needed
+ * Installs the extension using the given supported installer
+ * @param {file} extensionPath
+ * @param {BaseExtensionInstaller} installer an installer
+ * @return the name of the installed extension
  */
-export default function installExtension(extensionPath) {
+function installWithInstaller(extensionPath, installer) {
+  const newPackage = installer.getManifest(extensionPath);
   const destinationRoot = app.getPath("userData");
-  const newPackage = JSON.parse(
-    fs.readFileSync(path.join(extensionPath, "package.json"))
-  );
-
   const extensionDir = newPackage.name;
   const installDestination = path.join(
     destinationRoot,
@@ -61,10 +47,27 @@ export default function installExtension(extensionPath) {
     }
   }
 
+  // create installation destination
+  fs.mkdirSync(installDestination, { recursive: true });
   // in the future, if we need to change themes, we have to re-install assets
-  copyDirectory(extensionPath, installDestination);
-  nmpInstall(installDestination);
   copyAssets(installDestination);
+  installer.installTo(extensionPath, installDestination);
+  // TODO needs to use Promise.resolve
+  // TODO check async/promise chain YUCK
+}
 
-  return extensionDir;
+/**
+ *
+ * @param {*} extensionPath
+ * @returns the name of the installed extension if needed
+ */
+export default function installExtension(extensionPath) {
+  for (const installer of getInstallers()) {
+    if (installer.supportsInstalling(extensionPath)) {
+      const name = installWithInstaller(extensionPath, installer);
+      return name;
+    }
+  }
+
+  throw Error("No installer can handle " + extensionPath);
 }
