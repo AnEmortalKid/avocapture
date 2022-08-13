@@ -16,7 +16,8 @@ jest.mock("adm-zip", () => {
 const fs = require("fs");
 jest.mock("fs");
 
-import { ZipInstaller } from "./ZipInstaller";
+
+import { ZipInstaller } from "./zipInstaller";
 
 describe("ZipInstaller", () => {
   afterEach(() => {
