@@ -1,6 +1,6 @@
 const mockZip = {
   readAsText: jest.fn(),
-  extractAllTo: jest.fn()
+  extractAllTo: jest.fn(),
 };
 
 jest.mock("adm-zip", () => {
@@ -8,7 +8,7 @@ jest.mock("adm-zip", () => {
   return jest.fn().mockImplementation(() => {
     return {
       readAsText: (n) => mockZip.readAsText(n),
-      extractAllTo: (dest, ow) => mockZip.extractAllTo(dest, ow)
+      extractAllTo: (dest, ow) => mockZip.extractAllTo(dest, ow),
     };
   });
 });
@@ -53,7 +53,6 @@ describe("ZipInstaller", () => {
   });
 
   test("getManifest", () => {
-
     mockZip.readAsText.mockReturnValue(
       JSON.stringify({
         name: "test-extension",
@@ -64,7 +63,7 @@ describe("ZipInstaller", () => {
     const zi = new ZipInstaller();
     const manifest = zi.getManifest("someZip.zip");
 
-    expect(manifest.version).toBe('0.1.0');
+    expect(manifest.version).toBe("0.1.0");
     expect(mockZip.readAsText).toHaveBeenCalledWith("package.json");
   });
 
@@ -73,6 +72,6 @@ describe("ZipInstaller", () => {
 
     zi.installTo("source.zip", "destination");
 
-    expect(mockZip.extractAllTo).toHaveBeenCalledWith('destination', true);
+    expect(mockZip.extractAllTo).toHaveBeenCalledWith("destination", true);
   });
 });

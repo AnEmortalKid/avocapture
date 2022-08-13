@@ -3,29 +3,28 @@ const CopyPlugin = require("copy-webpack-plugin");
 const fs = require("fs");
 
 // zip our extensions up
-const zipper = require('./packager/builtinZipper');
-const zipBuiltins = ['avocapture-replay-mover', 'avocapture-obs-detector', 'avocapture-search-on-hotkey']
+const zipper = require("./packager/builtinZipper");
+const zipBuiltins = [
+  "avocapture-replay-mover",
+  "avocapture-obs-detector",
+  "avocapture-search-on-hotkey",
+];
 
 var zipPatterns = [];
 for (const builtin of zipBuiltins) {
-  console.log('Zipping ' + builtin)
-  const zipFrom = path.resolve(__dirname, 'builtin', builtin);
-  const zipTo = path.resolve(__dirname, 'builtin', builtin + '.zip')
+  console.log("Zipping " + builtin);
+  const zipFrom = path.resolve(__dirname, "builtin", builtin);
+  const zipTo = path.resolve(__dirname, "builtin", builtin + ".zip");
   zipPatterns.push({
     from: zipTo,
-    to: path.resolve(__dirname, ".webpack/main", "builtin", builtin + '.zip')
+    to: path.resolve(__dirname, ".webpack/main", "builtin", builtin + ".zip"),
   });
   zipper.zip({
     rootDir: zipFrom,
     destination: zipTo,
-    exclude: [
-      "*.md",
-      "**/images/**",
-      "*test.js",
-      "**/coverage/**"
-    ]
-  })
-  console.log('Complete!');
+    exclude: ["*.md", "**/images/**", "*test.js", "**/coverage/**"],
+  });
+  console.log("Complete!");
 }
 
 const assets = ["css", "images"];
@@ -44,7 +43,6 @@ fs.readdirSync(faPath).forEach((f) => {
     to: path.resolve(__dirname, ".webpack/main", "font-awesome-4.7.0", f),
   });
 });
-
 
 module.exports = {
   /**
@@ -103,10 +101,10 @@ module.exports = {
     // }),
     // zips only
     new CopyPlugin({
-      patterns: zipPatterns
-    })
+      patterns: zipPatterns,
+    }),
   ],
   externals: {
-    forcefocus: "commonjs2 forcefocus"
+    forcefocus: "commonjs2 forcefocus",
   },
 };

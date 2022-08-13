@@ -49,6 +49,6 @@ export class ZipInstaller extends BaseExtensionInstaller {
    */
   getManifest(extensionPath) {
     const azip = new AdmZip(extensionPath);
-    return JSON.parse(azip.readAsText('package.json'));
+    return JSON.parse(azip.readAsText("package.json"));
   }
 }
