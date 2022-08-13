@@ -9,7 +9,7 @@ export class ReplayDetailsDialog {
   _create(settings) {
     const entryWindow = new BrowserWindow({
       width: 800,
-      height: 180,
+      height: 200,
       frame: false,
       titleBarOverlay: true,
       resizable: false,
