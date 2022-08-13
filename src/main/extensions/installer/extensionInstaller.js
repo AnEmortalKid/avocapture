@@ -14,8 +14,8 @@ const path = require("path");
  * @param {BaseExtensionInstaller} installer an installer
  * @return the name of the installed extension
  */
-async function installWithInstaller(extensionPath, installer) {
-  const newPackage = await installer.getManifest(extensionPath);
+function installWithInstaller(extensionPath, installer) {
+  const newPackage = installer.getManifest(extensionPath);
   const destinationRoot = app.getPath("userData");
   const extensionDir = newPackage.name;
   const installDestination = path.join(
@@ -51,7 +51,7 @@ async function installWithInstaller(extensionPath, installer) {
   fs.mkdirSync(installDestination, { recursive: true });
   // in the future, if we need to change themes, we have to re-install assets
   copyAssets(installDestination);
-  await installer.installTo(extensionPath, installDestination);
+  installer.installTo(extensionPath, installDestination);
   // TODO needs to use Promise.resolve
   // TODO check async/promise chain YUCK
 }
@@ -61,10 +61,10 @@ async function installWithInstaller(extensionPath, installer) {
  * @param {*} extensionPath
  * @returns the name of the installed extension if needed
  */
-export default async function installExtension(extensionPath) {
+export default function installExtension(extensionPath) {
   for (const installer of getInstallers()) {
     if (installer.supportsInstalling(extensionPath)) {
-      const name = await installWithInstaller(extensionPath, installer);
+      const name = installWithInstaller(extensionPath, installer);
       return name;
     }
   }
