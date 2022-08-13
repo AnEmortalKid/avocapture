@@ -298,6 +298,15 @@ Your extension's UI runs in a `Browser` window and is effectively a [renderer](h
 - This application uses [electron-store](https://github.com/sindresorhus/electron-store) with some customization.
 - Your extension's settings will be stored under `%APPDATA%/avocapture/settings/your-extension-name.json`.
 
+## Packaging
+
+When packaging your extension, package the necessary components into a `zip` with the minimal set of things needed, particularly:
+
+* Your package.json
+* Your exported `js` files
+* The `node_modules` directory required by your extension
+  * You can use `npm install --omit=dev` to slim those down if needed
+
 ## Developer Tips
 
 - The `builtins` directory has some sample extensions that can be referenced.
@@ -305,3 +314,4 @@ Your extension's UI runs in a `Browser` window and is effectively a [renderer](h
   - Run the app with an `AVOCAPTURE_DEBUG` environment variable set to `true` to skip version checking.
   - either bump the version
   - delete the `%APPDATA%/avocapture/extensions` directory for your extension.
+- Avocapture can load your extension if you have `npm` installed instead of a zip in order to make development faster.
