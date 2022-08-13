@@ -2,6 +2,9 @@ const { ipcRenderer } = require("electron");
 
 /* 
   <li class="w3-container w3-disabled">
+  // if builtin 
+        <span class="w3-tag w3-theme-l1 w3-padding w3-round-large w3-right">Builtin</span>
+        else 
     <button class="w3-button w3-round w3-theme-action w3-right">Uninstall <i class="fa fa-trash"></i></button>
     <div>
       <span class="w3-large">Test Extension</span><br>
@@ -15,24 +18,33 @@ function createListItem(extensionInfo) {
   const li = document.createElement("li");
   li.classList.add("w3-container");
   if (extensionInfo.isBuiltIn) {
-    li.classList.add("w3-disabled");
+    const span = document.createElement("span");
+    span.classList.add(
+      "w3-tag",
+      "w3-theme-d1",
+      "w3-padding",
+      "w3-round-large",
+      "w3-right",
+      "w3-disabled"
+    );
+    li.appendChild(span);
+  } else {
+    const uninstallBtn = document.createElement("button");
+    uninstallBtn.classList.add(
+      "w3-button",
+      "w3-round",
+      "w3-theme-action",
+      "w3-right"
+    );
+    uninstallBtn.onclick = () => {
+      ipcRenderer.send("ExtensionManagement.Uninstall", extensionInfo.name);
+    };
+
+    const uninstallIcon = document.createElement("i");
+    uninstallIcon.classList.add("fa", "fa-trash");
+    uninstallBtn.appendChild(uninstallIcon);
+    li.appendChild(uninstallBtn);
   }
-
-  const uninstallBtn = document.createElement("button");
-  uninstallBtn.classList.add(
-    "w3-button",
-    "w3-round",
-    "w3-theme-action",
-    "w3-right"
-  );
-  uninstallBtn.onclick = () => {
-    ipcRenderer.send("ExtensionManagement.Uninstall", extensionInfo.name);
-  };
-
-  const uninstallIcon = document.createElement("i");
-  uninstallIcon.classList.add("fa", "fa-trash");
-  uninstallBtn.appendChild(uninstallIcon);
-  li.appendChild(uninstallBtn);
 
   const nameDiv = document.createElement("div");
   const nameSpan = document.createElement("span");
