@@ -27,6 +27,9 @@ for (const builtin of zipBuiltins) {
   console.log("Complete!");
 }
 
+const version = require('./package.json').version;
+fs.writeFileSync(path.resolve(__dirname, "packager", "version.json"), JSON.stringify({ version: version }))
+
 const assets = ["css", "images"];
 
 const assetPatterns = assets.map((asset) => {
@@ -102,6 +105,14 @@ module.exports = {
     // zips only
     new CopyPlugin({
       patterns: zipPatterns,
+    }),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, "packager", "version.json"),
+          to: path.resolve(__dirname, ".webpack/main", "version.json"),
+        },
+      ],
     }),
   ],
   externals: {
