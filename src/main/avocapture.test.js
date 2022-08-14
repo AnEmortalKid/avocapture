@@ -14,6 +14,7 @@ let mock_hide = jest.fn();
 let mock_app_on = jest.fn();
 let mock_setIcon = jest.fn();
 let mock_getAllWindows = jest.fn();
+let mock_setTitle = jest.fn();
 
 let mock_webContents = {
   on: jest.fn(),
@@ -45,6 +46,7 @@ jest.mock("electron", () => {
         setIcon: mock_setIcon,
         getAllWindows: mock_getAllWindows,
         webContents: mock_webContents,
+        setTitle: mock_setTitle,
       };
     }),
     ipcMain: {
@@ -329,6 +331,8 @@ describe("Avocapture Application", () => {
       Menu.setApplicationMenu = jest.fn();
       // set empty bulitns
       fs.readdirSync.mockReturnValue([]);
+      // set fake version
+      fs.readFileSync.mockReturnValue(JSON.stringify({ version: "0.1.0" }));
       isProduction.mockReturnValue(true);
 
       mock_AppSettings.getAll.mockReturnValue({
@@ -465,6 +469,9 @@ describe("Avocapture Application", () => {
         expect(mock_ExtensionManager.install).toHaveBeenCalledWith(
           path.join(builtIns, "builtin-extension")
         );
+
+        // sets loading title
+        expect(mock_setTitle).toHaveBeenCalledWith("Loading Avocapture 0.1.0");
       });
 
       test("registers change listener", () => {
@@ -602,6 +609,9 @@ describe("Avocapture Application", () => {
               uploaders: ["fake-uploader"],
             }
           );
+
+          // sets main title
+          expect(mock_setTitle).toHaveBeenCalledWith("Avocapture 0.1.0");
         });
       });
 
