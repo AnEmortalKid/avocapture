@@ -43,6 +43,8 @@ jobs:
         node-version: 14
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.1        
+    - name: Setup VisualStudio for node-gyp
+      run: npm config set msvs_version 2022
     - name: install dependencies
       run: npm ci
     - name: publish
