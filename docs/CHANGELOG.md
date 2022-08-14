@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.0
+
+- Fix Built-in extensions not displaying tag in Extension Manager
+- Add application version to loading/main app titles
+
 ## 0.3.0
 
 - Implement loading screen for initial loading/install

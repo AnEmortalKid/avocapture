@@ -27,7 +27,7 @@ function createListItem(extensionInfo) {
       "w3-right",
       "w3-disabled"
     );
-    span.textContent = 'Built-in'
+    span.textContent = "Built-in";
     li.appendChild(span);
   } else {
     const uninstallBtn = document.createElement("button");

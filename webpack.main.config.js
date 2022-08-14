@@ -27,8 +27,11 @@ for (const builtin of zipBuiltins) {
   console.log("Complete!");
 }
 
-const version = require('./package.json').version;
-fs.writeFileSync(path.resolve(__dirname, "packager", "version.json"), JSON.stringify({ version: version }))
+const version = require("./package.json").version;
+fs.writeFileSync(
+  path.resolve(__dirname, "packager", "version.json"),
+  JSON.stringify({ version: version })
+);
 
 const assets = ["css", "images"];
 

@@ -155,7 +155,9 @@ export function runApp() {
   app.whenReady().then(() => {
     createWindow();
 
-    const appVersion = JSON.parse(fs.readFileSync(path.resolve(__dirname, "version.json"))).version;
+    const appVersion = JSON.parse(
+      fs.readFileSync(path.resolve(__dirname, "version.json"))
+    ).version;
 
     app.on("activate", () => {
       if (BrowserWindow.getAllWindows().length === 0) {
@@ -175,7 +177,7 @@ export function runApp() {
       mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
       mainWindow.webContents.on("did-finish-load", () => {
         mainWindow.webContents.send("AppSettings.Initialize", currSettings);
-        mainWindow.setTitle('Avocapture ' + appVersion);
+        mainWindow.setTitle("Avocapture " + appVersion);
       });
     });
 
@@ -185,7 +187,7 @@ export function runApp() {
 
     mainWindow.webContents.once("did-finish-load", () => {
       appLoader.load(() => {
-        mainWindow.setTitle('Loading Avocapture ' + appVersion);
+        mainWindow.setTitle("Loading Avocapture " + appVersion);
 
         // start to get notified about any changes
         extensionManager.registerChangeListener(extensionChangeListener);
