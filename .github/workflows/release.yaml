@@ -41,8 +41,10 @@ jobs:
     - uses: actions/setup-node@master
       with:
         node-version: 14
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.1        
     - name: install dependencies
-      run: npm install
+      run: npm ci
     - name: publish
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
