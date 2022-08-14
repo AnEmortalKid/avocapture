@@ -1,6 +1,5 @@
-var certConf = {
-  certificateFile: './sign.pfx'
-}
+
+var certConf = {}
 if (process.env.WIN_CERT_FILE) {
   certConf.certificateFile = process.env.WIN_CERT_FILE;
 }
@@ -49,6 +48,7 @@ module.exports = {
         name: "avocapture",
         setupIcon: "./branding/logo.ico",
         loadingGif: "./branding/logo_animated.gif",
+        ...certConf
       },
     },
     {

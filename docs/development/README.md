@@ -14,8 +14,19 @@
 
 ### Env set on windows
 
+#### Set certificate env vars when signing build
+
+```bash
+export WIN_CERT_FILE=pathToPFX
+export WIN_CERT_PASS=plainTextPass
+npm run make
+```
+
+#### Publish
+
 _git bash_
 ```bash
 export GITHUB_TOKEN=value
 npm run publish
 ```
+
