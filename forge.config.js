@@ -1,3 +1,13 @@
+var certConf = {
+  certificateFile: './sign.pfx'
+}
+if (process.env.WIN_CERT_FILE) {
+  certConf.certificateFile = process.env.WIN_CERT_FILE;
+}
+if (process.env.WIN_CERT_PASS) {
+  certConf.certificatePassword = process.env.WIN_CERT_PASS;
+}
+
 // If you have set config.forge to a JavaScript file path in package.json:
 // Only showing the relevant configuration for brevity
 module.exports = {
