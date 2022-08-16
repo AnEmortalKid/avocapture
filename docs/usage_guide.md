@@ -17,8 +17,8 @@ In order to properly show the dialog, the game you're attempting to capture shou
 ## Setup
 
 1. Download the latest available `avocapture-setup.exe` from the [Github Releases](https://github.com/AnEmortalKid/avocapture/releases)
-2. Open the executable, you'll see a loading screen as the app is setting up. 
-3. Currently, the app will seem like it freezes while it installs the extensions. Which should be fixed [here](https://github.com/AnEmortalKid/avocapture/issues/15)
+2. Open the executable, you'll see a loading screen as the app is installing for the first time to the system. 
+3. A secondary loading screen will show up when extensions are installed/updated and on each launch (should be much faster after extensions are installed once).
 4. Once application loads, you should be able to pick which mechanism to detect your replays and update the settings based on the extension's you're using:
 
 ![](./usage/images/app.PNG)
