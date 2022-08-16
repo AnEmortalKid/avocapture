@@ -36,6 +36,7 @@ jobs:
   publish_on_win:
     # https://github.com/MadLittleMods/node-usb-detection/pull/165/files
     runs-on: windows-2019
+    environment: ReleaseEnv
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@master
@@ -44,8 +45,6 @@ jobs:
       - name: Download Cert
         id: write_file
         uses: timheuer/base64-to-file@v1.1
-        env:
-          RUNNER_TEMP: './packager/'
         with:
           fileName: 'cert.pfx'
           encodedString: ${{ secrets.WIN_CERT_FILE_BASE64 }}
