@@ -7,7 +7,18 @@ if (process.env.WIN_CERT_PASS) {
   certConf.certificatePassword = process.env.WIN_CERT_PASS;
 }
 
-console.log('Using ' , certConf.certificateFile);
+// only allow both to be set to more easily debug issues
+if (certConf.certificateFile || certConf.certificatePassword) {
+  if (!certConf.certificateFile) {
+    throw new Error('ForgeConfig: Specified pass but no cert file.');
+  }
+  if (!certConf.certificatePassword) {
+    throw new Error('ForgeConfig: Specified a cert file but no password.');
+  }
+}
+else {
+  console.log('[FORGE] > not signing binary');
+}
 
 // If you have set config.forge to a JavaScript file path in package.json:
 // Only showing the relevant configuration for brevity
