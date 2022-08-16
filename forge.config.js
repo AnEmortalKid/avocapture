@@ -1,3 +1,12 @@
+
+var certConf = {}
+if (process.env.WIN_CERT_FILE) {
+  certConf.certificateFile = process.env.WIN_CERT_FILE;
+}
+if (process.env.WIN_CERT_PASS) {
+  certConf.certificatePassword = process.env.WIN_CERT_PASS;
+}
+
 // If you have set config.forge to a JavaScript file path in package.json:
 // Only showing the relevant configuration for brevity
 module.exports = {
@@ -39,6 +48,7 @@ module.exports = {
         name: "avocapture",
         setupIcon: "./branding/logo.ico",
         loadingGif: "./branding/logo_animated.gif",
+        ...certConf
       },
     },
     {
