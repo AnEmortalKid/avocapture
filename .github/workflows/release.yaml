@@ -69,6 +69,6 @@ jobs:
       - name: publish          
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WIN_CERT_PASS: ${{ secrets.CERTIFICATE_PASS }}
+          WIN_CERT_PASS: ${{ secrets.WIN_CERT_PASS }}
           WIN_CERT_FILE: ${{ steps.write_file.outputs.filePath }}
         run: npm run publish
