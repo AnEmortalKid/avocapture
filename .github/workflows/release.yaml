@@ -46,7 +46,6 @@ jobs:
         uses: timheuer/base64-to-file@v1.1
         with:
           fileName: 'cert.pfx'
-          fileDir: './packager/'
           encodedString: ${{ secrets.WIN_CERT_FILE_BASE64 }}
       #     - name: Add msbuild to PATH
       #       uses: microsoft/setup-msbuild@v1.1
