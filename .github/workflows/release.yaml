@@ -44,6 +44,8 @@ jobs:
       - name: Download Cert
         id: write_file
         uses: timheuer/base64-to-file@v1.1
+        env:
+          RUNNER_TEMP: './packager/'
         with:
           fileName: 'cert.pfx'
           encodedString: ${{ secrets.WIN_CERT_FILE_BASE64 }}
