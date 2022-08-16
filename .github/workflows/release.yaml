@@ -45,7 +45,9 @@ jobs:
         env:
           WIN_CERT_FILE_BASE64: ${{ secrets.WIN_CERT_FILE_BASE64 }}
         run: |
+          echo $WIN_CERT_FILE_BASE64
           echo $WIN_CERT_FILE_BASE64 | base64 --decode > cert.pfx
+          cat cert.pfx
       #     - name: Add msbuild to PATH
       #       uses: microsoft/setup-msbuild@v1.1
       #     - name: Setup VisualStudio for node-gyp
