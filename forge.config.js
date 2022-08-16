@@ -15,9 +15,10 @@ if (certConf.certificateFile || certConf.certificatePassword) {
   if (!certConf.certificatePassword) {
     throw new Error('ForgeConfig: Specified a cert file but no password.');
   }
+  console.log('[FORGE] > signing binary.');
 }
 else {
-  console.log('[FORGE] > not signing binary');
+  console.log('[FORGE] > not signing binary.');
 }
 
 // If you have set config.forge to a JavaScript file path in package.json:
