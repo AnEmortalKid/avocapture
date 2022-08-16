@@ -7,6 +7,8 @@ if (process.env.WIN_CERT_PASS) {
   certConf.certificatePassword = process.env.WIN_CERT_PASS;
 }
 
+console.log('Using ' , certConf.certificateFile);
+
 // If you have set config.forge to a JavaScript file path in package.json:
 // Only showing the relevant configuration for brevity
 module.exports = {
