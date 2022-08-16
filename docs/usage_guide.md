@@ -1,6 +1,7 @@
 # Usage Guide
 
-# :warning: 
+--- 
+:warning: :warning: :warning: 
 
 ## Non Full Screen
 
@@ -11,7 +12,7 @@ In order to properly show the dialog, the game you're attempting to capture shou
 * I am aware of how suspicious it is to ask you to download an executable and trust me, I have signed the binary produced by this project with a Code Siging License. As people download and use the software, windows will eventually mark it as trusted.
 
 * If you do not trust the executable, you can build the project from sources using `npm` and `electron-forge`.
-
+---
 
 ## Setup
 
