@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.0
+
+- Setup auto-update
+
+## 0.5.0
+
+- Signed binary
+
 ## 0.4.0
 
 - Fix Built-in extensions not displaying tag in Extension Manager
