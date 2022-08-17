@@ -1,8 +1,8 @@
 name: Release
 on:
-  release:
-    types:
-      - created
+  push:
+    tags:
+      - "v*"
 
 jobs:
   # publish_on_linux:
@@ -46,7 +46,7 @@ jobs:
         id: write_file
         uses: timheuer/base64-to-file@v1.1
         with:
-          fileName: 'cert.pfx'
+          fileName: "cert.pfx"
           encodedString: ${{ secrets.WIN_CERT_FILE_BASE64 }}
       #     - name: Add msbuild to PATH
       #       uses: microsoft/setup-msbuild@v1.1
@@ -66,7 +66,7 @@ jobs:
         run: npm install --global npm@8.3.1
       - name: install dependencies
         run: npm ci
-      - name: publish          
+      - name: publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WIN_CERT_PASS: ${{ secrets.WIN_CERT_PASS }}
