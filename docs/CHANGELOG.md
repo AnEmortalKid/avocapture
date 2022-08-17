@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.0
+
+- Publish minor version to check auto-update working
+
 ## 0.6.0
 
 - Setup auto-update
