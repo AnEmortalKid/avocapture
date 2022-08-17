@@ -1,6 +1,6 @@
 {
   "name": "avocapture",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Capture bugs for Issue Council but much nicer",
   "main": "./.webpack/main",
   "scripts": {
