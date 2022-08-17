@@ -4,7 +4,10 @@ if (require("electron-squirrel-startup")) {
   app.quit();
 }
 
-require("update-electron-app")();
+const log = require("electron-log");
+require("update-electron-app")({
+  logger: log.scope('update-electron-app')
+});
 
 import { runApp } from "./avocapture";
 
