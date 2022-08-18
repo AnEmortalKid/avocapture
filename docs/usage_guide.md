@@ -21,7 +21,7 @@ In order to properly show the dialog, the game you're attempting to capture shou
 3. A secondary loading screen will show up when extensions are installed/updated and on each launch (should be much faster after extensions are installed once).
 4. Once application loads, you should be able to pick which mechanism to detect your replays and update the settings based on the extension's you're using:
 
-![](./usage/images/app.PNG)
+![](./usage/imgs/sample_usage.gif)
 
 
 ## Extension Setup
