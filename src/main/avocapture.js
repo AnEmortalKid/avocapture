@@ -276,7 +276,7 @@ export function runApp() {
 
     const selectedDir =
       result.filePaths.length > 0 ? result.filePaths[0] : null;
-    // todo event sender destroys
+
     logger.log(`Directory selection by: ${event.sender}`);
     event.sender.send(AppEvents.ACTIONS.SELECT_DIRECTORY_RESPONSE, selectedDir);
     event.sender.focus();
