@@ -21,6 +21,7 @@ const extensions = {
 const actions = {
   selectDirectory(responseCallback) {
     ipcRenderer.once("AppActions.SelectDirectory.Response", (event, data) => {
+      console.log(`Responding to ${event} with ${data}`);
       if (data) {
         responseCallback(data);
       }

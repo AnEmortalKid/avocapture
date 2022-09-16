@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.1
+
+- Fix replay-mover select directory not persisting
+
 ## 0.7.0
 
 - Publish minor version to check auto-update working

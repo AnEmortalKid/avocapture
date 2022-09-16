@@ -1,5 +1,10 @@
 # changelog
 
+## 0.7.1
+
+- Fix select directory submitting dialog and not receiving value
+- Align versions with parent
+
 ## 0.2.0
 
 - Align versions

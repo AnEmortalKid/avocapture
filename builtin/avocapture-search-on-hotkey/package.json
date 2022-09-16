@@ -1,6 +1,6 @@
 {
   "name": "avocapture-search-on-hotkey",
-  "version": "0.2.0",
+  "version": "0.7.1",
   "description": "An extension for avocapture that searches the filesystem when a hotkey is pressed.",
   "main": "extension.js",
   "scripts": {
