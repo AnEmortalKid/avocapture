@@ -267,12 +267,17 @@ export function runApp() {
   });
 
   ipcMain.on(AppEvents.ACTIONS.SELECT_DIRECTORY, async (event, data) => {
-    const result = await dialog.showOpenDialog(mainWindow, {
-      properties: ["openDirectory"],
-    });
+    const result = await dialog.showOpenDialog(
+      event.sender.getOwnerBrowserWindow(),
+      {
+        properties: ["openDirectory"],
+      }
+    );
 
     const selectedDir =
       result.filePaths.length > 0 ? result.filePaths[0] : null;
+
+    logger.log(`Directory selection by: ${event.sender}`);
     event.sender.send(AppEvents.ACTIONS.SELECT_DIRECTORY_RESPONSE, selectedDir);
     event.sender.focus();
   });

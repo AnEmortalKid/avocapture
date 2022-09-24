@@ -12,7 +12,7 @@ function cancelForm() {
 }
 
 function bindToForm(data) {
-  console.log("BindingToForm ", data);
+  console.log("BindingToForm ", JSON.stringify(data));
   if (data) {
     replayFolderInput.value = data.destination;
   }
@@ -32,10 +32,13 @@ function bindButtons() {
   cancelBtn.addEventListener("click", cancelForm);
 }
 
+function setDirectory(data) {
+  console.log(`Data: ${data}`)
+  replayFolderInput.value = data;
+}
+
 selectDirButton.onclick = () => {
-  avocapture.actions.selectDirectory((data) => {
-    replayFolderInput.value = data;
-  });
+  avocapture.actions.selectDirectory(setDirectory);
 };
 
 bindButtons();

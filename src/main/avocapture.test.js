@@ -823,21 +823,26 @@ describe("Avocapture Application", () => {
       });
 
       test("on select directory handles no results", async () => {
+        const mock_sender_window = {};
+
         mock_dialog.showOpenDialog.mockReturnValue({ filePaths: [] });
         let mock_sender = {
           send: jest.fn(),
           focus: jest.fn(),
+          getOwnerBrowserWindow: jest.fn(),
         };
+        mock_sender.getOwnerBrowserWindow.mockReturnValue(mock_sender_window);
+
         emitter.emit(AppEvents.ACTIONS.SELECT_DIRECTORY, {
           sender: mock_sender,
         });
         // pretend something was selected
         await Promise.resolve();
 
-        // displays dialog
+        // displays dialog with the window in context
         // sends result to caller
         expect(mock_dialog.showOpenDialog).toHaveBeenCalledWith(
-          expect.anything(),
+          mock_sender_window,
           {
             properties: ["openDirectory"],
           }
