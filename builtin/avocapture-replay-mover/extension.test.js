@@ -1,7 +1,7 @@
 var mockLogger;
 
-const fs = require('fs');
-jest.mock('fs');
+const fsExtra = require('fs-extra');
+jest.mock('fs-extra');
 
 const path = require('path');
 
@@ -45,7 +45,7 @@ describe("extension", () => {
   describe("on upload", () => {
 
     beforeEach(() => {
-      fs.renameSync = jest.fn()
+      fsExtra.moveSync = jest.fn()
     });
 
     test("moves replay to folder", () => {
@@ -64,7 +64,7 @@ describe("extension", () => {
 
       // use path to ensure platform separator
       const expectedDestination = path.join('parentDir', 'destinationDir', 'replays', 'fake.mp4')
-      expect(fs.renameSync).toHaveBeenCalledWith('anotherDir/fake.mp4', expectedDestination);
+      expect(fsExtra.moveSync).toHaveBeenCalledWith('anotherDir/fake.mp4', expectedDestination);
     });
 
     test("does nothing when destination missing", () => {
@@ -78,7 +78,7 @@ describe("extension", () => {
 
       rm.upload(fakeReplay)
 
-      expect(fs.renameSync).not.toHaveBeenCalled();
+      expect(fsExtra.moveSync).not.toHaveBeenCalled();
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });

@@ -28,5 +28,8 @@
   },
   "devDependencies": {
     "jest": "^28.1.2"
+  },
+  "dependencies": {
+    "fs-extra": "^10.1.0"
   }
 }
