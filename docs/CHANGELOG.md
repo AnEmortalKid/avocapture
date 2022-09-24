@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.2
+
+- Bump replay-mover to fix fs-extra missing from zip
+
 ## 0.7.1
 
 - Fix replay-mover select directory not persisting #32

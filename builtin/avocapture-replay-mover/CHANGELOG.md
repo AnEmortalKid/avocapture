@@ -1,5 +1,9 @@
 # changelog
 
+## 0.7.2
+
+- Fix fs-extra missing
+
 ## 0.7.1
 
 - Fix select directory submitting dialog and not receiving value
