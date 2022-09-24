@@ -1,4 +1,4 @@
-const fs = require("fs");
+const fs = require("fs-extra");
 const path = require("path");
 
 class ReplayMover {
@@ -52,7 +52,7 @@ class ReplayMover {
     if (this.destination && this.destination.length > 0) {
       const destinationPath = path.join(this.destination, replayData.fileName);
       this.logger.info(`Computed destination ${destinationPath}`);
-      fs.renameSync(replayData.filePath, destinationPath);
+      fs.moveSync(replayData.filePath, destinationPath);
     } else {
       this.logger.error("No destination to upload to!");
     }

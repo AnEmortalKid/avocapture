@@ -4,6 +4,7 @@
 
 - Fix select directory submitting dialog and not receiving value
 - Align versions with parent
+- Allow replay mover to move files between drives
 
 ## 0.2.0
 
