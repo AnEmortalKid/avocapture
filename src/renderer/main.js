@@ -84,7 +84,9 @@ function addUploaders(settings) {
 }
 
 function bindToUI(settings) {
-  prefixInput.value = settings.prefix;
+  if (settings.prefix || settings.prefix == "") {
+    prefixInput.value = settings.prefix;
+  }
 
   addDetectors(settings);
   addUploaders(settings);
