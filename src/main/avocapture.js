@@ -171,7 +171,9 @@ export function runApp() {
       detectors: extensionManager.getExtensionsOfType("detector"),
       uploaders: extensionManager.getExtensionsOfType("uploader"),
     };
-    replayDetectionListener.setPrefix(appSettings.prefix);
+    replayDetectionListener.setPrefix(
+      appSettings.prefix ? appSettings.prefix : ""
+    );
 
     appLoader.onFinished(() => {
       mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);

@@ -668,6 +668,19 @@ describe("Avocapture Application", () => {
       );
     });
 
+    test.each([null, undefined, ""])(
+      "calls setPrefix with blank when prefix is %p",
+      (prefix) => {
+        mock_AppSettings.getAll.mockReturnValue({
+          prefix: prefix,
+        });
+
+        runApp();
+
+        expect(mock_ReplayDetectionListener.setPrefix).toHaveBeenCalledWith("");
+      }
+    );
+
     describe("Handles events", () => {
       let emitter;
       beforeEach(() => {
