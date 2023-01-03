@@ -1,6 +1,6 @@
 {
   "name": "avocapture-replay-mover",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "An Avocapture uploader that moves replay files to a new folder.",
   "main": "extension.js",
   "scripts": {
@@ -28,5 +28,8 @@
   },
   "devDependencies": {
     "jest": "^28.1.2"
+  },
+  "dependencies": {
+    "fs-extra": "^10.1.0"
   }
 }

@@ -2,6 +2,8 @@ const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
 const fs = require("fs");
 
+const execSync = require("child_process").execSync;
+
 // zip our extensions up
 const zipper = require("./packager/builtinZipper");
 const zipBuiltins = [
@@ -9,6 +11,20 @@ const zipBuiltins = [
   "avocapture-obs-detector",
   "avocapture-search-on-hotkey",
 ];
+
+// RUN npm install in these dirs
+for (const builtin of zipBuiltins) {
+  console.log('[Webpack Prepare Zips] npm installing ' + builtin)
+  execSync(
+    "npm install --omit=dev",
+    { cwd: path.resolve(__dirname, "builtin", builtin) },
+    function (error, stdout, stderr) {
+      console.error(error);
+      console.log("> " + stdout);
+      console.error(stderr);
+    }
+  );
+}
 
 var zipPatterns = [];
 for (const builtin of zipBuiltins) {

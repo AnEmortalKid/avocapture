@@ -33,7 +33,7 @@ npm run publish
 ## Automated Publishing steps
 
 1. If the desired version isn't set on the `package.json`, set it with `npm version major|minor|patch`
-2. Draft a new release
+2. Draft a new release , set tag to start with `v`, ex: `v0.7.0`
 3. Ensure it is set to `pre-release` (electron updater will check if isDraft | preRelease and skip)
 4. Once the artifacts are attached, change pre-release to non-pre-release
 5. Applications should execute the auto-update.
